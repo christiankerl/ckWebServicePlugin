@@ -1,0 +1,162 @@
+= ckWebService plugin =
+
+The `ckWebServicePlugin` is a symfony plugin that let you expose your modules and actions as a webservice.
+
+The Plugin is based on the standard PHP SOAP module, see http://de.php.net/manual/en/ref.soap.php 
+
+It offers automatic generation of .wsdl files from your source code.
+
+== Installation ==
+
+  * Install the plugin
+
+    download the attached archive and put the `ckWebServicePlugin` into your `/plugins` folder
+
+  * Configure the application in your `app.yml`
+
+    {{{
+      # your soap enviroment
+      soap:
+        # enable the `ckSoapParameterFilter`
+        enable_soap_parameter: on
+        ck_web_service_plugin:
+          # the location of your .wsdl file
+          wsdl: http://localhost/myWebService.wsdl
+          # the class that will be registered as handler for webservice requests
+          handler: ckSoapHandler
+          # set the persistence mode
+          persist: %SOAP_PERSISTENCE_SESSION%
+          # set the method every action has to implement to get the result of the action
+          result_callback: getSoapResult
+          # the options array, which is passed to the `SoapServer` constructor
+          options:
+            encoding: utf-8
+            soap_version: %SOAP_1_2%
+    }}}
+
+    You only have to configure `wsdl`, `options` and set `enable_soap_parameter` to `on`, if you want to use the standard settings shown above.
+
+  * Enable the controller in your `factories.yml`
+
+    {{{
+      # your soap enviroment
+      soap:
+        controller:
+          class: ckWebServiceController
+    }}}
+
+  * Enable the `ckSoapParameterFilter` in your `filters.yml`
+
+    {{{
+      soap_parameter:
+        class: ckSoapParameterFilter
+        param:
+          # `app_enable_soap_parameter` has to be set to `on` so the filter is only enabled in soap mode
+          condition: %APP_ENABLE_SOAP_PARAMETER%
+    }}}
+
+  * Clear your cache
+
+    {{{
+      symfony cc
+    }}}
+
+== Enabling actions for automatic wsdl generation ==
+
+  * Add `@ws-enable`-tag to the comment block
+
+  * Also the method has no parameters add `@param`-tags for each parameter you want to use
+
+  * Add a `@return`-tag for the return type of the method
+
+  * The following example action should illustrate the use
+
+    {{{      
+      class fooActions extends sfActions
+      {
+        /**
+         * Method to get the result, when in soap mode
+         */
+        public function getSoapResult()
+        {
+          return $this->result;
+        }
+
+        /**
+         * Executes index action
+         *
+         * @ws-enable
+         * @param string $test A string parameter
+         *
+         * @return string      A string
+         */
+        public function executeIndex()
+        {
+            $this->result = 'Parameter $test='.$this->request->getParameter('test');
+
+            //this is optional
+            return sfView::NONE;
+        }
+
+        /**
+         * A method which will not be exposed in the wsdl.
+         *
+         * @param string $test A string parameter
+         *
+         * @return string      A string
+         */
+        public function executeBar()
+        {
+
+        }
+      }
+    }}}
+
+== Generating the .wsdl file ==
+
+  * Execute the pake task, be sure the env_name is the same you used in the configuration
+
+    {{{
+      symfony build-wsdl app_name env_name [controller_name] [debug] webservice_name webservice_base_url
+    }}}
+
+  * Clear your cache
+
+    {{{
+      symfony cc
+    }}}
+
+  * This will add a .wsdl file to your `/web` folder, and add configuration on how to map the soap to request parameters to each `module.yml`, which exposes at least one method
+
+  * The names of the methods in the generated .wsdl file will follow the scheme `module_Action`
+
+  * This task will also create a new controller in your `/web` folder
+
+== Notes ==
+
+  * Complex Types are also supported by the `wsdl-build`-task, but the classes have to be in the `/lib` or `/apps/my_app/lib` folder
+
+  * To use your own .wsdl or to use more descriptive method names, you should implement your own handler class and set the handler config parameter in your `app.yml`, see the following example:
+
+    {{{
+      class mySoapHandler
+      {
+        public function descriptiveFoo($foo, $bar)
+        {
+          return sfContext::getInstance()->getController()->invokeSoapEnabledAction('fooModule', 'index', array($foo, $bar));
+        }
+      }
+    }}}
+
+    If you have edited the `modules.yml` of your `fooModule` the mapping to request parameters will still be available, otherwise you will find them in the array returned by:
+
+    {{{
+      $request->getParameter('param', 'ckWebServicePlugin');
+    }}}
+
+  * Browse the source to better understand what's going on inside :)
+
+== Contact ==
+
+  You may write me an email to: christian-kerl [at] web [dot] de
+
