@@ -6,6 +6,7 @@
  * @author    Christian Kerl <christian-kerl@web.de>
  * @copyright Copyright (c) 2008, Christian Kerl
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
+ * @version   SVN: $Id$
  */
 
 pake_desc('build wsdl file from marked classes');
@@ -36,7 +37,8 @@ function run_wsdl_build($task, $args)
 
   run_init_controller($task, $args);
 
-  sfConfig::set('sf_app_lib_dir', sfConfig::get('sf_root_dir').'/apps/'.$sf_app.'/lib');
+  sfConfig::set('sf_app_dir', sfConfig::get('sf_root_dir').'/apps/'.$sf_app);
+  sfConfig::set('sf_app_lib_dir', sfConfig::get('sf_app_dir').'/lib');
   _register_lib_dirs();
 
   $root_modules_dir = sfConfig::get('sf_root_dir').'/apps/'.$sf_app.'/modules';
@@ -54,74 +56,79 @@ function run_wsdl_build($task, $args)
 
   foreach($finder->in($root_modules_dir) as $module_dir)
   {
-    require_once($root_modules_dir.'/'.$module_dir.'/actions/actions.class.php');
+    //proposed by Nicolas Martin to avoid problems with 'inited' modules
+    if(!preg_match('/class(.*)Actions(.*)extends(.*)auto/', file_get_contents($root_modules_dir.'/'.$module_dir.'/actions/actions.class.php')) && file_exists($root_modules_dir.'/'.$module_dir.'/actions/actions.class.php'))
+    {       
+      require_once($root_modules_dir.'/'.$module_dir.'/actions/actions.class.php');
 
-    $class = new ReflectionClass($module_dir.'Actions');
+      $class = new ReflectionClass($module_dir.'Actions');
 
-    $module_config = $root_modules_dir.'/'.$module_dir.'/config/module.yml';
+      $module_config = $root_modules_dir.'/'.$module_dir.'/config/module.yml';
 
-    if(file_exists($module_config))
-    {
-      $yml = sfYaml::load($module_config);
-    }
-    else
-    {
-      $yml = array();
-    }
-
-    if(!is_array($yml[$sf_env]))
-    {
-      $yml[$sf_env] = array();
-    }
-
-    $yml[$sf_env]['soap_parameter_map'] = array();
-
-    foreach($class->getMethods() as $method)
-    {
-      $name = $method->getName();
-
-      if(substr($name,0,7)=='execute' && strlen($name)>7)
+      if(file_exists($module_config))
       {
-        $action = strtolower(substr($name, 7));
-        $name = $module_dir.'_'.substr($name, 7);
-
-        $param_return = _parse_method_comment($method->getDocComment());
-
-        if($param_return == null)
-        {
-          continue;
-        }
-
-        pake_echo_action('method+', $name);
-
-        $yml[$sf_env]['soap_parameter_map'][$action] = array();
-
-        $ws_method = new WsdlMethod();
-        $ws_method->setName($name);
-        
-        if(!empty($param_return['return']) && is_null($param_return['return']))
-        {
-          $ws_method->setReturn($param_return['return']['type'], $param_return['return']['desc']);
-        }
-        
-        foreach($param_return['param'] as $param)
-        {
-          $yml[$sf_env]['soap_parameter_map'][$action][] = $param['name'];
-
-          $ws_method->addParameter($param['type'], $param['name'], $param['desc']);
-        }
-
-        $methods[] = $ws_method;
-
-        $ws_write->addMethod($ws_method);
+        $yml = sfYaml::load($module_config);
       }
-    }
+      else
+      {
+        $yml = array();
+      }
 
-    //only save if we added something to the configuration
-    if(!empty($yml[$sf_env]['soap_parameter_map']))
-    {
-      pake_echo_action('file+', $module_config);
-      file_put_contents($module_config, sfYaml::dump($yml));
+      if(!is_array($yml[$sf_env]))
+      {
+        $yml[$sf_env] = array();
+      }
+
+      $yml[$sf_env]['soap_parameter_map'] = array();
+
+      foreach($class->getMethods() as $method)
+      {
+        $name = $method->getName();
+
+        if(substr($name,0,7)=='execute' && strlen($name)>7)
+        {
+          $action = strtolower(substr($name, 7));
+          $name = $module_dir.'_'.substr($name, 7);
+
+          $param_return = _parse_method_comment($method->getDocComment());
+
+          if($param_return == null)
+          {
+            continue;
+          }
+
+          pake_echo_action('method+', $name);
+
+          $yml[$sf_env]['soap_parameter_map'][$action] = array();
+
+          $ws_method = new WsdlMethod();
+          $ws_method->setName($name);
+
+          if(!empty($param_return['return']) && is_null($param_return['return']))
+          {
+            $ws_method->setReturn($param_return['return']['type'], $param_return['return']['desc']);
+          }
+
+          foreach($param_return['param'] as $param)
+          {
+            $yml[$sf_env]['soap_parameter_map'][$action][] = $param['name'];
+
+            $ws_method->addParameter($param['type'], $param['name'], $param['desc']);
+          }
+
+          $methods[] = $ws_method;
+
+          $ws_write->addMethod($ws_method);
+        }
+      }
+
+      //only save if we added something to the configuration
+      if(!empty($yml[$sf_env]['soap_parameter_map']))
+      {
+        pake_echo_action('file+', $module_config);
+        file_put_contents($module_config, sfYaml::dump($yml));
+      }
+
     }
   }
 
@@ -143,6 +150,9 @@ function _register_lib_dirs()
   __autoload('sfConfig');
   simpleAutoLoader::register(sfConfig::get('sf_lib_dir'), '.class.php');
   simpleAutoLoader::register(sfConfig::get('sf_app_lib_dir'), '.class.php');
+  simpleAutoLoader::register(sfConfig::get('sf_root_dir').'/plugins/modules/*/actions', '.class.php');
+  simpleAutoLoader::register(sfConfig::get('sf_app_dir').'/modules/*/actions', '.class.php');
+  simpleAutoLoader::register(sfConfig::get('sf_app_dir').'/modules/*/lib', '.class.php');
 
   $finder = pakeFinder::type('directory')->name('*');
 
