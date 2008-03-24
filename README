@@ -2,13 +2,21 @@
 
 The `ckWebServicePlugin` is a symfony plugin that let you expose your modules and actions as a webservice.
 
-The Plugin is based on the standard PHP SOAP module, see http://de.php.net/manual/en/ref.soap.php 
+The Plugin is based on the standard PHP SOAP module, see http://de.php.net/manual/en/ref.soap.php.
 
-It offers automatic generation of .wsdl files from your source code.
+It offers automatic generation of .wsdl files from your source code, using the WSDL Generator from http://www.djkaty.com/drupal/php-wsdl.
 
 == Installation ==
 
   * Install the plugin
+
+    execute:    
+
+    {{{
+      symfony plugin-install http://plugins.symfony-project.com/ckWebServicePlugin
+    }}}
+
+    or:
 
     download the attached archive and put the `ckWebServicePlugin` into your `/plugins` folder
 
@@ -94,8 +102,8 @@ It offers automatic generation of .wsdl files from your source code.
         {
             $this->result = 'Parameter $test='.$this->request->getParameter('test');
 
-            //this is optional
-            return sfView::NONE;
+            //return what you want, the view rendering will be bypassed any way
+            return sfView::SUCCESS;
         }
 
         /**
@@ -111,6 +119,8 @@ It offers automatic generation of .wsdl files from your source code.
         }
       }
     }}}
+
+    The resulting webservice method, when using the pake task, will be `foo_Index` with parameter `test` of type `string` and return type `string`.
 
 == Generating the .wsdl file ==
 
@@ -128,13 +138,34 @@ It offers automatic generation of .wsdl files from your source code.
 
   * This will add a .wsdl file to your `/web` folder, and add configuration on how to map the soap to request parameters to each `module.yml`, which exposes at least one method
 
-  * The names of the methods in the generated .wsdl file will follow the scheme `module_Action`
+  * The names of the methods in the generated .wsdl file will follow the scheme: `module_Action`
 
   * This task will also create a new controller in your `/web` folder
 
+  * Example:
+
+    {{{
+      symfony build-wsdl fronted soap myFooBarService http://www.myfoobar.com/
+    }}}
+
+    * This will add a `frontend_soap.php` and a `myFooBarService.wsdl` to your `/web` folder
+
+    * The endpoint for the generated service will be `http://www.myfoobar.com/frontend_soap.php`
+
 == Notes ==
 
+  * The whole view rendering part is bypassed any way, it doesn't matter if your module action returns sfView::NONE or sfView::SUCCESS, this has the advantage you can use the action easily in soap mode and normal mode (viewing via browser) without having to add additional conditions
+
   * Complex Types are also supported by the `wsdl-build`-task, but the classes have to be in the `/lib` or `/apps/my_app/lib` folder
+
+  * You can use the symfony session features as usual
+
+  * When you are developing you might add the following line to your `php.yml` to disable caching of the .wsdl file
+  
+    {{{
+      set:
+        soap.wsdl_cache_enabled: off
+    }}}
 
   * To use your own .wsdl or to use more descriptive method names, you should implement your own handler class and set the handler config parameter in your `app.yml`, see the following example:
 
@@ -156,7 +187,18 @@ It offers automatic generation of .wsdl files from your source code.
 
   * Browse the source to better understand what's going on inside :)
 
+== TODO ==
+
+  - decide how to handle redirects
+  - add a mixin method to actions, so you don't have to implement the getSoapResult in every *Actions class
+  - add the posibility to choose wether rendering is bypassed or not (per app / per module / per action)
+  - switch to symfony 1.1 (change the `build-wsdl` task, ...)
+  - write tests
+  - rewrite the wsdl generator
+  - enable nusoap, PEAR::SOAP as soap_server
+
+  - if anyone likes to contribute just let me know, help is welcome
+
 == Contact ==
 
   You may write me an email to: christian-kerl [at] web [dot] de
-
