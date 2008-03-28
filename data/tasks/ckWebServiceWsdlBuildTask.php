@@ -104,7 +104,7 @@ function run_wsdl_build($task, $args)
           $ws_method = new WsdlMethod();
           $ws_method->setName($name);
 
-          if(!empty($param_return['return']) && is_null($param_return['return']))
+          if(!is_null($param_return['return'] && !empty($param_return['return'])))
           {
             $ws_method->setReturn($param_return['return']['type'], $param_return['return']['desc']);
           }
