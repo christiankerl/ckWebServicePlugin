@@ -87,8 +87,8 @@ function run_wsdl_build($task, $args)
 
         if(substr($name,0,7)=='execute' && strlen($name)>7)
         {
-          $action = strtolower(substr($name, 7));
-          $name = $module_dir.'_'.substr($name, 7);
+          $action = strtolower(substr($name, 7, 1)).substr($name, 8);
+          $name = $module_dir.'_'.$action;
 
           $param_return = _parse_method_comment($method->getDocComment());
 

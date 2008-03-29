@@ -108,8 +108,9 @@ class ckWebServiceController extends sfController
    */
   public function invokeSoapEnabledAction($moduleName, $actionName, $parameters)
   {
-    $moduleName = strtolower($moduleName);
-    $actionName = strtolower($actionName);
+    //causes issues with camelized names
+    //$moduleName = strtolower($moduleName);
+    //$actionName = strtolower($actionName);
 
     $request = $this->getContext()->getRequest();
 
