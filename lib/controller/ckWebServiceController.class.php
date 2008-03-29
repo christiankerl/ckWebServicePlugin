@@ -137,26 +137,64 @@ class ckWebServiceController extends sfController
         throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $moduleName, $actionName));
       }
 
-      //check if we are able to call the result getter
-      if(is_callable(array($actionInstance, $soapResultCallback)))
+      //check if we are able to call a custom result getter
+      if(!method_exists(array($actionInstance, $soapResultCallback)))
       {
+        $soapResultCallback = 'defaultResultCallback';
+        
         if (sfConfig::get('sf_logging_enabled'))
         {
-          sfContext::getInstance()->getLogger()->info(sprintf('{%s} Calling soapResultCallback \'%s\'.', __CLASS__, $soapResultCallback));
+          sfContext::getInstance()->getLogger()->info(sprintf('{%s} Hooking defaultResultCallback in \'sfComponent\' as \'%s\'.', __CLASS__, $soapResultCallback));
         }
-
-        //return the result of our action
-        return $actionInstance->$soapResultCallback();
+        
+        //hook in the default result getter
+        sfMixer::register('sfComponent', array($this, $soapResultCallback));
       }
-      else
+      if (sfConfig::get('sf_logging_enabled'))
       {
-        return;
+        sfContext::getInstance()->getLogger()->info(sprintf('{%s} Calling soapResultCallback \'%s\'.', __CLASS__, $soapResultCallback));
       }
+
+      //return the result of our action
+      return $actionInstance->$soapResultCallback();      
     }
     catch(Exception $e)
     {
       //we return all exceptions as soap faults to the remote caller
       throw new SoapFault('1', $e->getMessage(), '', $e->getTraceAsString());
     }
+  }
+  
+  /**
+   * Implements the default behavior to get the result of a soap action.
+   *
+   * @param sfAction $actionInstance The hooked sfAction instance
+   * 
+   * @return mixed The result of the hooked sfAction instance
+   */
+  public function defaultResultCallback($actionInstance)
+  {
+    $vars = $actionInstance->getVarHolder()->getAll();
+    
+    //if we have one or more vars and shouldn't render
+    if(count($vars) > 0 && $this->getRenderMode() == sfView::RENDER_NONE)
+    {
+      //get the default result array key
+      $default_key = sfConfig::get('mod_'.$actionInstance->getModuleName().'_soap_return_key_'.$actionInstance->getActionName(), 'result');
+      
+      //if there is only one var stored we return it
+      if(count($vars) == 1)
+      {
+        reset($vars);
+        return current($vars);
+      }
+      //if the default key exists we return the value
+      else if(array_key_exists($default_key, $vars))
+      {
+        return $vars[$default_key];
+      }
+    }
+    
+    return;
   }
 }
