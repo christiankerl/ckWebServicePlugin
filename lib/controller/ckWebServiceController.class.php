@@ -18,6 +18,23 @@
  */
 class ckWebServiceController extends sfController
 {
+  /**
+   * Makes a string's first character lowercase.
+   *
+   * @param  string $str A string
+   *
+   * @return string      The string with first character lowercased
+   */
+  protected static function lcfirst($str)
+  {
+    if(is_string($str) && strlen($str) > 0)
+    {
+      $str[0] = strtolower($str[0]);
+    }
+
+    return $str;
+  }
+
   protected $soap_server = null;
 
   /**
@@ -28,9 +45,32 @@ class ckWebServiceController extends sfController
   public function initialize($context)
   {
     parent::initialize($context);
+  }
 
-    //don't render anything
-    $this->setRenderMode(sfView::RENDER_NONE);
+  /**
+   * Retrieves the presentation rendering mode.
+   *
+   * @return int One of the following:
+   *             - sfView::RENDER_NONE
+   *             - sfView::RENDER_VAR
+   */
+  public function getRenderMode()
+  {
+    return $this->doRender() ? sfView::RENDER_VAR : sfView::RENDER_NONE;
+  }
+
+  /**
+   * Indicates wether or not the current action should be rendered.
+   *
+   * @return bool true, if the action should be rendered, otherwise false
+   */
+  protected function doRender()
+  {
+    $result = sfConfig::get('app_ck_web_service_plugin_render', false);
+
+    $result = sfConfig::get('mod_'.$this->getContext()->getModuleName().'_soap_render_map_'.$this->getContext()->getActionName(), $result);
+
+    return $result;
   }
 
   /**
@@ -108,9 +148,8 @@ class ckWebServiceController extends sfController
    */
   public function invokeSoapEnabledAction($moduleName, $actionName, $parameters)
   {
-    //causes issues with camelized names
-    //$moduleName = strtolower($moduleName);
-    //$actionName = strtolower($actionName);
+    $moduleName = self::lcfirst($moduleName);
+    $actionName = self::lcfirst($actionName);
 
     $request = $this->getContext()->getRequest();
 
@@ -142,12 +181,12 @@ class ckWebServiceController extends sfController
       if(!method_exists(array($actionInstance, $soapResultCallback)))
       {
         $soapResultCallback = 'defaultResultCallback';
-        
+
         if (sfConfig::get('sf_logging_enabled'))
         {
           sfContext::getInstance()->getLogger()->info(sprintf('{%s} Hooking defaultResultCallback in \'sfComponent\' as \'%s\'.', __CLASS__, $soapResultCallback));
         }
-        
+
         //hook in the default result getter
         sfMixer::register('sfComponent', array($this, $soapResultCallback));
       }
@@ -157,7 +196,7 @@ class ckWebServiceController extends sfController
       }
 
       //return the result of our action
-      return $actionInstance->$soapResultCallback();      
+      return $actionInstance->$soapResultCallback();
     }
     catch(Exception $e)
     {
@@ -165,24 +204,24 @@ class ckWebServiceController extends sfController
       throw new SoapFault('1', $e->getMessage(), '', $e->getTraceAsString());
     }
   }
-  
+
   /**
    * Implements the default behavior to get the result of a soap action.
    *
    * @param sfAction $actionInstance The hooked sfAction instance
-   * 
+   *
    * @return mixed The result of the hooked sfAction instance
    */
-  public function defaultResultCallback($actionInstance)
+  public function & defaultResultCallback($actionInstance)
   {
     $vars = $actionInstance->getVarHolder()->getAll();
-    
+
     //if we have one or more vars and shouldn't render
-    if(count($vars) > 0 && $this->getRenderMode() == sfView::RENDER_NONE)
+    if(count($vars) > 0 && !$this->doRender())
     {
       //get the default result array key
       $default_key = sfConfig::get('mod_'.$actionInstance->getModuleName().'_soap_return_key_'.$actionInstance->getActionName(), 'result');
-      
+
       //if there is only one var stored we return it
       if(count($vars) == 1)
       {
@@ -195,7 +234,13 @@ class ckWebServiceController extends sfController
         return $vars[$default_key];
       }
     }
-    
+    //if we should render
+    else if($this->doRender())
+    {
+      //return the rendered view
+      return $this->getActionStack()->getLastEntry()->getPresentation();
+    }
+
     return;
   }
 }
