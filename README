@@ -44,6 +44,8 @@ It offers automatic generation of .wsdl files from your source code, using the W
         handler: ckSoapHandler
         # set the persistence mode [optional]
         persist: %SOAP_PERSISTENCE_SESSION%
+        # set wether or not action views should be rendered as normal [optional]
+        render: off
         # set the custom method every action class implements to get the result of the action [optional]
         result_callback: getSoapResult
         # the options array, which is passed to the `SoapServer` constructor, is the same as described in the php soap documentation [optional]
@@ -71,6 +73,10 @@ It offers automatic generation of .wsdl files from your source code, using the W
           # the name of the second, third, ... action parameter
           - second
           - ...
+      # set for each action wether or not action views should be rendered as normal, if this isn't set for an action the value from `ck_web_service_plugin: render` in `app.yml` is used
+      soap_render_map:
+        # the action name [mandatory]
+        test: on
       # the name of the action member, which contains the result [optional]
       soap_return_key: result_key
   }}}
@@ -203,9 +209,12 @@ It offers automatic generation of .wsdl files from your source code, using the W
   If none is found on the action instance a default getter is mixed into the action and is called. 
   
   This default getter has the following behavior:
-  * if only one variable exists in the actions parameter holder (set via ''$actionInstance->var = 'some value';''), this variable is returned
-  * if a default key into the parameter holder is configured using ''soap_return_key'' in the ''module.yml'' ('''Attention:''' if this is not configured ''result'' is assumed) and this key exists its corresponding value is returned
-  * if both approaches fail nothing is returned 
+  * when rendering is enable for the action (depending on configuration in ''module.yml'' and ''app.yml''):
+    * the rendered view is returned
+  * when rendering is disabled:
+    * if only one variable exists in the actions parameter holder (set via ''$actionInstance->var = 'some value';''), this variable is returned
+    * if a default key into the parameter holder is configured using ''soap_return_key'' in the ''module.yml'' ('''Attention:''' if this is not configured ''result'' is assumed) and this key exists its corresponding value is returned
+    * if both approaches fail nothing is returned 
 
   The described mechanism should be an easy to use, but powerfull way for you to get the result of an action.
 
@@ -244,7 +253,6 @@ It offers automatic generation of .wsdl files from your source code, using the W
 == TODO ==
 
   * decide how to handle redirects
-  * add the posibility to choose wether rendering is bypassed or not (per app / per module / per action)
   * switch to symfony 1.1 (change the ''build-wsdl'' task, ...)
   * write tests
   * rewrite the wsdl generator
