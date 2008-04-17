@@ -126,7 +126,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
   The generator is used through the ''wsdl-build'' symfony cli task, it has the following syntax:
   
   {{{
-    symfony build-wsdl app_name env_name [controller_name] [debug] webservice_name webservice_base_url
+    symfony wsdl-build app_name env_name [controller_name] [debug] webservice_name webservice_base_url
   }}}
   
   The first four parameters are the same as of the ''init-controller'' task.
@@ -138,7 +138,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
   Howto execute the ''wsdl-build'' task shows the following example:
   
   {{{
-    symfony build-wsdl fronted soap myFooBarService http://www.myfoobar.com/
+    symfony wsdl-build fronted soap myFooBarService http://www.myfoobar.com/
   }}}
 
     * This will add a ''frontend_soap.php'' and a ''myFooBarService.wsdl'' to your ''/web'' folder.
@@ -253,7 +253,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
 == TODO ==
 
   * decide how to handle redirects
-  * switch to symfony 1.1 (change the ''build-wsdl'' task, ...)
+  * switch to symfony 1.1 (change the ''wsdl-build'' task, ...)
   * write tests
   * rewrite the wsdl generator
   * enable nusoap, PEAR::SOAP as soap_server
