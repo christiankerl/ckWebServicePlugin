@@ -149,36 +149,37 @@ It offers automatic generation of .wsdl files from your source code, using the W
   
   {{{
   #!php
-    class fooActions extends sfActions
+  <?php
+  class fooActions extends sfActions
+  {
+    /**
+     * Executes index action
+     *
+     * @ws-enable
+     * @param string $test A string parameter
+     *
+     * @return string      A string
+     */
+    public function executeIndex()
     {
-      /**
-       * Executes index action
-       *
-       * @ws-enable
-       * @param string $test A string parameter
-       *
-       * @return string      A string
-       */
-      public function executeIndex()
-      {
-        $this->result = 'Parameter $test='.$this->request->getParameter('test');
-
-        //return what you want, the view rendering will be bypassed any way
-        return sfView::SUCCESS;
-      }
-
-      /**
-       * A method which will not be exposed in the wsdl.
-       *
-       * @param string $test A string parameter
-       *
-       * @return string      A string
-       */
-      public function executeBar()
-      {
-        $this->something = "some text!";
-      }
+      $this->result = 'Parameter $test='.$this->request->getParameter('test');
+      
+      //return what you want, the view rendering will be bypassed any way
+      return sfView::SUCCESS;
     }
+
+    /**
+     * A method which will not be exposed in the wsdl.
+     *
+     * @param string $test A string parameter
+     *
+     * @return string      A string
+     */
+    public function executeBar()
+    {
+      $this->something = "some text!";
+    }
+  }
   }}}
   
   This will generate a method with the name ''foo_Index'' with a parameter named ''test'' of type ''string'' and a return value of type ''string''.
@@ -228,13 +229,14 @@ It offers automatic generation of .wsdl files from your source code, using the W
 
   {{{
   #!php
-    class mySoapHandler
+  <?php
+  class mySoapHandler
+  {
+    public function descriptiveFooMethod($foo, $bar)
     {
-      public function descriptiveFooMethod($foo, $bar)
-      {
-        return sfContext::getInstance()->getController()->invokeSoapEnabledAction('fooModule', 'index', array($foo, $bar));
-      }
+      return sfContext::getInstance()->getController()->invokeSoapEnabledAction('fooModule', 'index', array($foo, $bar));
     }
+  }
   }}}
 
   If you have configured the ''module.yml'' of the ''fooModule'' in the following way:
