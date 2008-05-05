@@ -10,14 +10,14 @@
   <email>christian-kerl@web.de</email>
   <active>yes</active>
  </lead>
- <date>2008-04-10</date>
+ <date>2008-05-04</date>
  <version>
-  <release>1.2.0</release>
-  <api>1.2.0</api>
+  <release>1.3.0</release>
+  <api>1.3.0</api>
  </version>
  <stability>
-  <release>stable</release>
-  <api>stable</api>
+  <release>devel</release>
+  <api>devel</api>
  </stability>
  <license uri="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
  <notes>-</notes>
@@ -25,17 +25,14 @@
   <dir name="/">
    <file role="data" name="README" />
    <file role="data" name="LICENSE" />   
-   <dir name="data">
-    <dir name="tasks">
-     <file role="data" name="ckWebServiceWsdlBuildTask.php" />
-    </dir>
-   </dir>
    <dir name="lib">
     <dir name="controller">
      <file role="data" name="ckWebServiceController.class.php" />
     </dir>
-    <dir name="vendor">
-     <dir name="wsdl">
+    <dir name="task">
+      <file role="data" name="ckWebServiceGenerateWsdlTask.php" />
+    </dir>    
+    <dir name="vendor/wsdl">
        <file role="data" name="BaseWsdl.php" />
        <file role="data" name="BaseWsdlWriter.php" />
        <file role="data" name="DocBlockParser.php" />
@@ -45,8 +42,7 @@
        <file role="data" name="WsdlPart.php" />
        <file role="data" name="WsdlProperty.php" />
        <file role="data" name="WsdlType.php" />
-       <file role="data" name="WsdlWriter.php" />
-     </dir>
+       <file role="data" name="WsdlWriter.php" />     
     </dir>
     <file role="data" name="ckSoapHandler.class.php" />
     <file role="data" name="ckSoapParameterFilter.class.php" />
@@ -64,9 +60,9 @@
    <package>
     <name>symfony</name>
     <channel>pear.symfony-project.com</channel>
-    <min>1.0.0</min>
-    <max>1.1.0</max>
-    <exclude>1.1.0</exclude>
+    <min>1.1.0</min>
+    <max>1.2.0</max>
+    <exclude>1.2.0</exclude>
    </package>
   </required>
  </dependencies>
