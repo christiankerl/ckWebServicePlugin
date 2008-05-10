@@ -142,9 +142,7 @@ EOF;
         {
           $yml[$env] = array();
         }
-
-        $yml[$env]['soap_parameter_map'] = array();
-
+        
         foreach($class->getMethods() as $method)
         {
           $name = $method->getName();
@@ -158,10 +156,12 @@ EOF;
 
             if($param_return == null)
             {
+              $yml[$env][$action] = array('enable'=>false);
+              
               continue;
             }
 
-            $yml[$env]['soap_parameter_map'][$action] = array();
+            $yml[$env][$action] = array('enable'=>true, 'parameter'=>array(), 'result'=>null, 'render'=>false);
 
             $ws_method = new WsdlMethod();
             $ws_method->setName($name);
@@ -173,7 +173,7 @@ EOF;
 
             foreach($param_return['param'] as $param)
             {
-              $yml[$env]['soap_parameter_map'][$action][] = $param['name'];
+              $yml[$env][$action]['parameter'][] = $param['name'];
 
               $ws_method->addParameter($param['type'], $param['name'], $param['desc']);
             }
@@ -185,7 +185,7 @@ EOF;
         }
 
         // only save if we added something to the configuration
-        if(!empty($yml[$env]['soap_parameter_map']))
+        if(!empty($yml[$env]))
         {
           file_put_contents($module_config, sfYaml::dump($yml));
         }

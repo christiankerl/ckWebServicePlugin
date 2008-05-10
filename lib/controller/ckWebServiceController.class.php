@@ -30,6 +30,7 @@ class ckWebServiceController extends sfController
   public function initialize($context)
   {
     parent::initialize($context);
+    $this->dispatcher->connect('controller.change_action', array($this, 'listenToControllerChangeActionEvent'));
   }
 
   /**
@@ -53,7 +54,7 @@ class ckWebServiceController extends sfController
   {
     $result = sfConfig::get('app_ck_web_service_plugin_render', false);
 
-    $result = sfConfig::get('mod_'.$this->context->getModuleName().'_soap_render_map_'.$this->context->getActionName(), $result);
+    $result = sfConfig::get(sprintf('mod_%s_%s_render', $this->context->getModuleName(), $this->context->getActionName()), $result);
 
     return $result;
   }
@@ -194,9 +195,9 @@ class ckWebServiceController extends sfController
   /**
    * Implements the default behavior to get the result of a soap action.
    *
-   * @param sfAction $actionInstance The hooked sfAction instance
+   * @param sfAction $actionInstance A sfAction instance
    *
-   * @return mixed The result of the hooked sfAction instance
+   * @return mixed The result of the sfAction instance
    */
   public function defaultResultCallback($actionInstance)
   {
@@ -206,7 +207,7 @@ class ckWebServiceController extends sfController
     if(count($vars) > 0 && !$this->doRender())
     {
       // get the default result array key
-      $default_key = sfConfig::get('mod_'.$actionInstance->getModuleName().'_soap_return_key_'.$actionInstance->getActionName(), 'result');
+      $default_key = sfConfig::get(sprintf('mod_%s_%s_result', $actionInstance->getModuleName(), $actionInstance->getActionName()), 'result');
 
       // if there is only one var stored we return it
       if(count($vars) == 1)
@@ -248,6 +249,19 @@ class ckWebServiceController extends sfController
     else
     {
       return false;
+    }
+  }
+  
+  /**
+   * Listens to the controller.change_action event.
+   *
+   * @param sfEvent $event An sfEvent instance
+   */
+  public function listenToControllerChangeActionEvent(sfEvent $event)
+  {
+    if($event->getSubject() === $this && !sfConfig::get(sprintf('mod_%s_%s_enable', $event['module'], $event['action']), false))
+    {
+      throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $event['module'], $event['action']));
     }
   }
 }
