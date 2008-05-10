@@ -17,7 +17,9 @@
  * @author     Christian Kerl <christian-kerl@web.de>
  */
 class ckWebServiceController extends sfController
-{
+{  
+  const DEFAULT_RESULT_CALLBACK = 'defaultResultCallback';
+  
   protected $soap_server = null;
 
   /**
@@ -45,13 +47,13 @@ class ckWebServiceController extends sfController
   /**
    * Indicates wether or not the current action should be rendered.
    *
-   * @return bool true, if the action should be rendered, otherwise false
+   * @return bool True, if the action should be rendered, otherwise false
    */
   protected function doRender()
   {
     $result = sfConfig::get('app_ck_web_service_plugin_render', false);
 
-    $result = sfConfig::get('mod_'.$this->getContext()->getModuleName().'_soap_render_map_'.$this->getContext()->getActionName(), $result);
+    $result = sfConfig::get('mod_'.$this->context->getModuleName().'_soap_render_map_'.$this->context->getActionName(), $result);
 
     return $result;
   }
@@ -72,7 +74,7 @@ class ckWebServiceController extends sfController
    */
   public function handle()
   {
-    //retrieve configuration
+    // retrieve configuration
     $wsdl = sfConfig::get('app_ck_web_service_plugin_wsdl');
 
     $options = sfConfig::get('app_ck_web_service_plugin_soap_options', array());
@@ -81,19 +83,19 @@ class ckWebServiceController extends sfController
 
     if (sfConfig::get('sf_logging_enabled'))
     {
-      sfContext::getInstance()->getLogger()->info(sprintf('{%s} Starting SoapServer with \'%s\' and Handler \'%s\'.', __CLASS__, $wsdl, $handler));
+      $this->context->getLogger()->info(sprintf('{%s} Starting SoapServer with \'%s\' and Handler \'%s\'.', __CLASS__, $wsdl, $handler));
     }
 
-    //construct the server
+    // construct the server
     $this->soap_server = new SoapServer($wsdl, $options);
 
-    //set the handler
+    // set the handler
     $this->soap_server->setClass($handler);
 
-    //set the persistence mode
+    // set the persistence mode
     $this->soap_server->setPersistence($persist);
 
-    //start the server
+    // start the server
     $this->soap_server->handle();
   }
 
@@ -134,7 +136,7 @@ class ckWebServiceController extends sfController
     $moduleName = ckString::lcfirst($moduleName);
     $actionName = ckString::lcfirst($actionName);
 
-    $request = $this->getContext()->getRequest();
+    $request = $this->context->getRequest();
 
     $request->setParameter('param', $parameters, 'ckWebServicePlugin');
 
@@ -142,48 +144,49 @@ class ckWebServiceController extends sfController
     {
       if (sfConfig::get('sf_logging_enabled'))
       {
-        sfContext::getInstance()->getLogger()->info(sprintf('{%s} Forwarding to \'%s/%s\'.', __CLASS__, $moduleName, $actionName));
+        $this->context->getLogger()->info(sprintf('{%s} Forwarding to \'%s/%s\'.', __CLASS__, $moduleName, $actionName));
       }
 
-      //use forward to invoke the action, so we have to pass the filter chain
+      // use forward to invoke the action, so we have to pass the filter chain
       $this->forward($moduleName, $actionName);
 
-      //get the function which retrieves the action result
+      // get the function which retrieves the action result
       $soapResultCallback = sfConfig::get('app_ck_web_service_plugin_result_callback', 'getSoapResult');
 
-      //get the last executed action
+      // get the last executed action
       $actionInstance = $this->getActionStack()->getLastEntry()->getActionInstance();
 
-      //if we have been redirected to the 404 module, we raise an exception
+      // if we have been redirected to the 404 module, we raise an exception
       if($actionInstance->getModuleName() == sfConfig::get('sf_error_404_module') && $actionInstance->getActionName() == sfConfig::get('sf_error_404_action'))
       {
         throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $moduleName, $actionName));
       }
 
-      //check if we are able to call a custom result getter
+      // check if we are able to call a custom result getter
       if(!method_exists(array($actionInstance, $soapResultCallback)))
       {
-        $soapResultCallback = 'defaultResultCallback';
+        $soapResultCallback = self::DEFAULT_RESULT_CALLBACK;
 
         if (sfConfig::get('sf_logging_enabled'))
         {
-          sfContext::getInstance()->getLogger()->info(sprintf('{%s} Hooking defaultResultCallback in \'sfComponent\' as \'%s\'.', __CLASS__, $soapResultCallback));
+          $this->context->getLogger()->info(sprintf('{%s} Start listening to \'component.method_not_found event\'.', __CLASS__, $soapResultCallback));
         }
 
-        //hook in the default result getter
-        sfMixer::register('sfComponent', array($this, $soapResultCallback));
+        // listen to the component.method_not_found event
+        $this->dispatcher->connect('component.method_not_found', array($this, 'listenToComponentMethodNotFoundEvent'));        
       }
+      
       if (sfConfig::get('sf_logging_enabled'))
       {
-        sfContext::getInstance()->getLogger()->info(sprintf('{%s} Calling soapResultCallback \'%s\'.', __CLASS__, $soapResultCallback));
+        $this->context->getLogger()->info(sprintf('{%s} Calling soapResultCallback \'%s\'.', __CLASS__, $soapResultCallback));
       }
 
-      //return the result of our action
+      // return the result of our action
       return $actionInstance->$soapResultCallback();
     }
     catch(Exception $e)
     {
-      //we return all exceptions as soap faults to the remote caller
+      // we return all exceptions as soap faults to the remote caller
       throw new SoapFault('1', $e->getMessage(), '', $e->getTraceAsString());
     }
   }
@@ -195,35 +198,56 @@ class ckWebServiceController extends sfController
    *
    * @return mixed The result of the hooked sfAction instance
    */
-  public function & defaultResultCallback($actionInstance)
+  public function defaultResultCallback($actionInstance)
   {
     $vars = $actionInstance->getVarHolder()->getAll();
 
-    //if we have one or more vars and shouldn't render
+    // if we have one or more vars and shouldn't render
     if(count($vars) > 0 && !$this->doRender())
     {
-      //get the default result array key
+      // get the default result array key
       $default_key = sfConfig::get('mod_'.$actionInstance->getModuleName().'_soap_return_key_'.$actionInstance->getActionName(), 'result');
 
-      //if there is only one var stored we return it
+      // if there is only one var stored we return it
       if(count($vars) == 1)
       {
         reset($vars);
         return current($vars);
       }
-      //if the default key exists we return the value
+      // if the default key exists we return the value
       else if(array_key_exists($default_key, $vars))
       {
         return $vars[$default_key];
       }
     }
-    //if we should render
+    // if we should render
     else if($this->doRender())
     {
-      //return the rendered view
+      // return the rendered view
       return $this->getActionStack()->getLastEntry()->getPresentation();
     }
 
     return;
+  }
+  
+  /**
+   * Listens to the component.method_not_found event.
+   *
+   * @param  sfEvent $event An sfEvent instance
+   * 
+   * @return bool True, if the method is the DEFAULT_RESULT_CALLBACK, false otherwise
+   */
+  public function listenToComponentMethodNotFoundEvent(sfEvent $event)
+  {
+    if($event['method'] == self::DEFAULT_RESULT_CALLBACK)
+    {
+      $event->setReturnValue($this->{self::DEFAULT_RESULT_CALLBACK}($event->getSubject()));
+    
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 }
