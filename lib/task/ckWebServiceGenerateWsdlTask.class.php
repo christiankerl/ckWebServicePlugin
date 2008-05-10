@@ -129,12 +129,14 @@ EOF;
 
         $module_config = sfConfig::get('sf_app_module_dir').'/'.$module_dir.'/config/module.yml';
 
+        $this->getFilesystem()->mkdirs(dirname($module_config));
+        
         if(!file_exists($module_config))
         {
           $this->getFilesystem()->touch($module_config);          
         }
         
-         $yml = sfYaml::load($module_config);
+        $yml = sfYaml::load($module_config);
 
         if(!isset($yml[$env]) || !is_array($yml[$env]))
         {

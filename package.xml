@@ -30,8 +30,11 @@
      <file role="data" name="ckWebServiceController.class.php" />
     </dir>
     <dir name="task">
-      <file role="data" name="ckWebServiceGenerateWsdlTask.php" />
-    </dir>    
+      <file role="data" name="ckWebServiceGenerateWsdlTask.class.php" />
+    </dir>
+    <dir name="util">
+      <file role="data" name="ckString.class.php" />
+    </dir>
     <dir name="vendor/wsdl">
        <file role="data" name="BaseWsdl.php" />
        <file role="data" name="BaseWsdlWriter.php" />
