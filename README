@@ -1,5 +1,7 @@
 = ckWebService plugin =
 
+'''This is the documentation for the symfony 1.0 compatible plugin version!'''
+
 The `ckWebServicePlugin` is a symfony plugin that let you expose your modules and actions as a webservice.
 
 The Plugin is based on the standard PHP SOAP module, see http://de.php.net/manual/en/ref.soap.php.
@@ -17,7 +19,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
   or to install the current revision, checkout:
   
   {{{
-    http://svn.symfony-project.com/plugins/ckWebServicePlugin/trunk
+    http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/1.0
   }}}
 
   into a ''plugins/ckWebServicePlugin'' folder.
@@ -202,11 +204,11 @@ It offers automatic generation of .wsdl files from your source code, using the W
   In conclusion we have to provide a mapping of function parameters to request parameters. This is done by the 'ckSoapParameterFilter' it takes the names of the request parameters from the corresponding ''module.yml''.
   The names in the configuration have to be in the same order like the function arguments. 
   
-  In general a array containing all params can be retrieved by: ''$request->getParameter('param', null, 'ckWebServicePlugin');''.
+  In general an array containing all params can be retrieved by: ''$request->getParameter('param', null, 'ckWebServicePlugin');''.
 
 === Getting the action result ===
 
-  There are multiple stages of getting the action result. First we try to invoke a implementation of the ''result_callback'' configured in ''app.yml''.
+  There are multiple stages of getting the action result. First we try to invoke an implementation of the ''result_callback'' configured in ''app.yml''.
   If none is found on the action instance a default getter is mixed into the action and is called. 
   
   This default getter has the following behavior:
@@ -254,8 +256,9 @@ It offers automatic generation of .wsdl files from your source code, using the W
 
 == TODO ==
 
+  * add support for soap headers
+  * merge changes to configuration model in symfony 1.1 compatible version back
   * decide how to handle redirects
-  * switch to symfony 1.1 (change the ''wsdl-build'' task, ...)
   * write tests
   * rewrite the wsdl generator
   * enable nusoap, PEAR::SOAP as soap_server
