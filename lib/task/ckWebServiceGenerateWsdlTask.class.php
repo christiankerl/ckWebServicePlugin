@@ -92,7 +92,7 @@ EOF;
     $dbg  = $options['debug'];
     $name = $arguments['name'];
     $url  = $arguments['url'];
-    $url  = '/' == substr($url, strlen($url) - 1) ? $url : $url.'/';
+    $url  = ckString::endsWith($url, '/') ? $url : $url.'/';
 
     $controller_name = $name.'.php';
     $controller_path = sprintf('%s/%s', sfConfig::get('sf_web_dir'), $controller_name);
@@ -147,9 +147,9 @@ EOF;
         {
           $name = $method->getName();
 
-          if(substr($name,0,7)=='execute' && strlen($name)>7)
+          if(ckString::startsWith($name, 'execute') && strlen($name)>7)
           {
-            $action = strtolower(substr($name, 7, 1)).substr($name, 8);
+            $action = ckString::lcfirst(substr($name, 7));
             $name = $module_dir.'_'.$action;
 
             $param_return = $this->parseMethodCommentBlock($method->getDocComment());
@@ -240,7 +240,7 @@ EOF;
     {
       $line = trim($line);
 
-      if(substr($line, 0, 2) == '* ' && substr($line, 2, 1) == '@')
+      if(ckString::startsWith($line, '* ') && substr($line, 2, 1) == '@')
       {
         $parts = explode(' ', substr($line, 3), 4);
 

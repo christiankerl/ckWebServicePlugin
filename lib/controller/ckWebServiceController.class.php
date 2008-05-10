@@ -18,23 +18,6 @@
  */
 class ckWebServiceController extends sfController
 {
-  /**
-   * Makes a string's first character lowercase.
-   *
-   * @param  string $str A string
-   *
-   * @return string      The string with first character lowercased
-   */
-  protected static function lcfirst($str)
-  {
-    if(is_string($str) && strlen($str) > 0)
-    {
-      $str[0] = strtolower($str[0]);
-    }
-
-    return $str;
-  }
-
   protected $soap_server = null;
 
   /**
@@ -148,8 +131,8 @@ class ckWebServiceController extends sfController
    */
   public function invokeSoapEnabledAction($moduleName, $actionName, $parameters)
   {
-    $moduleName = self::lcfirst($moduleName);
-    $actionName = self::lcfirst($actionName);
+    $moduleName = ckString::lcfirst($moduleName);
+    $actionName = ckString::lcfirst($actionName);
 
     $request = $this->getContext()->getRequest();
 
