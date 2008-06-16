@@ -22,6 +22,8 @@ class ckWebServiceController extends sfController
   
   protected $soap_server = null;
 
+  protected $soap_headers = array();
+  
   /**
    * Initializes this controller.
    *
@@ -30,6 +32,7 @@ class ckWebServiceController extends sfController
   public function initialize($context)
   {
     parent::initialize($context);
+    
     $this->dispatcher->connect('controller.change_action', array($this, 'listenToControllerChangeActionEvent'));
   }
 
@@ -82,6 +85,21 @@ class ckWebServiceController extends sfController
     $handler = sfConfig::get('app_ck_web_service_plugin_handler', 'ckSoapHandler');
     $persist = sfConfig::get('app_ck_web_service_plugin_persist', SOAP_PERSISTENCE_SESSION);
 
+    $this->soap_headers = sfConfig::get('app_ck_web_service_plugin_soap_headers', array());
+    
+    if(!isset($options['classmap']) || !is_array($options['classmap']))
+    {
+      $options['classmap'] = array();
+    }
+    
+    foreach($headers as $header_name => $header_options)
+    {
+      if(isset($header_options['class']))
+      {
+        $options['classmap'][$header_name] = $header_options['class'];
+      }
+    }
+    
     if (sfConfig::get('sf_logging_enabled'))
     {
       $this->context->getLogger()->info(sprintf('{%s} Starting SoapServer with \'%s\' and Handler \'%s\'.', __CLASS__, $wsdl, $handler));
@@ -113,12 +131,28 @@ class ckWebServiceController extends sfController
    */
   public function __call($method, $arguments)
   {
-    $method = explode('_', $method);
+    if(isset($this->soap_headers[$method]))
+    {
+      $event = $this->dispatcher->notifyUntil(new sfEvent($this, 'webservice.handle_header', array('header'=>$method, 'data'=>$arguments[0])));
+    
+      if(!$event->isProcessed() && sfConfig::get('sf_logging_enabled'))
+      {
+        $this->context->getLogger()->info(sprintf('{%s} SoapHeader \'%s\' unhandled.', __CLASS__, $method));
+      }
+      
+      $result = $event->getReturnValue();
+      
+      return !is_null($result) ? $result : $arguments[0];
+    }
+    else
+    {
+      $method = explode('_', $method);
 
-    $moduleName = $method[0];
-    $actionName = isset($method[1]) && strlen($method[1]) > 0 ? $method[1] : 'index';
+      $moduleName = $method[0];
+      $actionName = isset($method[1]) && strlen($method[1]) > 0 ? $method[1] : 'index';
 
-    return $this->invokeSoapEnabledAction($moduleName, $actionName, $arguments);
+      return $this->invokeSoapEnabledAction($moduleName, $actionName, $arguments);
+    }
   }
 
   /**

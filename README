@@ -1,6 +1,6 @@
 = ckWebService plugin =
 
-'''This is the documentation for the symfony 1.1 compatible plugin version!'''
+'''This is the documentation for the symfony 1.1 compatible plugin version! '''
 
 The `ckWebServicePlugin` is a symfony plugin that let you expose your modules and actions as a webservice.
 
@@ -48,11 +48,17 @@ It offers automatic generation of .wsdl files from your source code, using the W
         options:
           encoding: utf-8
           soap_version: %SOAP_1_2%
+        # register your SoapHeaders and their corresponding data container class [optional]
+        soap_headers:
+          FooHeader:                     # name of the soap header
+            class: MyFooHeaderDataClass  # name of the data class
+          BarHeader:
+            class: MyFooHeaderDataClass
   }}}
 
 === module.yml ===
 
-  '''The configuration described here is done by the WSDL Generator!'''
+  '''The configuration described here is done by the WSDL Generator! '''
   
   The plugin allows per action configuration of parameters passed by the soap call so you can use them like request parameters.
   Also you can configure per action in which action member the result is stored, if not set ''result'' is assumed, and wether or not to render the view as result.
@@ -119,7 +125,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
     symfony webservice:generate-wsdl [--environment=soap] [--debug=on] app_name webservice_name webservice_base_url
   }}}
     
-  It will generate a wsdl file and a controller script in the ''web/'' folder and add / modify all ''module.yml'' files of enabled actions.
+  It will generate a wsdl file and a controller script in the ''web/'' folder and add / modify all ''module.yml'' files of your actions.
 
 === Example ===
 
@@ -173,6 +179,79 @@ It offers automatic generation of .wsdl files from your source code, using the W
   This will generate a method with the name ''foo_Index'' with a parameter named ''test'' of type ''string'' and a return value of type ''string''.
   
   '''Attention:''' This class has no ''getSoapResult'' method, because the result of the action is stored in the ''result'' member, see 'Internals'->'Getting the action result' for more details.
+
+== SoapHeader ==
+
+  The plugin also supports the use of SoapHeaders. You can use them to send additional data, like authentication data, with a method call.
+  
+  The data a soap header carries is always stored in a complex type, that means you have to specify a class in which the SoapServer can put the incoming data. For compatibility reasons to Microsofts .NET Framework webservice implementation the SoapHeader and the data class need to have the same name.
+  But fortunatly PHP's ''SoapServer'' implementation allows a mapping of types, defined in the *.wsdl file, to PHP classes. To define these mappings you have to use the ''soap_headers'' setting in ''app.yml''. The keys in this array are always the names of the SoapHeaders. The values are arrays containing a key ''class'' and as value the name of the data class.
+  This enables you to give SoapHeaders, transporting the same kind of data, different names.
+  
+  The data classes have to be in your application's ''lib/'' folder or a module's ''lib/'' folder.
+  
+  To handle incoming headers you have to listen to the ''webservice.handle_header'' event, it is a ''notifyUntil'' event.
+  The event has two parameters. The first is ''header'' containing the name of the SoapHeader. The second is ''data'' containing an instance of the data class.
+  If you want to modify the headers value, use ''$event->setReturnValue($modifiedData)'' where ''$modifiedData'' is an instance of the data class.
+  
+  The following example shows how to process a SoapHeader:
+  
+  {{{
+  #php
+  <?php
+  
+  /**
+   * WrappedString stores a simple string send with a SoapHeader.
+   */
+  class WrappedString
+  {
+  	public $data = "";
+  }
+    
+  /**
+   * SoapHeaderListener listens to the webservice.handle_header event for the MyFooHeader.
+   */
+  class SoapHeaderListener
+  {
+    const HEADER_NAME = 'MyFooHeader';
+    
+    /**
+     * Constructor connects the SoapHeaderListener with the webservice.handle_header event.
+     *
+     * @param sfEventDispatcher $dispatcher The sfEventDispatcher instance.
+     */
+    public function __construct(sfEventDispatcher $dispatcher)
+    {
+      $dispatcher->connect('webservice.handle_header', array($this, 'listenToWebserviceHandleHeaderEvent'));
+    }
+  
+    /**
+     * Handles a webservice.handle_header event, if the header is of type MyFooHeader.
+     *
+     * @param sfEvent $event A sfEvent instance.
+     */
+    public function listenToWebserviceHandleHeaderEvent(sfEvent $event)
+    {
+      if($event['header'] == self::HEADER_NAME)
+      {
+        $return = new WrappedString();        
+        $return->data = sprintf('%s --- has been processed.', $event['data']->data);
+        
+        $event->setReturnValue($return);
+      
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+  }
+  
+  ?>
+  }}}
+  
+  '''Attention:''' SoapHeaders are not yet supported by the WSDL Generator task, so you have to define them yourself in the *.wsdl file.
 
 == Internals ==
 
@@ -241,7 +320,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
 
 == TODO ==
 
-  * add support for soap headers
+  * add support for soap headers to generator
   * decide how to handle redirects
   * write tests
   * rewrite the wsdl generator
