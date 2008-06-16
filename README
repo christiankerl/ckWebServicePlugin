@@ -197,7 +197,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
   The following example shows how to process a SoapHeader:
   
   {{{
-  #php
+  #!php
   <?php
   
   /**
