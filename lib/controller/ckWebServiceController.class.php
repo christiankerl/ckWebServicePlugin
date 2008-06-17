@@ -18,23 +18,6 @@
  */
 class ckWebServiceController extends sfController
 {
-  /**
-   * Makes a string's first character lowercase.
-   *
-   * @param  string $str A string
-   *
-   * @return string      The string with first character lowercased
-   */
-  protected static function lcfirst($str)
-  {
-    if(is_string($str) && strlen($str) > 0)
-    {
-      $str[0] = strtolower($str[0]);
-    }
-
-    return $str;
-  }
-
   protected $soap_server = null;
 
   /**
@@ -68,8 +51,8 @@ class ckWebServiceController extends sfController
   {
     $result = sfConfig::get('app_ck_web_service_plugin_render', false);
 
-    $result = sfConfig::get('mod_'.$this->getContext()->getModuleName().'_soap_render_map_'.$this->getContext()->getActionName(), $result);
-
+    $result = sfConfig::get(sprintf('mod_%s_%s_render', $this->context->getModuleName(), $this->context->getActionName()), $result);
+    
     return $result;
   }
 
@@ -148,8 +131,8 @@ class ckWebServiceController extends sfController
    */
   public function invokeSoapEnabledAction($moduleName, $actionName, $parameters)
   {
-    $moduleName = self::lcfirst($moduleName);
-    $actionName = self::lcfirst($actionName);
+    $moduleName = ckString::lcfirst($moduleName);
+    $actionName = ckString::lcfirst($actionName);
 
     $request = $this->getContext()->getRequest();
 
@@ -220,8 +203,8 @@ class ckWebServiceController extends sfController
     if(count($vars) > 0 && !$this->doRender())
     {
       //get the default result array key
-      $default_key = sfConfig::get('mod_'.$actionInstance->getModuleName().'_soap_return_key_'.$actionInstance->getActionName(), 'result');
-
+      $default_key = sfConfig::get(sprintf('mod_%s_%s_result', $actionInstance->getModuleName(), $actionInstance->getActionName()), 'result');
+      
       //if there is only one var stored we return it
       if(count($vars) == 1)
       {

@@ -74,32 +74,32 @@ function run_wsdl_build($task, $args)
         $yml = array();
       }
 
-      if(!is_array($yml[$sf_env]))
+      if(!isset($yml[$sf_env]) || !is_array($yml[$sf_env]))
       {
         $yml[$sf_env] = array();
       }
-
-      $yml[$sf_env]['soap_parameter_map'] = array();
 
       foreach($class->getMethods() as $method)
       {
         $name = $method->getName();
 
-        if(substr($name,0,7)=='execute' && strlen($name)>7)
+        if(ckString::startsWith($name, 'execute') && strlen($name)>7)
         {
-          $action = strtolower(substr($name, 7, 1)).substr($name, 8);
+          $action = ckString::lcfirst(substr($name, 7));
           $name = $module_dir.'_'.$action;
 
           $param_return = _parse_method_comment($method->getDocComment());
 
           if($param_return == null)
           {
+            $yml[$sf_env][$action] = array('enable' => false);
+            
             continue;
           }
 
           pake_echo_action('method+', $name);
 
-          $yml[$sf_env]['soap_parameter_map'][$action] = array();
+          $yml[$sf_env][$action] = array('enable'=>true, 'parameter'=>array(), 'result'=>null, 'render'=>false);
 
           $ws_method = new WsdlMethod();
           $ws_method->setName($name);
@@ -111,7 +111,7 @@ function run_wsdl_build($task, $args)
 
           foreach($param_return['param'] as $param)
           {
-            $yml[$sf_env]['soap_parameter_map'][$action][] = $param['name'];
+            $yml[$sf_env][$action]['parameter'][] = $param['name'];
 
             $ws_method->addParameter($param['type'], $param['name'], $param['desc']);
           }
@@ -123,7 +123,7 @@ function run_wsdl_build($task, $args)
       }
 
       //only save if we added something to the configuration
-      if(!empty($yml[$sf_env]['soap_parameter_map']))
+      if(!empty($yml[$sf_env]))
       {
         pake_echo_action('file+', $module_config);
         file_put_contents($module_config, sfYaml::dump($yml));
@@ -179,7 +179,7 @@ function _parse_method_comment($comment)
   {
     $line = trim($line);
 
-    if(substr($line, 0, 2) == '* ' && substr($line, 2, 1) == '@')
+    if(ckString::startsWith($line, '* ') && substr($line, 2, 1) == '@')
     {
       $parts = explode(' ', substr($line, 3), 4);
 

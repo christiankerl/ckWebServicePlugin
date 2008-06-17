@@ -1,6 +1,6 @@
 = ckWebService plugin =
 
-'''This is the documentation for the symfony 1.0 compatible plugin version!'''
+'''This is the documentation for the symfony 1.0 compatible plugin version! '''
 
 The `ckWebServicePlugin` is a symfony plugin that let you expose your modules and actions as a webservice.
 
@@ -51,36 +51,31 @@ It offers automatic generation of .wsdl files from your source code, using the W
         # set the custom method every action class implements to get the result of the action [optional]
         result_callback: getSoapResult
         # the options array, which is passed to the `SoapServer` constructor, is the same as described in the php soap documentation [optional]
-        options:
+        soap_options:
           encoding: utf-8
           soap_version: %SOAP_1_2%
   }}}
 
 === module.yml ===
 
-  '''Some of the configuration described here is done by the WSDL Generator!'''
+  '''The configuration described here is done by the WSDL Generator! '''
   
   The plugin allows per action configuration of parameters passed by the soap call so you can use them like request parameters.
-  Also you can configure per action in which action member the result is stored, if not set ''result'' is assumed.
+  Also you can configure per action in which action member the result is stored, if not set ''result'' is assumed, and wether or not to render the view as result.
 
   {{{
     # your enviroment for web service mode
     soap:
-      # the following part is done by the WSDL Generator, you only have to configure this if you don't use the generator
-      soap_parameter_map:
-        # the action name [mandatory]
-        test:
-          # the name of the first action parameter
-          - test
-          # the name of the second, third, ... action parameter
-          - second
-          - ...
-      # set for each action wether or not action views should be rendered as normal, if this isn't set for an action the value from `ck_web_service_plugin: render` in `app.yml` is used
-      soap_render_map:
-        # the action name [mandatory]
-        test: on
-      # the name of the action member, which contains the result [optional]
-      soap_return_key: result_key
+      # the following part added by the WSDL Generator for each action, you only have to configure this if you don't use the generator
+      action_name:
+        # enable the action to be called from ckWebServiceController, should prevent malicious calls to actions through manipulated soap messages [mandatory]
+        enable: true
+        # ordered list of the parameters [optional]
+        parameter: [first_param, second_param]
+        # the name of the action member, which contains the result, if `render` is true this has no effect [optional]
+        result: null
+        # set wether or not the view should be rendered as normal, if this isn't set the value from `ck_web_service_plugin: render` in `app.yml` is used [optional]
+        render: false
   }}}
 
 === factories.yml ===
@@ -246,10 +241,9 @@ It offers automatic generation of .wsdl files from your source code, using the W
   {{{
     # your enviroment for web service mode
     soap:
-      soap_parameter_map:
-        index:
-          - foo
-          - bar
+      index:
+        enable: true
+        parameter: [foo, bar]
   }}}
   
   parameter mapping will work like you expect it.
@@ -257,7 +251,6 @@ It offers automatic generation of .wsdl files from your source code, using the W
 == TODO ==
 
   * add support for soap headers
-  * merge changes to configuration model in symfony 1.1 compatible version back
   * decide how to handle redirects
   * write tests
   * rewrite the wsdl generator

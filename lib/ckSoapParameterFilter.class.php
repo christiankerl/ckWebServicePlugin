@@ -29,7 +29,7 @@ class ckSoapParameterFilter extends sfFilter
     {
       $request = $this->getContext()->getRequest();
       $param   = $request->getParameter('param', null, 'ckWebServicePlugin');
-      $map     = sfConfig::get('mod_'.$this->getContext()->getModuleName().'_soap_parameter_map_'.$this->getContext()->getActionName());
+      $map     = sfConfig::get(sprintf('mod_%s_%s_parameter', $this->getContext()->getModuleName(), $this->getContext()->getActionName()));
 
       if(is_array($param) && is_array($map))
       {

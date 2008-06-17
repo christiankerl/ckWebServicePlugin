@@ -12,8 +12,8 @@
  </lead>
  <date>2008-04-10</date>
  <version>
-  <release>1.2.0</release>
-  <api>1.2.0</api>
+  <release>1.3.0</release>
+  <api>1.3.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -33,6 +33,9 @@
    <dir name="lib">
     <dir name="controller">
      <file role="data" name="ckWebServiceController.class.php" />
+    </dir>
+    <dir name="util">
+     <file role="data" name="ckString.class.php" />
     </dir>
     <dir name="vendor">
      <dir name="wsdl">
