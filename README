@@ -45,7 +45,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
         # set the custom method every action class implements to get the result of the action [optional]
         result_callback: getSoapResult
         # the options array, which is passed to the `SoapServer` constructor, is the same as described in the php soap documentation [optional]
-        options:
+        soap_options:
           encoding: utf-8
           soap_version: %SOAP_1_2%
         # register your SoapHeaders and their corresponding data container class [optional]

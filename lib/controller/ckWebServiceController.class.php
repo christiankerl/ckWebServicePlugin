@@ -19,7 +19,7 @@
 class ckWebServiceController extends sfController
 {  
   const DEFAULT_RESULT_CALLBACK = 'defaultResultCallback';
-  
+    
   protected $soap_server = null;
 
   protected $soap_headers = array();
