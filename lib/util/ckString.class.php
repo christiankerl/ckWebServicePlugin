@@ -6,7 +6,7 @@
  * @author    Christian Kerl <christian-kerl@web.de>
  * @copyright Copyright (c) 2008, Christian Kerl
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
- * @version   SVN: $Id: ckWebServiceController.class.php 8402 2008-04-10 21:13:25Z chrisk $
+ * @version   SVN: $Id$
  */
 
 /**
