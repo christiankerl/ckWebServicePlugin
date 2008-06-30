@@ -44,7 +44,7 @@
        <file role="data" name="DocBlockParser.php" />
        <file role="data" name="WsdlDefinition.php" />
        <file role="data" name="WsdlMessage.php" />
-       <file role="data" name="WsdlMethod.php" />       
+       <file role="data" name="WsdlMethod.php" />
        <file role="data" name="WsdlPart.php" />
        <file role="data" name="WsdlProperty.php" />
        <file role="data" name="WsdlType.php" />
