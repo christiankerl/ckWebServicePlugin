@@ -1,78 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.4.6" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
- <name>ckWebServicePlugin</name>
- <channel>pear.symfony-project.com</channel>
- <summary>WebService API Plugin.</summary>
- <description>This plugin exposes your actions as a webservice api.</description>
- <lead>
-  <name>Christian Kerl</name>
-  <user>chrisk</user>
-  <email>christian-kerl@web.de</email>
-  <active>yes</active>
- </lead>
- <date>2008-06-17</date>
- <version>
-  <release>1.4.0</release>
-  <api>1.4.0</api>
- </version>
- <stability>
-  <release>stable</release>
-  <api>stable</api>
- </stability>
- <license uri="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
- <notes>-</notes>
- <contents>
-  <dir name="/">
-   <file role="data" name="README" />
-   <file role="data" name="LICENSE" />   
-   <dir name="data">
-    <dir name="tasks">
-     <file role="data" name="ckWebServiceWsdlBuildTask.php" />
-    </dir>
-   </dir>
-   <dir name="lib">
-    <dir name="controller">
-     <file role="data" name="ckWebServiceController.class.php" />
-    </dir>
-    <dir name="util">
-     <file role="data" name="ckString.class.php" />
-    </dir>
-    <dir name="vendor">
-     <dir name="wsdl">
-       <file role="data" name="BaseWsdl.php" />
-       <file role="data" name="BaseWsdlWriter.php" />
-       <file role="data" name="DocBlockParser.php" />
-       <file role="data" name="WsdlDefinition.php" />
-       <file role="data" name="WsdlMessage.php" />
-       <file role="data" name="WsdlMethod.php" />
-       <file role="data" name="WsdlPart.php" />
-       <file role="data" name="WsdlProperty.php" />
-       <file role="data" name="WsdlType.php" />
-       <file role="data" name="WsdlWriter.php" />
-     </dir>
-    </dir>
-    <file role="data" name="ckSoapHandler.class.php" />
-    <file role="data" name="ckSoapParameterFilter.class.php" />
-   </dir>
-   </dir>
- </contents>
- <dependencies>
-  <required>
-   <php>
-    <min>5.0.0</min>
-   </php>
-   <pearinstaller>
-    <min>1.4.1</min>
-   </pearinstaller>
-   <package>
-    <name>symfony</name>
-    <channel>pear.symfony-project.com</channel>
-    <min>1.0.0</min>
-    <max>1.1.0</max>
-    <exclude>1.1.0</exclude>
-   </package>
-  </required>
- </dependencies>
- <phprelease />
- <changelog />
+<package packagerversion="1.4.6" version="2.0"
+	xmlns="http://pear.php.net/dtd/package-2.0"
+	xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+	<name>ckWebServicePlugin</name>
+	<channel>pear.symfony-project.com</channel>
+	<summary>WebService API Plugin.</summary>
+	<description>
+		This plugin exposes your actions as a webservice api.
+	</description>
+	<lead>
+		<name>Christian Kerl</name>
+		<user>chrisk</user>
+		<email>christian-kerl@web.de</email>
+		<active>yes</active>
+	</lead>
+	<date>2008-07-19</date>
+	<version>
+		<release>1.4.1</release>
+		<api>1.4.1</api>
+	</version>
+	<stability>
+		<release>stable</release>
+		<api>stable</api>
+	</stability>
+	<license uri="http://www.opensource.org/licenses/mit-license.php">
+		MIT license
+	</license>
+	<notes>-</notes>
+	<contents>
+		<dir name="/">
+			<file role="data" name="README" />
+			<file role="data" name="LICENSE" />
+			<dir name="config">
+				<file role="data" name="config.php" />
+			</dir>
+			<dir name="data/tasks">
+				<file role="data" name="ckWebServiceWsdlBuildTask.php" />
+			</dir>
+			<dir name="lib">
+				<dir name="action">
+					<file role="data"
+						name="ckWebServiceComponent.class.php" />
+				</dir>
+				<dir name="controller">
+					<file role="data"
+						name="ckWebServiceController.class.php" />
+				</dir>
+				<dir name="util">
+					<file role="data" name="ckString.class.php" />
+				</dir>
+				<dir name="vendor/wsdl">
+					<file role="data" name="BaseWsdl.php" />
+					<file role="data" name="BaseWsdlWriter.php" />
+					<file role="data" name="DocBlockParser.php" />
+					<file role="data" name="WsdlDefinition.php" />
+					<file role="data" name="WsdlMessage.php" />
+					<file role="data" name="WsdlMethod.php" />
+					<file role="data" name="WsdlPart.php" />
+					<file role="data" name="WsdlProperty.php" />
+					<file role="data" name="WsdlType.php" />
+					<file role="data" name="WsdlWriter.php" />
+				</dir>
+				<file role="data" name="ckSoapHandler.class.php" />
+				<file role="data"
+					name="ckSoapParameterFilter.class.php" />
+			</dir>
+		</dir>
+	</contents>
+	<dependencies>
+		<required>
+			<php>
+				<min>5.0.0</min>
+			</php>
+			<pearinstaller>
+				<min>1.4.1</min>
+			</pearinstaller>
+			<package>
+				<name>symfony</name>
+				<channel>pear.symfony-project.com</channel>
+				<min>1.0.0</min>
+				<max>1.1.0</max>
+				<exclude>1.1.0</exclude>
+			</package>
+		</required>
+	</dependencies>
+	<phprelease />
+	<changelog />
 </package>
