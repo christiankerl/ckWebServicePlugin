@@ -52,7 +52,7 @@ class DocBlockParser
         $commentLine = $property->getDocComment();
         
         if (strlen($commentLine)) {
-            if (preg_match("|/\*\*\s+@var\s+([a-zA-Z0-9\[\]]+)([^(\*/)]*)\*/|", $commentLine, $matches)) {
+            if (preg_match("|@var\s+([a-zA-Z0-9\[\]]+)([^(\*/)]*)|", $commentLine, $matches)) {
                 $info['type'] = $matches[1];
                 if (isset($matches[2])) {
                     $info['desc'] = $matches[2];
