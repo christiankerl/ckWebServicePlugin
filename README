@@ -130,7 +130,7 @@ It offers automatic generation of .wsdl files from your source code, using the W
   
   It will generate a wsdl file and a controller script in the ''web/'' folder and add / modify all ''module.yml'' files of enabled actions.
 
-=== Example ===
+=== Simple Example ===
 
   Howto execute the ''wsdl-build'' task shows the following example:
   
@@ -182,6 +182,10 @@ It offers automatic generation of .wsdl files from your source code, using the W
   This will generate a method with the name ''foo_Index'' with a parameter named ''test'' of type ''string'' and a return value of type ''string''.
   
   '''Attention:''' This class has no ''getSoapResult'' method, because the result of the action is stored in the ''result'' member, see 'Internals'->'Getting the action result' for more details.
+
+== sfComponent Extension ==
+
+  To determine if your application is currently in soap mode you can use the ''isSoapRequest()'' method in your component and action classes, to be more precise: in all subclasses of ''sfComponent''.
 
 == Internals ==
 
