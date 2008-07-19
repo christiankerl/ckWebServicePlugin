@@ -180,6 +180,10 @@ It offers automatic generation of .wsdl files from your source code, using the W
   
   '''Attention:''' This class has no ''getSoapResult'' method, because the result of the action is stored in the ''result'' member, see 'Internals'->'Getting the action result' for more details.
 
+== sfComponent Extension ==
+
+  To determine if your application is currently in soap mode you can use the ''isSoapRequest()'' method in your component and action classes, to be more precise: in all subclasses of ''sfComponent''.
+
 == SoapHeader ==
 
   The plugin also supports the use of SoapHeaders. You can use them to send additional data, like authentication data, with a method call.
@@ -196,6 +200,21 @@ It offers automatic generation of .wsdl files from your source code, using the W
   
   The following example shows how to process a SoapHeader:
   
+    Add the following lines to the ''app.yml'' file:
+    
+  {{{
+  # your enviroment for web service mode
+  soap:
+    ck_web_service_plugin:
+      # the rest of the plugin config
+      # ...
+      soap_headers:
+        MyFooHeader:
+          data_class: WrappedString
+  }}}
+  
+    Create a ''WrappedString.class.php'' file in your application's ''lib/'' folder, this will be the data class for the header.
+  
   {{{
   #!php
   <?php
@@ -207,30 +226,48 @@ It offers automatic generation of .wsdl files from your source code, using the W
   {
   	public $data = "";
   }
-    
+  
+  ?>
+  }}}
+  
+    Register an event listener in your application's configuration class and create the listener class in your application's ''lib/'' folder.
+  
+  	Modified application's configuration class:
+  	
+  {{{
+  #!php
+  <?php
+  
+  class appConfiguration extends sfApplicationConfiguration
+  {
+    public function configure()
+    {
+      $this->dispatcher->connect('webservice.handle_header', array('mySoapHeaderListener', 'listenToWebserviceHandleHeaderEvent'));
+    }
+  }
+  
+  ?>
+  }}}
+  
+    Event listener class:
+  
+  {{{
+  #!php
+  <?php
+  
   /**
-   * SoapHeaderListener listens to the webservice.handle_header event for the MyFooHeader.
+   * mySoapHeaderListener listens to the webservice.handle_header event for the MyFooHeader.
    */
-  class SoapHeaderListener
+  class mySoapHeaderListener
   {
     const HEADER_NAME = 'MyFooHeader';
-    
-    /**
-     * Constructor connects the SoapHeaderListener with the webservice.handle_header event.
-     *
-     * @param sfEventDispatcher $dispatcher The sfEventDispatcher instance.
-     */
-    public function __construct(sfEventDispatcher $dispatcher)
-    {
-      $dispatcher->connect('webservice.handle_header', array($this, 'listenToWebserviceHandleHeaderEvent'));
-    }
-  
+      
     /**
      * Handles a webservice.handle_header event, if the header is of type MyFooHeader.
      *
      * @param sfEvent $event A sfEvent instance.
      */
-    public function listenToWebserviceHandleHeaderEvent(sfEvent $event)
+    public static function listenToWebserviceHandleHeaderEvent(sfEvent $event)
     {
       if($event['header'] == self::HEADER_NAME)
       {
