@@ -48,11 +48,11 @@ class DocBlockParser
      */
     public static function getPropertyInfo(ReflectionProperty $property)
     {
-        $info        = array();        
+        $info        = array();
         $commentLine = $property->getDocComment();
-        
+
         if (strlen($commentLine)) {
-            if (preg_match("|/\*\*\s+@var\s+([a-zA-Z0-9\[\]]+)([^(\*/)]*)\*/|", $commentLine, $matches)) {
+            if (preg_match("|@var\s+([a-zA-Z0-9\[\]]+)([^(\*/)]*)|", $commentLine, $matches)) {
                 $info['type'] = $matches[1];
                 if (isset($matches[2])) {
                     $info['desc'] = $matches[2];
@@ -74,7 +74,7 @@ class DocBlockParser
         $tagRegex = self::getTagRegex();
         $lines    = split("\n", self::stripCommentChars($doc));
         $desc     = "";
-        
+
         foreach ($lines as $line) {
             if (preg_match($tagRegex, $line)) {
                 return $desc;
@@ -102,19 +102,19 @@ class DocBlockParser
 
         // Do a Line at a time
         $lines = split("\n", self::stripCommentChars($doc));
-        
+
         for ($i = 0, $c = count($lines); $i < $c; $i++) {
 
             // Loop through the Doc Tag list and Find Matches
             foreach (self::$docBlockTags as $tag => $tagInfo) {
                 if (preg_match($tagInfo['regex'], $lines[$i], $matches)) {
-                    
+
                     // Name the matches...
                     $matchNames = $tagInfo['matches'];
                     for ($j = 0; $j < count($matchNames); $j++) {
                         $param[$matchNames[$j]] = $matches[($j + 1)];
                     }
-                    
+
                     // Get the place to put the wrapped lines..
                     $paramKeys        = array_keys($param);
                     $wrapped          = end($paramKeys);
@@ -131,11 +131,11 @@ class DocBlockParser
                     if ($i >= $c) {
                         break;
                     }
-                    $param[$wrapped] .= $lines[$i] . "\n"; 
+                    $param[$wrapped] .= $lines[$i] . "\n";
                 }
-                
+
                 $params[]     = array($currentTag => $param);
-                
+
                 // Reset Stuff for Next Param
                 $param        = array();
                 $inParamBlock = false;
@@ -170,7 +170,7 @@ class DocBlockParser
      * Create a Simple Regex for all Doc Block Tags
      *
      * @return string The regex pattern
-     */ 
+     */
     private static function getTagRegex()
     {
         return "/(" . join("|", array_keys(self::$docBlockTags)) . ")/";
