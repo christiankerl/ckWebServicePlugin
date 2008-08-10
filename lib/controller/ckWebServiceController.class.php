@@ -17,13 +17,13 @@
  * @author     Christian Kerl <christian-kerl@web.de>
  */
 class ckWebServiceController extends sfController
-{  
+{
   const DEFAULT_RESULT_CALLBACK = 'defaultResultCallback';
-    
+
   protected $soap_server = null;
 
   protected $soap_headers = array();
-  
+
   /**
    * Initializes this controller.
    *
@@ -32,7 +32,7 @@ class ckWebServiceController extends sfController
   public function initialize($context)
   {
     parent::initialize($context);
-    
+
     $this->dispatcher->connect('controller.change_action', array($this, 'listenToControllerChangeActionEvent'));
   }
 
@@ -86,12 +86,12 @@ class ckWebServiceController extends sfController
     $persist = sfConfig::get('app_ck_web_service_plugin_persist', SOAP_PERSISTENCE_SESSION);
 
     $this->soap_headers = sfConfig::get('app_ck_web_service_plugin_soap_headers', array());
-    
+
     if(!isset($options['classmap']) || !is_array($options['classmap']))
     {
       $options['classmap'] = array();
     }
-    
+
     foreach($headers as $header_name => $header_options)
     {
       if(isset($header_options['class']))
@@ -99,7 +99,7 @@ class ckWebServiceController extends sfController
         $options['classmap'][$header_name] = $header_options['class'];
       }
     }
-    
+
     if (sfConfig::get('sf_logging_enabled'))
     {
       $this->context->getLogger()->info(sprintf('{%s} Starting SoapServer with \'%s\' and Handler \'%s\'.', __CLASS__, $wsdl, $handler));
@@ -134,14 +134,14 @@ class ckWebServiceController extends sfController
     if(isset($this->soap_headers[$method]))
     {
       $event = $this->dispatcher->notifyUntil(new sfEvent($this, 'webservice.handle_header', array('header'=>$method, 'data'=>$arguments[0])));
-    
+
       if(!$event->isProcessed() && sfConfig::get('sf_logging_enabled'))
       {
         $this->context->getLogger()->info(sprintf('{%s} SoapHeader \'%s\' unhandled.', __CLASS__, $method));
       }
-      
+
       $result = $event->getReturnValue();
-      
+
       return !is_null($result) ? $result : $arguments[0];
     }
     else
@@ -198,7 +198,7 @@ class ckWebServiceController extends sfController
       }
 
       // check if we are able to call a custom result getter
-      if(!method_exists(array($actionInstance, $soapResultCallback)))
+      if(!method_exists($actionInstance, $soapResultCallback))
       {
         $soapResultCallback = self::DEFAULT_RESULT_CALLBACK;
 
@@ -208,9 +208,9 @@ class ckWebServiceController extends sfController
         }
 
         // listen to the component.method_not_found event
-        $this->dispatcher->connect('component.method_not_found', array($this, 'listenToComponentMethodNotFoundEvent'));        
+        $this->dispatcher->connect('component.method_not_found', array($this, 'listenToComponentMethodNotFoundEvent'));
       }
-      
+
       if (sfConfig::get('sf_logging_enabled'))
       {
         $this->context->getLogger()->info(sprintf('{%s} Calling soapResultCallback \'%s\'.', __CLASS__, $soapResultCallback));
@@ -264,12 +264,12 @@ class ckWebServiceController extends sfController
 
     return;
   }
-  
+
   /**
    * Listens to the component.method_not_found event.
    *
    * @param  sfEvent $event An sfEvent instance
-   * 
+   *
    * @return bool True, if the method is the DEFAULT_RESULT_CALLBACK, false otherwise
    */
   public function listenToComponentMethodNotFoundEvent(sfEvent $event)
@@ -277,7 +277,7 @@ class ckWebServiceController extends sfController
     if($event['method'] == self::DEFAULT_RESULT_CALLBACK)
     {
       $event->setReturnValue($this->{self::DEFAULT_RESULT_CALLBACK}($event->getSubject()));
-    
+
       return true;
     }
     else
@@ -285,7 +285,7 @@ class ckWebServiceController extends sfController
       return false;
     }
   }
-  
+
   /**
    * Listens to the controller.change_action event.
    *
