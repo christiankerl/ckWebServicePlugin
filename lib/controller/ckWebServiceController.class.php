@@ -52,7 +52,7 @@ class ckWebServiceController extends sfController
     $result = sfConfig::get('app_ck_web_service_plugin_render', false);
 
     $result = sfConfig::get(sprintf('mod_%s_%s_render', $this->context->getModuleName(), $this->context->getActionName()), $result);
-    
+
     return $result;
   }
 
@@ -161,7 +161,7 @@ class ckWebServiceController extends sfController
       }
 
       //check if we are able to call a custom result getter
-      if(!method_exists(array($actionInstance, $soapResultCallback)))
+      if(!method_exists($actionInstance, $soapResultCallback))
       {
         $soapResultCallback = 'defaultResultCallback';
 
@@ -204,7 +204,7 @@ class ckWebServiceController extends sfController
     {
       //get the default result array key
       $default_key = sfConfig::get(sprintf('mod_%s_%s_result', $actionInstance->getModuleName(), $actionInstance->getActionName()), 'result');
-      
+
       //if there is only one var stored we return it
       if(count($vars) == 1)
       {
