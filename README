@@ -1,34 +1,31 @@
-= ckWebService plugin =
-
-'''This is the documentation for the symfony 1.1 compatible plugin version! '''
+# ckWebService plugin (for symfony 1.1)
 
 The `ckWebServicePlugin` is a symfony plugin that let you expose your modules and actions as a webservice.
 
-The Plugin is based on the standard PHP SOAP module, see http://de.php.net/manual/en/ref.soap.php.
+The Plugin is based on the standard PHP SOAP module, see [http://de.php.net/manual/en/ref.soap.php](http://de.php.net/manual/en/ref.soap.php).
 
-It offers automatic generation of .wsdl files from your source code, using the WSDL Generator from http://www.djkaty.com/drupal/php-wsdl.
+It offers automatic generation of .wsdl files from your source code, using the WSDL Generator from [http://www.djkaty.com/drupal/php-wsdl](http://www.djkaty.com/drupal/php-wsdl).
 
-== Installation ==
+## Installation
   
-  To install the current revision, checkout:
+To install the latest release:
+
+    > symfony plugin:install ckWebServicePlugin
   
-  {{{
-    http://svn.symfony-project.com/plugins/ckWebServicePlugin/trunk
-  }}}
+or to install the current revision, checkout the HEAD revision into a ``plugins/ckWebServicePlugin`` folder:
+  
+    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/trunk
 
-  into a ''plugins/ckWebServicePlugin'' folder.
+Now configure the plugin how it is described in the next section and clear your cache.
 
-  After this: configure the plugin how it is described in the next section and clear your cache.
+## Configuration
 
-== Configuration ==
+The plugin configuration is split over several yml files, some settings are mandatory others are optional and should only be set if you want to change the default behavior.
 
-  The plugin configuration is split over several yml files, some settings are mandatory others are optional and should only be set if you want to change the default behavior.
+### app.yml
 
-=== app.yml ===
-
-  Configure general plugin settings.
-
-  {{{
+Configure general plugin settings.
+  
     # your enviroment for web service mode
     soap:
       # enable the `ckSoapParameterFilter` [mandatory]
@@ -54,16 +51,15 @@ It offers automatic generation of .wsdl files from your source code, using the W
             class: MyFooHeaderDataClass  # name of the data class
           BarHeader:
             class: MyFooHeaderDataClass
-  }}}
 
-=== module.yml ===
+### module.yml
 
-  '''The configuration described here is done by the WSDL Generator! '''
+>**TIP**
+>The configuration described here is done by the WSDL Generator!
   
-  The plugin allows per action configuration of parameters passed by the soap call so you can use them like request parameters.
-  Also you can configure per action in which action member the result is stored, if not set ''result'' is assumed, and wether or not to render the view as result.
+The plugin allows per action configuration of parameters passed by the soap call so you can use them like request parameters.
+Also you can configure per action in which action member the result is stored, if not set ``result`` is assumed, and wether or not to render the view as result.
 
-  {{{
     # your enviroment for web service mode
     soap:
       # the following part added by the WSDL Generator for each action, you only have to configure this if you don't use the generator
@@ -76,297 +72,274 @@ It offers automatic generation of .wsdl files from your source code, using the W
         result: null
         # set wether or not the view should be rendered as normal, if this isn't set the value from `ck_web_service_plugin: render` in `app.yml` is used [optional]
         render: false
-  }}}
 
-=== factories.yml ===
+### factories.yml
 
-  Enable the ''ckWebServiceController'', this is mandatory.
+Enable the ``ckWebServiceController``, this is mandatory.
 
-  {{{
     # your enviroment for web service mode
     soap:
       controller:
         class: ckWebServiceController
-  }}}
 
-=== filters.yml ===
+### filters.yml
 
-  Enable the ''ckSoapParameterFilter'', this is mandatory.
-  
-  {{{
+Enable the ``ckSoapParameterFilter``, this is mandatory.
+
     soap_parameter:
       class: ckSoapParameterFilter
       param:
         # `app_enable_soap_parameter` has to be set to `on` so the filter is only enabled in soap mode
         condition: %APP_ENABLE_SOAP_PARAMETER%
-  }}}
 
-=== php.ini ===
+### php.ini
 
-  Disable wsdl file caching, when your developing to see changes to the wsdl file instantly, this is optional.
-  
-  {{{
+Disable wsdl file caching, when your developing to see changes to the wsdl file instantly, this is optional.
+
     soap.wsdl_cache_enabled=0
-  }}}
 
-== WSDL Generator ==
+## WSDL Generator
 
-  The WSDL Generator offers the possibility to search all your module actions for web service enabled actions and generate a wsdl file with input parameters and return types from the code.
-  Also it generates yaml configuration for mapping of web service method parameters to request parameters. And lastly generates a controller script, the endpoint of the webservice.
+The WSDL Generator offers the possibility to search all your module actions for web service enabled actions and generate a wsdl file with input parameters and return types from the code.
+Also it generates yaml configuration for mapping of web service method parameters to request parameters. And lastly generates a controller script, the endpoint of the webservice.
   
-  Module actions are enabled for export by adding a ''@ws-enable'' to the doc comment block. Also actions have no function parameters you should add ''@param'' and one ''@return'' to each comment block so the web service methods have the proper input and output types.
-  The Generator allows complex types as input/output values so you can use your classes.
+Module actions are enabled for export by adding a ``@ws-enable`` to the doc comment block. Also actions have no function parameters you should add ``@param`` and one ``@return`` to each comment block so the web service methods have the proper input and output types.
+The Generator allows complex types as input/output values so you can use your classes.
   
-  The method names of the web service methods follow the scheme: ''module_Action''.
+The method names of the web service methods follow the scheme: ``module_Action``.
   
-  The generator is used through the ''webservice:generate-wsdl'' symfony cli task, it has the following syntax:
-  
-  {{{
-    symfony webservice:generate-wsdl [--environment=soap] [--debug=on] app_name webservice_name webservice_base_url
-  }}}
+The generator is used through the ``webservice:generate-wsdl`` symfony cli task, it has the following syntax:
+
+    > symfony webservice:generate-wsdl [--environment=soap] [--debug=on] app_name webservice_name webservice_base_url
     
-  It will generate a wsdl file and a controller script in the ''web/'' folder and add / modify all ''module.yml'' files of your actions.
+It will generate a wsdl file and a controller script in the ``web/`` folder and add / modify all ``module.yml`` files of your actions.
 
-=== Example ===
+### Example
 
-  Howto execute the ''webservice:generate-wsdl'' task shows the following example:
+Howto execute the ``webservice:generate-wsdl`` task shows the following example:
   
-  {{{
-    symfony webservice:generate-wsdl frontend myFooBarService http://www.myfoobar.com/
-  }}}
+    > symfony webservice:generate-wsdl frontend myFooBarService http://www.myfoobar.com/
 
-    * This will add a ''myFooBarService.php'' and a ''myFooBarService.wsdl'' to your ''/web'' folder.
+*   This will add a ``myFooBarService.php`` and a ``myFooBarService.wsdl`` to your ``/web`` folder.
 
-    * The endpoint for the generated service will be ''http://www.myfoobar.com/myFooBarService.php''.
+*   The endpoint for the generated service will be ``http://www.myfoobar.com/myFooBarService.php``.
     
-  Howto enable actions for export shows this example:
+Howto enable actions for export shows this example:
   
-  {{{
-  #!php
-  <?php
-  class fooActions extends sfActions
-  {
-    /**
-     * Executes index action
-     *
-     * @ws-enable
-     * @param string $test A string parameter
-     *
-     * @return string      A string
-     */
-    public function executeIndex()
+    [php]
+    <?php
+    class fooActions extends sfActions
     {
-      $this->result = 'Parameter $test='.$this->request->getParameter('test');
-      
-      //return what you want, the view rendering will be bypassed any way
-      return sfView::SUCCESS;
-    }
-
-    /**
-     * A method which will not be exposed in the wsdl.
-     *
-     * @param string $test A string parameter
-     *
-     * @return string      A string
-     */
-    public function executeBar()
-    {
-      $this->something = "some text!";
-    }
-  }
-  }}}
-  
-  This will generate a method with the name ''foo_Index'' with a parameter named ''test'' of type ''string'' and a return value of type ''string''.
-  
-  '''Attention:''' This class has no ''getSoapResult'' method, because the result of the action is stored in the ''result'' member, see 'Internals'->'Getting the action result' for more details.
-
-== sfComponent Extension ==
-
-  To determine if your application is currently in soap mode you can use the ''isSoapRequest()'' method in your component and action classes, to be more precise: in all subclasses of ''sfComponent''.
-
-== SoapHeader ==
-
-  The plugin also supports the use of SoapHeaders. You can use them to send additional data, like authentication data, with a method call.
-  
-  The data a soap header carries is always stored in a complex type, that means you have to specify a class in which the SoapServer can put the incoming data. For compatibility reasons to Microsofts .NET Framework webservice implementation the SoapHeader and the data class need to have the same name.
-  But fortunatly PHP's ''SoapServer'' implementation allows a mapping of types, defined in the *.wsdl file, to PHP classes. To define these mappings you have to use the ''soap_headers'' setting in ''app.yml''. The keys in this array are always the names of the SoapHeaders. The values are arrays containing a key ''class'' and as value the name of the data class.
-  This enables you to give SoapHeaders, transporting the same kind of data, different names.
-  
-  The data classes have to be in your application's ''lib/'' folder or a module's ''lib/'' folder.
-  
-  To handle incoming headers you have to listen to the ''webservice.handle_header'' event, it is a ''notifyUntil'' event.
-  The event has two parameters. The first is ''header'' containing the name of the SoapHeader. The second is ''data'' containing an instance of the data class.
-  If you want to modify the headers value, use ''$event->setReturnValue($modifiedData)'' where ''$modifiedData'' is an instance of the data class.
-  
-  The following example shows how to process a SoapHeader:
-  
-    Add the following lines to the ''app.yml'' file:
-    
-  {{{
-  # your enviroment for web service mode
-  soap:
-    ck_web_service_plugin:
-      # the rest of the plugin config
-      # ...
-      soap_headers:
-        MyFooHeader:
-          data_class: WrappedString
-  }}}
-  
-    Create a ''WrappedString.class.php'' file in your application's ''lib/'' folder, this will be the data class for the header.
-  
-  {{{
-  #!php
-  <?php
-  
-  /**
-   * WrappedString stores a simple string send with a SoapHeader.
-   */
-  class WrappedString
-  {
-  	public $data = "";
-  }
-  
-  ?>
-  }}}
-  
-    Register an event listener in your application's configuration class and create the listener class in your application's ''lib/'' folder.
-  
-  	Modified application's configuration class:
-  	
-  {{{
-  #!php
-  <?php
-  
-  class appConfiguration extends sfApplicationConfiguration
-  {
-    public function configure()
-    {
-      $this->dispatcher->connect('webservice.handle_header', array('mySoapHeaderListener', 'listenToWebserviceHandleHeaderEvent'));
-    }
-  }
-  
-  ?>
-  }}}
-  
-    Event listener class:
-  
-  {{{
-  #!php
-  <?php
-  
-  /**
-   * mySoapHeaderListener listens to the webservice.handle_header event for the MyFooHeader.
-   */
-  class mySoapHeaderListener
-  {
-    const HEADER_NAME = 'MyFooHeader';
-      
-    /**
-     * Handles a webservice.handle_header event, if the header is of type MyFooHeader.
-     *
-     * @param sfEvent $event A sfEvent instance.
-     */
-    public static function listenToWebserviceHandleHeaderEvent(sfEvent $event)
-    {
-      if($event['header'] == self::HEADER_NAME)
+      /**
+       * Executes index action
+       *
+       * @ws-enable
+       * @param string $test A string parameter
+       *
+       * @return string      A string
+       */
+      public function executeIndex()
       {
-        $return = new WrappedString();        
-        $return->data = sprintf('%s --- has been processed.', $event['data']->data);
+        $this->result = 'Parameter $test='.$this->request->getParameter('test');
+    
+        //return what you want, the view rendering will be bypassed any way
+        return sfView::SUCCESS;
+      }
+    
+      /**
+       * A method which will not be exposed in the wsdl.
+       *
+       * @param string $test A string parameter
+       *
+       * @return string      A string
+       */
+      public function executeBar()
+      {
+        $this->something = "some text!";
+      }
+    }
+
+  
+*   This will generate a method with the name ``foo_Index`` with a parameter named ``test`` of type ``string`` and a return value of type ``string``.
+
+>**CAUTION**
+>This class has no ``getSoapResult`` method, because the result of the action is stored in the ``result`` member, see 'Internals'->'Getting the action result' for more details.
+
+## sfComponent Extension
+
+To determine if your application is currently in soap mode you can use the ``isSoapRequest()`` method in your component and action classes, to be more precise: in all subclasses of ``sfComponent``.
+
+## SoapHeader
+
+The plugin also supports the use of SoapHeaders. You can use them to send additional data, like authentication data, with a method call.
+  
+The data a soap header carries is always stored in a complex type, that means you have to specify a class in which the SoapServer can put the incoming data. For compatibility reasons to Microsofts .NET Framework webservice implementation the SoapHeader and the data class need to have the same name.
+But fortunatly PHP's ``SoapServer`` implementation allows a mapping of types, defined in the *.wsdl file, to PHP classes. To define these mappings you have to use the ``soap_headers`` setting in ``app.yml``. The keys in this array are always the names of the SoapHeaders. The values are arrays containing a key ``class`` and as value the name of the data class.
+This enables you to give SoapHeaders, transporting the same kind of data, different names.
+  
+The data classes have to be in your application's ``lib/`` folder or a module's ``lib/`` folder.
+  
+To handle incoming headers you have to listen to the ``webservice.handle_header`` event, it is a ``notifyUntil`` event.
+The event has two parameters. The first is ``header`` containing the name of the SoapHeader. The second is ``data`` containing an instance of the data class.
+If you want to modify the headers value, use ``$event->setReturnValue($modifiedData)`` where ``$modifiedData`` is an instance of the data class.
+  
+The following example shows how to process a SoapHeader:
+  
+  *   Add the following lines to the ``app.yml`` file:
+
+        # your enviroment for web service mode
+        soap:
+          ck_web_service_plugin:
+            # the rest of the plugin config
+            # ...
+            soap_headers:
+              MyFooHeader:
+                class: WrappedString
+  
+  *   Create a ``WrappedString.class.php`` file in your application's ``lib/`` folder, this will be the data class for the header.
+  
+        [php]
+        <?php
         
-        $event->setReturnValue($return);
-      
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-  }
+        /**
+         * WrappedString stores a simple string send with a SoapHeader.
+         */
+        class WrappedString
+        {
+        	public $data = "";
+        }
+
   
-  ?>
-  }}}
+  *   Register an event listener in your application's configuration class and create the listener class in your application's ``lib/`` folder.
   
-  '''Attention:''' SoapHeaders are not yet supported by the WSDL Generator task, so you have to define them yourself in the *.wsdl file.
+    *   Modified application's configuration class:
+    
+            [php]
+            <?php
+            
+            class appConfiguration extends sfApplicationConfiguration
+            {
+              public function configure()
+              {
+                $this->dispatcher->connect('webservice.handle_header', array('mySoapHeaderListener', 'listenToWebserviceHandleHeaderEvent'));
+              }
+            }
 
-== Internals ==
+    
+    *   Event listener class:
+    
+            [php]
+            <?php
+            
+            /**
+             * mySoapHeaderListener listens to the webservice.handle_header event for the MyFooHeader.
+             */
+            class mySoapHeaderListener
+            {
+              const HEADER_NAME = 'MyFooHeader';
+            
+              /**
+               * Handles a webservice.handle_header event, if the header is of type MyFooHeader.
+               *
+               * @param sfEvent $event A sfEvent instance.
+               */
+              public static function listenToWebserviceHandleHeaderEvent(sfEvent $event)
+              {
+                if($event['header'] == self::HEADER_NAME)
+                {
+                  $return = new WrappedString();        
+                  $return->data = sprintf('%s --- has been processed.', $event['data']->data);
+              
+                  $event->setReturnValue($return);
+              
+                  return true;
+                }
+                else
+                {
+                  return false;
+                }
+              }
+            }
 
-  The next three sections should give a view inside the plugin.
 
-=== ckSoapHandler ===
+>**CAUTION**
+>SoapHeaders are not yet supported by the WSDL Generator task, so you have to define them yourself in the *.wsdl file.
 
-  The ''ckSoapHandler'' class is the default web service request handler class. Because just since PHP 5.2 a method ''SoapServer::setObject(...)'' exists, which allows to set a object, which will handle requests, so to support older versions the ''SoapServer::setClass(...)'' is used.
-  Because there should only be one instance of ''ckWebServiceController'' a helper class ''ckSoapHandler'' is defined, which just passes the requests back to the controller instance. This mechanism only works if you use method names of scheme ''module_Action''.
-  If you want to use custom web service method names see section 'Custom RequestHandler'.
+## Internals
 
-=== ckSoapParameterFilter ===
+The next three sections should give a view inside the plugin.
 
-  Usually action method definitons (''execute*'') have no input parameters, instead data is aquired through ''getRequestParameter(...)'' method. In contrast to web service methods real parameters are passed.
-  In conclusion we have to provide a mapping of function parameters to request parameters. This is done by the 'ckSoapParameterFilter' it takes the names of the request parameters from the corresponding ''module.yml''.
-  The names in the configuration have to be in the same order like the function arguments. 
+### ckSoapHandler
+
+The ``ckSoapHandler`` class is the default web service request handler class. Because just since PHP 5.2 a method ``SoapServer::setObject(...)`` exists, which allows to set a object, which will handle requests, so to support older versions the ``SoapServer::setClass(...)`` is used.
+Because there should only be one instance of ``ckWebServiceController`` a helper class ``ckSoapHandler`` is defined, which just passes the requests back to the controller instance. This mechanism only works if you use method names of scheme ``module_Action``.
+If you want to use custom web service method names see section 'Custom RequestHandler'.
+
+### ckSoapParameterFilter
+
+Usually action method definitons (``execute*``) have no input parameters, instead data is aquired through ``getRequestParameter(...)`` method. In contrast to web service methods real parameters are passed.
+In conclusion we have to provide a mapping of function parameters to request parameters. This is done by the 'ckSoapParameterFilter' it takes the names of the request parameters from the corresponding ``module.yml``.
+The names in the configuration have to be in the same order like the function arguments. 
   
-  In general an array containing all params can be retrieved by: ''$request->getParameter('param', null, 'ckWebServicePlugin');''.
+In general an array containing all params can be retrieved by: ``$request->getParameter('param', null, 'ckWebServicePlugin');``.
 
-=== Getting the action result ===
+### Getting the action result
 
-  There are multiple stages of getting the action result. First we try to invoke an implementation of the ''result_callback'' configured in ''app.yml''.
-  If none is found on the action instance a default getter is mixed into the action and is called. In this version this is down by listening to the ''component.method_not_found'' event. 
+There are multiple stages of getting the action result. First we try to invoke an implementation of the ``result_callback`` configured in ``app.yml``.
+If none is found on the action instance a default getter is mixed into the action and is called. In this version this is down by listening to the ``component.method_not_found`` event. 
   
-  This default getter has the following behavior:
-  * when rendering is enable for the action (depending on configuration in ''module.yml'' and ''app.yml''):
-    * the rendered view is returned
-  * when rendering is disabled:
-    * if only one variable exists in the actions parameter holder (set via ''$actionInstance->var = 'some value';''), this variable is returned
-    * if a default key into the parameter holder is configured using ''soap_return_key'' in the ''module.yml'' ('''Attention:''' if this is not configured ''result'' is assumed) and this key exists, its corresponding value is returned
-    * if both approaches fail nothing is returned 
+This default getter has the following behavior:
 
-  The described mechanism should be an easy to use, but powerfull way for you to get the result of an action.
+*   when rendering is enable for the action (depending on configuration in ``module.yml`` and ``app.yml``):
+  *   the rendered view is returned
+*   when rendering is disabled:
+  *   if only one variable exists in the actions parameter holder (set via ``$actionInstance->var = 'some value';``), this variable is returned
+  *   if a default key into the parameter holder is configured using ``soap_return_key`` in the ``module.yml`` (if this is not configured ``result`` is assumed) and this key exists, its corresponding value is returned
+  *   if both approaches fail nothing is returned 
 
-== Custom RequestHandler ==
+The described mechanism should be an easy to use, but powerfull way for you to get the result of an action.
 
-  If the method names of scheme ''module_Action'' are to abstract for you or you have already a wsdl file I recommend to implement your own handler class.  Don't forget to set this new handler class in ''app.yml''.
+## Custom RequestHandler
 
-=== Example ===
+If the method names of scheme ``module_Action`` are to abstract for you or you have already a wsdl file I recommend to implement your own handler class.  Don't forget to set this new handler class in ``app.yml``.
 
-  The following example assumes you have a wsdl with a web service method named ''descriptiveFooMethod'' and two parameters ''foo'' and ''bar''. And a call to this should be redirected to the action ''index'' in the module ''fooModule''.
+### Example
 
-  {{{
-  #!php
-  <?php
-  class mySoapHandler
-  {
-    public function descriptiveFooMethod($foo, $bar)
+The following example assumes you have a wsdl with a web service method named ``descriptiveFooMethod`` and two parameters ``foo`` and ``bar``. And a call to this should be redirected to the action ``index`` in the module ``fooModule``.
+
+    [php]
+    <?php
+    class mySoapHandler
     {
-      return sfContext::getInstance()->getController()->invokeSoapEnabledAction('fooModule', 'index', array($foo, $bar));
+      public function descriptiveFooMethod($foo, $bar)
+      {
+        return sfContext::getInstance()->getController()->invokeSoapEnabledAction('fooModule', 'index', array($foo, $bar));
+      }
     }
-  }
-  }}}
 
-  If you have configured the ''module.yml'' of the ''fooModule'' in the following way:
+
+If you have configured the ``module.yml`` of the ``fooModule`` in the following way:
   
-  {{{
     # your enviroment for web service mode
     soap:
       index:
         enable: true
         parameter: [foo, bar]
-  }}}
   
-  parameter mapping will work like you expect it.
+parameter mapping will work like you expect it.
 
-== TODO ==
+## TODO
 
-  * add support for soap headers to generator
-  * decide how to handle redirects
-  * write tests
-  * rewrite the wsdl generator
-  * enable nusoap, PEAR::SOAP as soap_server
+*   add support for soap headers to generator
+*   decide how to handle redirects
+*   write tests
+*   rewrite the wsdl generator
+*   enable nusoap, PEAR::SOAP as soap_server
 
-== Contributing ==
+## Contributing
 
-  If you would like to contribute just let me know.
+If you would like to contribute just let me know.
 
-== Contact ==
+## Contact
 
-  If you have any questions, suggestions or bug reports, write an email to: christian-kerl [at] web [dot] de
+If you have any questions, suggestions or bug reports, write an email to: christian-kerl [at] web [dot] de
