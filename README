@@ -158,7 +158,6 @@ Howto enable actions for export shows this example:
         $this->something = "some text!";
       }
     }
-
   
 *   This will generate a method with the name ``foo_Index`` with a parameter named ``test`` of type ``string`` and a return value of type ``string``.
 
@@ -208,7 +207,6 @@ The following example shows how to process a SoapHeader:
         {
         	public $data = "";
         }
-
   
   *   Register an event listener in your application's configuration class and create the listener class in your application's ``lib/`` folder.
   
@@ -224,7 +222,6 @@ The following example shows how to process a SoapHeader:
                 $this->dispatcher->connect('webservice.handle_header', array('mySoapHeaderListener', 'listenToWebserviceHandleHeaderEvent'));
               }
             }
-
     
     *   Event listener class:
     
@@ -261,13 +258,12 @@ The following example shows how to process a SoapHeader:
               }
             }
 
-
 >**CAUTION**
 >SoapHeaders are not yet supported by the WSDL Generator task, so you have to define them yourself in the *.wsdl file.
 
 ## Internals
 
-The next three sections should give a view inside the plugin.
+The next three sections should give an inside view of the plugin architecture.
 
 ### ckSoapHandler
 
@@ -316,7 +312,6 @@ The following example assumes you have a wsdl with a web service method named ``
         return sfContext::getInstance()->getController()->invokeSoapEnabledAction('fooModule', 'index', array($foo, $bar));
       }
     }
-
 
 If you have configured the ``module.yml`` of the ``fooModule`` in the following way:
   
