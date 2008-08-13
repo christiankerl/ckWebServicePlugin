@@ -31,6 +31,7 @@ function run_wsdl_build($task, $args)
   $ws_name = $args[$last_index-1];
   unset($args[$last_index-1]);
   $ws_url = $args[$last_index];
+  $ws_url = ckString::endsWith($ws_url, '/') ? $ws_url : $ws_url.'/';
   unset($args[$last_index]);
 
   $sf_controller = isset($args[2]) ? $args[2] : $sf_app.'_'.$sf_env;
@@ -109,7 +110,7 @@ function run_wsdl_build($task, $args)
   }
 
   $file = sprintf('%s/web/%s.wsdl', sfConfig::get('sf_root_dir'), $ws_name);
-  $def->save($file);
+  $gen->save($file);
   pake_echo_action('file+', $file);
 }
 
