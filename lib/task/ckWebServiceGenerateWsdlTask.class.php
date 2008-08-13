@@ -69,8 +69,6 @@ EOF;
    */
   protected function doRun(sfCommandManager $commandManager, $options)
   {
-    $this->registerPluginLibs();
-
     $this->process($commandManager, $options);
 
     $this->checkProjectExists();
@@ -78,6 +76,9 @@ EOF;
     $app = $commandManager->getArgumentValue('application');
     $this->checkAppExists($app);
     sfConfig::set('sf_app_module_dir', sprintf('%s/../../apps/%s/modules', $this->getPluginDir(), $app));
+    sfConfig::set('sf_app_lib_dir', sprintf('%s/../../apps/%s/lib', $this->getPluginDir(), $app));
+
+    $this->registerLibDirs();
 
     return $this->execute($commandManager->getArgumentValues(), $commandManager->getOptionValues());
   }
@@ -187,9 +188,11 @@ EOF;
   /**
    * Registers required class files for autoloading.
    */
-  protected function registerPluginLibs()
+  protected function registerLibDirs()
   {
     $autoload = sfSimpleAutoload::getInstance();
+    $autoload->addDirectory(sfConfig::get('sf_lib_dir'));
+    $autoload->addDirectory(sfConfig::get('sf_app_lib_dir'));
     $autoload->addDirectory($this->getPluginDir().'/lib/vendor/ckWsdlGenerator');
     $autoload->addDirectory($this->getPluginDir().'/lib/util');
   }
