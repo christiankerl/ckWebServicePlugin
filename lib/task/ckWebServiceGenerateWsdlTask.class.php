@@ -41,19 +41,19 @@ This task also creates a front controller script in the [web/|COMMENT] directory
 You can set the environment by using the [environment|COMMENT] option:
 
   [./symfony webservice:generate-wsdl frontend --environment=soap|INFO]
-  
+
   or
-  
+
   [./symfony webservice:generate-wsdl frontend -e=soap|INFO]
-    
+
 You can enable debugging for the controller by using the [debug|COMMENT] option:
 
   [./symfony webservice:generate-wsdl frontend --debug=on|INFO]
-  
+
   or
-  
+
   [./symfony webservice:generate-wsdl frontend -d=on|INFO]
-    
+
 EOF;
 
     $this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
@@ -70,18 +70,18 @@ EOF;
   protected function doRun(sfCommandManager $commandManager, $options)
   {
     $this->registerPluginLibs();
-    
+
     $this->process($commandManager, $options);
 
     $this->checkProjectExists();
-    
+
     $app = $commandManager->getArgumentValue('application');
     $this->checkAppExists($app);
     sfConfig::set('sf_app_module_dir', sprintf('%s/../../apps/%s/modules', $this->getPluginDir(), $app));
-    
+
     return $this->execute($commandManager->getArgumentValues(), $commandManager->getOptionValues());
   }
-  
+
   /**
    * @see sfTask
    */
@@ -90,11 +90,11 @@ EOF;
     $app  = $arguments['application'];
     $env  = $options['environment'];
     $dbg  = $options['debug'];
-    $name = $arguments['name'];
+    $file = $arguments['name'];
     $url  = $arguments['url'];
     $url  = ckString::endsWith($url, '/') ? $url : $url.'/';
 
-    $controller_name = $name.'.php';
+    $controller_name = $file.'.php';
     $controller_path = sprintf('%s/%s', sfConfig::get('sf_web_dir'), $controller_name);
 
     $this->getFilesystem()->remove($controller_path);
@@ -105,18 +105,11 @@ EOF;
       'ENVIRONMENT' => $env,
       'IS_DEBUG'    => $dbg ? 'true' : 'false',
     ));
-    
+
     $finder = sfFinder::type('directory')->name('*')->relative()->maxdepth(0);
 
-    $ws_def = new WsdlDefinition();
-    $ws_def->setDefinitionName($name);
-    $ws_def->setWsdlFileName(sprintf('%s/%s.wsdl', sfConfig::get('sf_web_dir'), $name));
-    $ws_def->setNameSpace($url);
-    $ws_def->setEndPoint($url.$controller_name);
-
-    $ws_write = new WsdlWriter($ws_def);
-
-    $methods = array();
+    $gen = new ckWsdlGenerator($file, $url, $url.$controller_name);
+    $gen->setCheckEnablement(true);
 
     foreach($finder->in(sfConfig::get('sf_app_module_dir')) as $module_dir)
     {
@@ -130,19 +123,19 @@ EOF;
         $module_config = sfConfig::get('sf_app_module_dir').'/'.$module_dir.'/config/module.yml';
 
         $this->getFilesystem()->mkdirs(dirname($module_config));
-        
+
         if(!file_exists($module_config))
         {
-          $this->getFilesystem()->touch($module_config);          
+          $this->getFilesystem()->touch($module_config);
         }
-        
+
         $yml = sfYaml::load($module_config);
 
         if(!isset($yml[$env]) || !is_array($yml[$env]))
         {
           $yml[$env] = array();
         }
-        
+
         foreach($class->getMethods() as $method)
         {
           $name = $method->getName();
@@ -152,35 +145,19 @@ EOF;
             $action = ckString::lcfirst(substr($name, 7));
             $name = $module_dir.'_'.$action;
 
-            $param_return = $this->parseMethodCommentBlock($method->getDocComment());
-
-            if($param_return == null)
+            if(!$gen->addMethod($name, $method))
             {
               $yml[$env][$action] = array('enable'=>false);
-              
+
               continue;
             }
 
             $yml[$env][$action] = array('enable'=>true, 'parameter'=>array(), 'result'=>null, 'render'=>false);
 
-            $ws_method = new WsdlMethod();
-            $ws_method->setName($name);
-
-            if(!is_null($param_return['return'] && !empty($param_return['return'])))
-            {
-              $ws_method->setReturn($param_return['return']['type'], $param_return['return']['desc']);
-            }
-
-            foreach($param_return['param'] as $param)
+            foreach(ckDocBlockParser::parseParameters($method->getDocComment()) as $param)
             {
               $yml[$env][$action]['parameter'][] = $param['name'];
-
-              $ws_method->addParameter($param['type'], $param['name'], $param['desc']);
             }
-
-            $methods[] = $ws_method;
-
-            $ws_write->addMethod($ws_method);
           }
         }
 
@@ -189,21 +166,14 @@ EOF;
         {
           file_put_contents($module_config, sfYaml::dump($yml));
         }
-
       }
     }
 
-    $complexTypes = WsdlType::getComplexTypes($methods);
-
-    foreach ($complexTypes as &$complexType)
-    {
-      $ws_write->addComplexType($complexType);
-    }
-
-    $ws_write->doCreateWsdl();
-    $ws_write->save();
+    $file = sprintf('%s/%s.wsdl', sfConfig::get('sf_web_dir'), $file);
+    $gen->save($file);
+    $this->logSection('file+', $file);
   }
-  
+
   /**
    * Returns the plugin root path.
    *
@@ -213,7 +183,7 @@ EOF;
   {
     return dirname(__FILE__).'/../..';
   }
-  
+
   /**
    * Registers required class files for autoloading.
    *
@@ -221,10 +191,10 @@ EOF;
   protected function registerPluginLibs()
   {
     $autoload = sfSimpleAutoload::getInstance();
-    $autoload->addDirectory($this->getPluginDir().'/lib/vendor/wsdl');
-    $autoload->addDirectory($this->getPluginDir().'/lib/util');    
+    $autoload->addDirectory($this->getPluginDir().'/lib/vendor/ckWsdlGenerator');
+    $autoload->addDirectory($this->getPluginDir().'/lib/util');
   }
-  
+
   /**
    * Parses parameter and return types, names and descriptions from a method comment block, if the tag @ws-enable is found.
    *
