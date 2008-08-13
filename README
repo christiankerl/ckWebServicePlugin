@@ -4,7 +4,7 @@ The `ckWebServicePlugin` is a symfony plugin that let you expose your modules an
 
 The Plugin is based on the standard PHP SOAP module, see [http://de.php.net/manual/en/ref.soap.php](http://de.php.net/manual/en/ref.soap.php).
 
-It offers automatic generation of .wsdl files from your source code, using the WSDL Generator from [http://www.djkaty.com/drupal/php-wsdl](http://www.djkaty.com/drupal/php-wsdl).
+It offers automatic generation of .wsdl files from your source code, using a WSDL Generator (ckWsdlGenerator).
 
 ## Installation
   
@@ -98,7 +98,7 @@ Disable wsdl file caching, when your developing to see changes to the wsdl file 
 
     soap.wsdl_cache_enabled=0
 
-## WSDL Generator
+## WSDL Generator (ckWsdlGenerator)
 
 The WSDL Generator offers the possibility to search all your module actions for web service enabled actions and generate a wsdl file with input parameters and return types from the code.
 Also it generates yaml configuration for mapping of web service method parameters to request parameters. And lastly generates a controller script, the endpoint of the webservice.
@@ -176,14 +176,50 @@ The data a soap header carries is always stored in a complex type, that means yo
 But fortunatly PHP's ``SoapServer`` implementation allows a mapping of types, defined in the *.wsdl file, to PHP classes. To define these mappings you have to use the ``soap_headers`` setting in ``app.yml``. The keys in this array are always the names of the SoapHeaders. The values are arrays containing a key ``class`` and as value the name of the data class.
 This enables you to give SoapHeaders, transporting the same kind of data, different names.
   
-The data classes have to be in your application's ``lib/`` folder or a module's ``lib/`` folder.
+The data classes have to be in your project's or application's ``lib/`` folder.
   
 To handle incoming headers you have to listen to the ``webservice.handle_header`` event, it is a ``notifyUntil`` event.
 The event has two parameters. The first is ``header`` containing the name of the SoapHeader. The second is ``data`` containing an instance of the data class.
-If you want to modify the headers value, use ``$event->setReturnValue($modifiedData)`` where ``$modifiedData`` is an instance of the data class.
+If you want to modify the value of the header, use ``$event->setReturnValue($modifiedData)`` where ``$modifiedData`` is an instance of the data class.
   
-The following example shows how to process a SoapHeader:
+The following example shows how to process a SoapHeader containing authentication data:
   
+  *   The SoapHeader name will be ``SecurityHeader`` and the corresponding data class will be ``AuthData``.
+  
+  *   Enable the header on a webservice enabled action:
+  
+        [php]
+        <?php
+        
+        class secureActions extends sfActions
+        {
+          /**
+           * Action to multiply a number with a factor
+           *
+           * @ws-enable
+           * @ws-header SecurityHeader: AuthData
+           *
+           * @param int $factor
+           * @param int $number
+           *
+           * @return int
+           */
+          public function executeCalc($request)
+          {
+            if(SecurityHeaderListener::isAuthenticated())
+            {
+              $this->result = $request->getParameter('factor') * $request->getParameter('number');
+            }
+            else
+            {
+              $this->result = null;
+            }
+          }
+        }
+
+>**CAUTION**
+>The ``@param`` doctag for the ``$request`` parameter is removed so it is not exported by the WSDL Generator.
+
   *   Add the following lines to the ``app.yml`` file:
 
         # your enviroment for web service mode
@@ -192,20 +228,39 @@ The following example shows how to process a SoapHeader:
             # the rest of the plugin config
             # ...
             soap_headers:
-              MyFooHeader:
-                class: WrappedString
+              SecurityHeader:
+                class: AuthData
   
-  *   Create a ``WrappedString.class.php`` file in your application's ``lib/`` folder, this will be the data class for the header.
+  *   Create a ``AuthData.class.php`` file in your application's ``lib/`` folder, this will be the data class for the header.
   
         [php]
         <?php
         
         /**
-         * WrappedString stores a simple string send with a SoapHeader.
+         * AuthData stores authentication data send with a SoapHeader.
          */
-        class WrappedString
+        class AuthData
         {
-        	public $data = "";
+            /**
+             * Flag wether the authentication succeded.
+             *
+             * @var bool
+             */
+            public $success;
+        
+            /**
+             * The user name.
+             *
+             * @var string
+             */
+            public $name;
+        
+            /**
+             * The user password.
+             *
+             * @var string
+             */
+        	public $pass;
         }
   
   *   Register an event listener in your application's configuration class and create the listener class in your application's ``lib/`` folder.
@@ -219,24 +274,31 @@ The following example shows how to process a SoapHeader:
             {
               public function configure()
               {
-                $this->dispatcher->connect('webservice.handle_header', array('mySoapHeaderListener', 'listenToWebserviceHandleHeaderEvent'));
+                $this->dispatcher->connect('webservice.handle_header', array('SecurityHeaderListener', 'listenToWebserviceHandleHeaderEvent'));
               }
             }
     
-    *   Event listener class:
+    *    Create a ``SecurityHeaderListener.class.php`` file in your application's ``lib/`` folder, this will be the event listener class:
     
             [php]
             <?php
             
             /**
-             * mySoapHeaderListener listens to the webservice.handle_header event for the MyFooHeader.
+             * SecurityHeaderListener listens to the webservice.handle_header event for the SecurityHeader.
              */
-            class mySoapHeaderListener
+            class SecurityHeaderListener
             {
-              const HEADER_NAME = 'MyFooHeader';
+              const HEADER_NAME = 'SecurityHeader';
+            
+              private static $success = false;
+              
+              public static function isAuthenticated()
+              {
+                return self::$success;
+              }
             
               /**
-               * Handles a webservice.handle_header event, if the header is of type MyFooHeader.
+               * Handles a webservice.handle_header event, if the header is of type SecurityHeader.
                *
                * @param sfEvent $event A sfEvent instance.
                */
@@ -244,8 +306,14 @@ The following example shows how to process a SoapHeader:
               {
                 if($event['header'] == self::HEADER_NAME)
                 {
-                  $return = new WrappedString();        
-                  $return->data = sprintf('%s --- has been processed.', $event['data']->data);
+                  $return = null;
+                  
+                  if($event['data']->name == 'test' && $event['data']->pass == 'test')
+                  {
+                    $return = clone $event['data'];
+                    $return->success = true;
+                    self::$success = true;
+                  }
               
                   $event->setReturnValue($return);
               
@@ -257,9 +325,6 @@ The following example shows how to process a SoapHeader:
                 }
               }
             }
-
->**CAUTION**
->SoapHeaders are not yet supported by the WSDL Generator task, so you have to define them yourself in the *.wsdl file.
 
 ## Internals
 
@@ -325,10 +390,8 @@ parameter mapping will work like you expect it.
 
 ## TODO
 
-*   add support for soap headers to generator
 *   decide how to handle redirects
 *   write tests
-*   rewrite the wsdl generator
 *   enable nusoap, PEAR::SOAP as soap_server
 
 ## Contributing
