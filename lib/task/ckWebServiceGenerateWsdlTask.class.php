@@ -186,61 +186,11 @@ EOF;
 
   /**
    * Registers required class files for autoloading.
-   *
    */
   protected function registerPluginLibs()
   {
     $autoload = sfSimpleAutoload::getInstance();
     $autoload->addDirectory($this->getPluginDir().'/lib/vendor/ckWsdlGenerator');
     $autoload->addDirectory($this->getPluginDir().'/lib/util');
-  }
-
-  /**
-   * Parses parameter and return types, names and descriptions from a method comment block, if the tag @ws-enable is found.
-   *
-   * @param  string $text A method comment block
-   * @return array        An array containing parameter and return types, names and descriptions
-   */
-  protected function parseMethodCommentBlock($text)
-  {
-    $result = array('param'=>array(), 'return'=>null);
-    $lines = explode("\n", $text);
-
-    $enable = false;
-
-    foreach($lines as $line)
-    {
-      $line = trim($line);
-
-      if(ckString::startsWith($line, '* ') && substr($line, 2, 1) == '@')
-      {
-        $parts = explode(' ', substr($line, 3), 4);
-
-        if($parts[0] == 'ws-enable')
-        {
-          $enable = true;
-        }
-        else if($parts[0] == 'param' && count($parts)>=3)
-        {
-          $desc = isset($parts[3]) ? $parts[3] : '';
-          $result[$parts[0]][] = array('name'=>substr($parts[2], 1), 'type'=>$parts[1], 'desc'=>$desc);
-        }
-        else if($parts[0] == 'return' && count($parts)>=2)
-        {
-          $desc = isset($parts[2]) ? $parts[2] : '';
-          $desc .= isset($parts[3]) ? ' '.$parts[3] : '';
-          $result[$parts[0]] = array('type'=>$parts[1], 'desc'=>$desc);
-        }
-      }
-    }
-
-    if($enable)
-    {
-      return $result;
-    }
-    else
-    {
-      return null;
-    }
   }
 }
