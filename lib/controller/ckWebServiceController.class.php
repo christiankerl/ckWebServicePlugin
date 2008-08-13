@@ -92,7 +92,7 @@ class ckWebServiceController extends sfController
       $options['classmap'] = array();
     }
 
-    foreach($headers as $header_name => $header_options)
+    foreach($this->soap_headers as $header_name => $header_options)
     {
       if(isset($header_options['class']))
       {
