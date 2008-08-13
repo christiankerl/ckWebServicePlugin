@@ -4,7 +4,7 @@ The `ckWebServicePlugin` is a symfony plugin that let you expose your modules an
 
 The Plugin is based on the standard PHP SOAP module, see [http://de.php.net/manual/en/ref.soap.php](http://de.php.net/manual/en/ref.soap.php).
 
-It offers automatic generation of .wsdl files from your source code, using the WSDL Generator from [http://www.djkaty.com/drupal/php-wsdl](http://www.djkaty.com/drupal/php-wsdl).
+It offers automatic generation of .wsdl files from your source code, using a WSDL Generator (ckWsdlGenerator).
 
 ## Installation
 
@@ -93,7 +93,7 @@ Disable wsdl file caching, when your developing to see changes to the wsdl file 
     set:
       soap.wsdl_cache_enabled: off
 
-## WSDL Generator
+## WSDL Generator (ckWsdlGenerator)
 
 The WSDL Generator offers the possibility to search all your module actions for web service enabled actions and generate a wsdl file with input parameters and return types from the code.
 Also it generates yaml configuration for mapping of web service method parameters to request parameters. And lastly generates a controller script, the endpoint of the webservice.
@@ -111,7 +111,7 @@ The first four parameters are the same as of the ``init-controller`` task.
 
 It will generate a wsdl file and a controller script in the ``web/`` folder and add / modify all ``module.yml`` files of enabled actions.
 
-### Simple Example
+### Example
 
 Howto execute the ``wsdl-build`` task shows the following example:
 
@@ -232,7 +232,6 @@ parameter mapping will work like you expect it.
 *   add support for soap headers
 *   decide how to handle redirects
 *   write tests
-*   rewrite the wsdl generator
 *   enable nusoap, PEAR::SOAP as soap_server
 
 ## Contributing
