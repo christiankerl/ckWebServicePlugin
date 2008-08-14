@@ -20,6 +20,8 @@ class ckWebServiceController extends sfController
 {
   protected $soap_server = null;
 
+  protected $soap_headers = array();
+
   /**
    * Initializes this controller.
    *
@@ -79,6 +81,21 @@ class ckWebServiceController extends sfController
     $handler = sfConfig::get('app_ck_web_service_plugin_handler', 'ckSoapHandler');
     $persist = sfConfig::get('app_ck_web_service_plugin_persist', SOAP_PERSISTENCE_SESSION);
 
+    $this->soap_headers = sfConfig::get('app_ck_web_service_plugin_soap_headers', array());
+
+    if(!isset($options['classmap']) || !is_array($options['classmap']))
+    {
+      $options['classmap'] = array();
+    }
+
+    foreach($this->soap_headers as $header_name => $header_options)
+    {
+      if(isset($header_options['class']))
+      {
+        $options['classmap'][$header_name] = $header_options['class'];
+      }
+    }
+
     if (sfConfig::get('sf_logging_enabled'))
     {
       sfContext::getInstance()->getLogger()->info(sprintf('{%s} Starting SoapServer with \'%s\' and Handler \'%s\'.', __CLASS__, $wsdl, $handler));
@@ -110,12 +127,31 @@ class ckWebServiceController extends sfController
    */
   public function __call($method, $arguments)
   {
-    $method = explode('_', $method);
+    if(isset($this->soap_headers[$method]))
+    {
+      $result = null;
+      $callable = sfMixer::getCallable(sprintf('%s:handleHeader:%s', __CLASS__, $method));
 
-    $moduleName = $method[0];
-    $actionName = isset($method[1]) && strlen($method[1]) > 0 ? $method[1] : 'index';
+      if(!is_null($callable))
+      {
+        $result = call_user_func($callable, $arguments[0]);
+      }
+      else if(sfConfig::get('sf_logging_enabled'))
+      {
+        $this->getContext()->getLogger()->info(sprintf('{%s} SoapHeader \'%s\' unhandled.', __CLASS__, $method));
+      }
 
-    return $this->invokeSoapEnabledAction($moduleName, $actionName, $arguments);
+      return !is_null($result) ? $result : $arguments[0];
+    }
+    else
+    {
+      $method = explode('_', $method);
+
+      $moduleName = $method[0];
+      $actionName = isset($method[1]) && strlen($method[1]) > 0 ? $method[1] : 'index';
+
+      return $this->invokeSoapEnabledAction($moduleName, $actionName, $arguments);
+    }
   }
 
   /**
