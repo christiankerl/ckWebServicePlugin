@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
 	<name>ckWebServicePlugin</name>
-	<channel>pear.symfony-project.com</channel>
+	<channel>plugins.symfony-project.com</channel>
 	<summary>WebService API Plugin.</summary>
 	<description>
 		This plugin exposes your actions as a webservice api.
@@ -22,8 +22,8 @@
 		<api>2.0.0</api>
 	</version>
 	<stability>
-		<release>devel</release>
-		<api>devel</api>
+		<release>stable</release>
+		<api>stable</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/mit-license.php">
 		MIT license

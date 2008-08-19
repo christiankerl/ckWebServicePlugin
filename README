@@ -206,7 +206,7 @@ The following example shows how to process a SoapHeader containing authenticatio
            */
           public function executeCalc($request)
           {
-            if(SecurityHeaderListener::isAuthenticated())
+            if($this->getUser()->isAuthenticated())
             {
               $this->result = $request->getParameter('factor') * $request->getParameter('number');
             }
@@ -231,7 +231,7 @@ The following example shows how to process a SoapHeader containing authenticatio
               SecurityHeader:
                 class: AuthData
   
-  *   Create a ``AuthData.class.php`` file in your application's ``lib/`` folder, this will be the data class for the header.
+  *   Create an ``AuthData.class.php`` file in your application's ``lib/`` folder, this will be the data class for the header.
   
         [php]
         <?php
@@ -290,13 +290,6 @@ The following example shows how to process a SoapHeader containing authenticatio
             {
               const HEADER_NAME = 'SecurityHeader';
             
-              private static $success = false;
-              
-              public static function isAuthenticated()
-              {
-                return self::$success;
-              }
-            
               /**
                * Handles a webservice.handle_header event, if the header is of type SecurityHeader.
                *
@@ -312,7 +305,7 @@ The following example shows how to process a SoapHeader containing authenticatio
                   {
                     $return = clone $event['data'];
                     $return->success = true;
-                    self::$success = true;
+                    sfContext::getInstance()->getUser()->setAuthenticated(true);
                   }
               
                   $event->setReturnValue($return);
