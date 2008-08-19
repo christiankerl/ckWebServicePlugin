@@ -165,6 +165,139 @@ Howto enable actions for export shows this example:
 
 To determine if your application is currently in soap mode you can use the ``isSoapRequest()`` method in your component and action classes, to be more precise: in all subclasses of ``sfComponent``.
 
+## SoapHeader
+
+The plugin also supports the use of SoapHeaders. You can use them to send additional data, like authentication data, with a method call.
+  
+The data a soap header carries is always stored in a complex type, that means you have to specify a class in which the SoapServer can put the incoming data. For compatibility reasons to Microsofts .NET Framework webservice implementation the SoapHeader and the data class need to have the same name.
+But fortunatly PHP's ``SoapServer`` implementation allows a mapping of types, defined in the *.wsdl file, to PHP classes. To define these mappings you have to use the ``soap_headers`` setting in ``app.yml``. The keys in this array are always the names of the SoapHeaders. The values are arrays containing a key ``class`` and as value the name of the data class.
+This enables you to give SoapHeaders, transporting the same kind of data, different names.
+  
+The data classes have to be in your project's or application's ``lib/`` folder.
+  
+To handle incoming headers you have to register a method to the ``ckWebServiceController:handleHeader:<HeaderName>`` hook via the ``sfMixer`` class.
+The registered method has to take an instance of the header's data class as parameter.
+To modify the header content the registered method has to return an instance of the data class holding the modified data.
+
+The following example shows how to process a SoapHeader containing authentication data:
+  
+  *   The SoapHeader name will be ``SecurityHeader`` and the corresponding data class will be ``AuthData``.
+  
+  *   Enable the header on a webservice enabled action:
+  
+        [php]
+        <?php
+        
+        class secureActions extends sfActions
+        {
+          /**
+           * Action to multiply a number with a factor
+           *
+           * @ws-enable
+           * @ws-header SecurityHeader: AuthData
+           *
+           * @param int $factor
+           * @param int $number
+           *
+           * @return int
+           */
+          public function executeCalc()
+          {
+            if($this->getUser()->isAuthenticated())
+            {
+              $this->result = $this->getRequestParameter('factor') * $this->getRequestParameter('number');
+            }
+            else
+            {
+              $this->result = null;
+            }
+          }
+        }
+
+  *   Add the following lines to the ``app.yml`` file:
+
+        # your enviroment for web service mode
+        soap:
+          ck_web_service_plugin:
+            # the rest of the plugin config
+            # ...
+            soap_headers:
+              SecurityHeader:
+                class: AuthData
+  
+  *   Create an ``AuthData.class.php`` file in your application's ``lib/`` folder, this will be the data class for the header.
+  
+        [php]
+        <?php
+        
+        /**
+         * AuthData stores authentication data send with a SoapHeader.
+         */
+        class AuthData
+        {
+            /**
+             * Flag wether the authentication succeded.
+             *
+             * @var bool
+             */
+            public $success;
+        
+            /**
+             * The user name.
+             *
+             * @var string
+             */
+            public $name;
+        
+            /**
+             * The user password.
+             *
+             * @var string
+             */
+        	public $pass;
+        }
+  
+  *   Register a mixin method to the ``ckWebServiceController:handleHeader:SecurityHeader`` hook in your application's ``config.php`` and create the mixin class in your application's ``lib/`` folder.
+  
+    *   Modified application's ``config.php``:
+    
+            [php]
+            <?php
+            
+            // ...
+            
+            sfMixer::register('ckWebServiceController:handleHeader:SecurityHeader', array('SecurityHeaderHandlerMixin', 'handleSecurityHeader'));
+    
+    *    Create a ``SecurityHeaderHandlerMixin.class.php`` file in your application's ``lib/`` folder, this will be the mixin class:
+    
+            [php]
+            <?php
+            
+            /**
+             * SecurityHeaderHandlerMixin provides callable for ckWebServiceController:handleHeader:SecurityHeader hook.
+             */
+            class SecurityHeaderHandlerMixin
+            {            
+              /**
+               * Handles a SecurityHeader.
+               *
+               * @param AuthData $data An AuthData instance.
+               */
+              public static function handleSecurityHeader($data)
+              {
+                $return = null;
+                
+                if($data->name == 'test' && $data->pass == 'test')
+                {
+                  $return = clone $data;
+                  $return->success = true;
+                  sfContext::getInstance()->getUser()->setAuthenticated(true);
+                }
+                
+                return $return;
+              }
+            }
+
 ## Internals
 
 The next three sections should give an inside view of the plugin architecture.
