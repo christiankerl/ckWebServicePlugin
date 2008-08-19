@@ -16,10 +16,10 @@
 		<email>christian-kerl@web.de</email>
 		<active>yes</active>
 	</lead>
-	<date>2008-07-19</date>
+	<date>2008-08-19</date>
 	<version>
-		<release>2.0.0</release>
-		<api>2.0.0</api>
+		<release>2.1.0</release>
+		<api>2.1.0</api>
 	</version>
 	<stability>
 		<release>stable</release>
@@ -50,18 +50,32 @@
 					<file role="data"
 						name="ckComponentEventListener.class.php" />
 				</dir>
-				<dir name="vendor/wsdl">
-					<file role="data" name="BaseWsdl.php" />
-					<file role="data" name="BaseWsdlWriter.php" />
-					<file role="data" name="DocBlockParser.php" />
-					<file role="data" name="WsdlDefinition.php" />
-					<file role="data" name="WsdlMessage.php" />
-					<file role="data" name="WsdlMethod.php" />
-					<file role="data" name="WsdlPart.php" />
-					<file role="data" name="WsdlProperty.php" />
-					<file role="data" name="WsdlType.php" />
-					<file role="data" name="WsdlWriter.php" />
-				</dir>
+                <dir name="vendor/ckWsdlGenerator">
+                    <file role="data" name="ckDocBlockParser.class.php" />
+                    <file role="data" name="ckDOMSerializable.class.php" />
+                    <file role="data" name="ckWsdlGenerator.class.php" />
+                    <dir name="wsdl">
+                        <file role="data" name="ckWsdlBindingDecorator.class.php" />
+                        <file role="data" name="ckWsdlDefinitions.class.php" />
+                        <file role="data" name="ckWsdlHttpBindingDecorator.class.php" />
+                        <file role="data" name="ckWsdlMessage.class.php" />
+                        <file role="data" name="ckWsdlOperation.class.php" />
+                        <file role="data" name="ckWsdlPart.class.php" />
+                        <file role="data" name="ckWsdlPortDecorator.class.php" />
+                        <file role="data" name="ckWsdlPortType.class.php" />
+                        <file role="data" name="ckWsdlService.class.php" />
+                        <file role="data" name="ckWsdlSoapBindingDecorator.class.php" />
+                        <file role="data" name="ckWsdlSoapPortDecorator.class.php" />
+                    </dir>
+                    <dir name="xsd">
+                        <file role="data" name="ckXsdArrayType.class.php" />
+                        <file role="data" name="ckXsdComplexType.class.php" />
+                        <file role="data" name="ckXsdComplexTypeElement.class.php" />
+                        <file role="data" name="ckXsdNamespace.class.php" />
+                        <file role="data" name="ckXsdSimpleType.class.php" />
+                        <file role="data" name="ckXsdType.class.php" />
+                    </dir>
+                </dir>
 				<file role="data" name="ckSoapHandler.class.php" />
 				<file role="data"
 					name="ckSoapParameterFilter.class.php" />
