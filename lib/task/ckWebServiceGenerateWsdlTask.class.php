@@ -20,6 +20,10 @@ class ckWebServiceGenerateWsdlTask extends sfGeneratorBaseTask
 {
   const CONTROLLER_TEMPLATE_PATH = '/task/generator/skeleton/app/web/index.php';
 
+  const HANDLER_TEMPLATE_PATH    = '/task/skeleton/SoapHandler.class.php';
+
+  protected $handler_method_template = '';
+
   /**
    * @see sfTask
    */
@@ -53,6 +57,14 @@ You can enable debugging for the controller by using the [debug|COMMENT] option:
   or
 
   [./symfony webservice:generate-wsdl frontend -d=on|INFO]
+
+EOF;
+
+    $this->handler_method_template = <<<EOF
+  public function ##NAME##(##PARAMS##)
+  {
+  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction(##MODULE##, ##ACTION##, array(##PARAMS##));
+  }
 
 EOF;
 
@@ -112,6 +124,10 @@ EOF;
     $gen = new ckWsdlGenerator($file, $url, $url.$controller_name);
     $gen->setCheckEnablement(true);
 
+    $use_handler  = true;
+    $handler_file = sfConfig::get('sf_app_lib_dir').$file.'Handler.class.php';
+    $handler_map  = array();
+
     foreach($finder->in(sfConfig::get('sf_app_module_dir')) as $module_dir)
     {
       // proposed by Nicolas Martin to avoid problems with 'inited' modules
@@ -146,6 +162,13 @@ EOF;
             $action = ckString::lcfirst(substr($name, 7));
             $name = $module_dir.'_'.$action;
 
+            $wsname = ckDocBlockParser::parseMethod($method->getDocComment());
+
+            if(!empty($wsname) && $use_handler)
+            {
+              $name = $wsname['name'];
+            }
+
             if(!$gen->addMethod($name, $method))
             {
               $yml[$env][$action] = array('enable'=>false);
@@ -159,6 +182,8 @@ EOF;
             {
               $yml[$env][$action]['parameter'][] = $param['name'];
             }
+
+            $handler_map[$name] = array('module' => $module_dir, 'action' => $action, 'parameter' => $yml[$env][$action]['parameter']);
           }
         }
 
@@ -169,6 +194,14 @@ EOF;
         }
       }
     }
+
+    $this->getFilesystem()->remove($handler_file);
+    $this->getFilesystem()->copy($this->getPluginDir().self::HANDLER_TEMPLATE_PATH, $handler_file);
+
+    $this->getFilesystem()->replaceTokens($handler_file, '##', '##', array(
+      'HND_NAME'   => $file,
+      'HND_METHOD' => $this->buildHandlerMethods($handler_map)
+    ));
 
     $file = sprintf('%s/%s.wsdl', sfConfig::get('sf_web_dir'), $file);
     $gen->save($file);
@@ -195,5 +228,34 @@ EOF;
     $autoload->addDirectory(sfConfig::get('sf_app_lib_dir'));
     $autoload->addDirectory($this->getPluginDir().'/lib/vendor/ckWsdlGenerator');
     $autoload->addDirectory($this->getPluginDir().'/lib/util');
+  }
+
+  protected function buildHandlerMethods($methods)
+  {
+    $result = '';
+
+    foreach($methods as $name => $params)
+    {
+      $result .= $this->replaceTokens($this->handler_method_template, '##', '##', array(
+      	'NAME'   => $name,
+      	'MODULE' => $params['module'],
+      	'ACTION' => $params['action'],
+      	'PARAMS' => implode(', ', $params['parameter'])
+      ));
+    }
+
+    return $result;
+  }
+
+  protected function replaceTokens($str, $start_delimiter, $end_delimiter, $tokens)
+  {
+    $result = $str;
+
+    foreach($tokens as $token => $value)
+    {
+      $result = str_replace($start_delimiter.$token.$end_delimiter, $value, $result);
+    }
+
+    return $result;
   }
 }

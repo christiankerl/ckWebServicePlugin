@@ -24,6 +24,8 @@ class ckWebServiceController extends sfController
 
   protected $soap_headers = array();
 
+  protected $isFirstForward = false;
+
   /**
    * Initializes this controller.
    *
@@ -182,6 +184,8 @@ class ckWebServiceController extends sfController
         $this->context->getLogger()->info(sprintf('{%s} Forwarding to \'%s/%s\'.', __CLASS__, $moduleName, $actionName));
       }
 
+      $this->isFirstForward = true;
+
       // use forward to invoke the action, so we have to pass the filter chain
       $this->forward($moduleName, $actionName);
 
@@ -293,9 +297,14 @@ class ckWebServiceController extends sfController
    */
   public function listenToControllerChangeActionEvent(sfEvent $event)
   {
-    if($event->getSubject() === $this && !sfConfig::get(sprintf('mod_%s_%s_enable', $event['module'], $event['action']), false))
+    if($event->getSubject() === $this && $this->isFirstForward)
     {
-      throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $event['module'], $event['action']));
+      $this->isFirstForward = false;
+
+      if(!sfConfig::get(sprintf('mod_%s_%s_enable', $event['module'], $event['action']), false))
+      {
+        throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $event['module'], $event['action']));
+      }
     }
   }
 }
