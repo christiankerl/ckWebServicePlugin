@@ -20,7 +20,7 @@ class ckWebServiceGenerateWsdlTask extends sfGeneratorBaseTask
 {
   const CONTROLLER_TEMPLATE_PATH = '/task/generator/skeleton/app/web/index.php';
 
-  const HANDLER_TEMPLATE_PATH    = '/task/skeleton/SoapHandler.class.php';
+  const HANDLER_TEMPLATE_PATH    = '/lib/task/skeleton/SoapHandler.class.php';
 
   protected $handler_method_template = '';
 
@@ -61,9 +61,10 @@ You can enable debugging for the controller by using the [debug|COMMENT] option:
 EOF;
 
     $this->handler_method_template = <<<EOF
+
   public function ##NAME##(##PARAMS##)
   {
-  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction(##MODULE##, ##ACTION##, array(##PARAMS##));
+  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
   }
 
 EOF;
@@ -125,7 +126,7 @@ EOF;
     $gen->setCheckEnablement(true);
 
     $use_handler  = true;
-    $handler_file = sfConfig::get('sf_app_lib_dir').$file.'Handler.class.php';
+    $handler_file = sfConfig::get('sf_app_lib_dir').'/'.$file.'Handler.class.php';
     $handler_map  = array();
 
     foreach($finder->in(sfConfig::get('sf_app_module_dir')) as $module_dir)
@@ -177,13 +178,15 @@ EOF;
             }
 
             $yml[$env][$action] = array('enable'=>true, 'parameter'=>array(), 'result'=>null, 'render'=>false);
+            $handler_map[$name] = array('module' => $module_dir, 'action' => $action, 'parameter' => array());
 
             foreach(ckDocBlockParser::parseParameters($method->getDocComment()) as $param)
             {
               $yml[$env][$action]['parameter'][] = $param['name'];
+              $handler_map[$name]['parameter'][] = '$'.$param['name'];
             }
 
-            $handler_map[$name] = array('module' => $module_dir, 'action' => $action, 'parameter' => $yml[$env][$action]['parameter']);
+
           }
         }
 
