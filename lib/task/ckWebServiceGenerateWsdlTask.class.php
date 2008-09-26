@@ -38,9 +38,17 @@ Call it with:
 
   [./symfony webservice:generate-wsdl|INFO]
 
+The wsdl file will be created in the [web/|COMMENT] directory:
+
+  [web/%name%.wsdl|INFO]
+
 This task also creates a front controller script in the [web/|COMMENT] directory:
 
-  [web/%application%_%environment%.php|INFO]
+  [web/%name%.php|INFO]
+
+and a custom soap handler class in the application's lib directory:
+
+  [apps/%application%/lib/%name%Handler.class.php]
 
 You can set the environment by using the [environment|COMMENT] option:
 
@@ -57,6 +65,14 @@ You can enable debugging for the controller by using the [debug|COMMENT] option:
   or
 
   [./symfony webservice:generate-wsdl frontend -d=on|INFO]
+
+You can enable the creation of a custom soap handler by using the [handler|COMMENT] option:
+
+  [./symfony webservice:generate-wsdl frontend --handler=on|INFO]
+
+  or
+
+  [./symfony webservice:generate-wsdl frontend -h=on|INFO]
 
 EOF;
 
@@ -75,6 +91,7 @@ EOF;
 
     $this->addOption('environment', 'e', sfCommandOption::PARAMETER_REQUIRED, 'The environment to use for webservice mode', 'soap');
     $this->addOption('debug', 'd', sfCommandOption::PARAMETER_NONE, 'Enables debugging in generated controller');
+    $this->addOption('handler', 'h', sfCommandOption::PARAMETER_NONE, 'Enables the generation of a custom soap handler class.');
   }
 
   /**
@@ -125,7 +142,7 @@ EOF;
     $gen = new ckWsdlGenerator($file, $url, $url.$controller_name);
     $gen->setCheckEnablement(true);
 
-    $use_handler  = true;
+    $use_handler  = $options['handler'];
     $handler_file = sfConfig::get('sf_app_lib_dir').'/'.$file.'Handler.class.php';
     $handler_map  = array();
 
@@ -185,8 +202,6 @@ EOF;
               $yml[$env][$action]['parameter'][] = $param['name'];
               $handler_map[$name]['parameter'][] = '$'.$param['name'];
             }
-
-
           }
         }
 
@@ -198,13 +213,16 @@ EOF;
       }
     }
 
-    $this->getFilesystem()->remove($handler_file);
-    $this->getFilesystem()->copy($this->getPluginDir().self::HANDLER_TEMPLATE_PATH, $handler_file);
+    if($use_handler)
+    {
+      $this->getFilesystem()->remove($handler_file);
+      $this->getFilesystem()->copy($this->getPluginDir().self::HANDLER_TEMPLATE_PATH, $handler_file);
 
-    $this->getFilesystem()->replaceTokens($handler_file, '##', '##', array(
-      'HND_NAME'   => $file,
-      'HND_METHOD' => $this->buildHandlerMethods($handler_map)
-    ));
+      $this->getFilesystem()->replaceTokens($handler_file, '##', '##', array(
+      	'HND_NAME'   => $file,
+      	'HND_METHOD' => $this->buildHandlerMethods($handler_map)
+      ));
+    }
 
     $file = sprintf('%s/%s.wsdl', sfConfig::get('sf_web_dir'), $file);
     $gen->save($file);

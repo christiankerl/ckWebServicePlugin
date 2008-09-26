@@ -100,30 +100,40 @@ Disable wsdl file caching, when your developing to see changes to the wsdl file 
 
 ## WSDL Generator (ckWsdlGenerator)
 
-The WSDL Generator offers the possibility to search all your module actions for web service enabled actions and generate a wsdl file with input parameters and return types from the code.
-Also it generates yaml configuration for mapping of web service method parameters to request parameters. And lastly generates a controller script, the endpoint of the webservice.
+The WSDL Generator offers the possibility to search all your modules for web service enabled actions and generate a wsdl file with input parameters and return types from the code.
+Also it generates:
+*   yaml configuration for mapping of web service method parameters to request parameters
+*   a controller script as the endpoint of the webservice
+*   a custom soap handler class (optional)
   
-Module actions are enabled for export by adding a ``@ws-enable`` to the doc comment block. Also actions have no function parameters you should add ``@param`` and one ``@return`` to each comment block so the web service methods have the proper input and output types.
-The Generator allows complex types as input/output values so you can use your classes.
+Module actions are enabled for export by adding a ``@ws-enable`` to the doc comment block. Also actions have no parameters in their signature you should add a ``@param`` tag foreach request parameter and one ``@return`` tag to each comment block, so the web service methods have the proper input and output types.
+The Generator allows complex types as input/output values so you can use classes.
   
-The method names of the web service methods follow the scheme: ``module_Action``.
+The webservice method's name follows the scheme ``module_Action`` by default.
   
 The generator is used through the ``webservice:generate-wsdl`` symfony cli task, it has the following syntax:
 
-    > symfony webservice:generate-wsdl [--environment=soap] [--debug=on] app_name webservice_name webservice_base_url
+    > symfony webservice:generate-wsdl [--environment=soap] [--debug=on] [--handler=on] app_name webservice_name webservice_base_url
     
-It will generate a wsdl file and a controller script in the ``web/`` folder and add / modify all ``module.yml`` files of your actions.
+It will generate a wsdl file, a controller script in the ``web/`` folder and add / modify all ``module.yml`` files of your modules.
+
+If the ``handler`` option is set to on, it will also generate a custom soap handler class file in the application's ``lib/`` folder and you can change the default method name using the ``@ws-method`` tag.
 
 ### Example
 
 Howto execute the ``webservice:generate-wsdl`` task shows the following example:
   
-    > symfony webservice:generate-wsdl frontend myFooBarService http://www.myfoobar.com/
+    > symfony webservice:generate-wsdl --handler=on frontend myFooBarService http://www.myfoobar.com/
 
 *   This will add a ``myFooBarService.php`` and a ``myFooBarService.wsdl`` to your ``/web`` folder.
 
+*   It will generate a ``myFooBarServiceHandler.class.php`` in your ``/apps/frontend/lib`` folder.
+
 *   The endpoint for the generated service will be ``http://www.myfoobar.com/myFooBarService.php``.
-    
+
+>**CAUTION**
+>Make sure you set the ``ck_web_service_plugin: handler:`` in ``app.yml`` to the generated soap handler class name when setting the ``handler`` option to ``on``, in the example above this would be ``myFooBarServiceHandler``.
+  
 Howto enable actions for export shows this example:
   
     [php]
@@ -134,6 +144,8 @@ Howto enable actions for export shows this example:
        * Executes index action
        *
        * @ws-enable
+       * @ws-method ExecFooIndex
+       *
        * @param string $test A string parameter
        *
        * @return string      A string
@@ -159,7 +171,7 @@ Howto enable actions for export shows this example:
       }
     }
   
-*   This will generate a method with the name ``foo_Index`` with a parameter named ``test`` of type ``string`` and a return value of type ``string``.
+*   This will generate a method with the name ``foo_Index``, or ``ExecFooIndex`` when handler generation is enabled, with a parameter named ``test`` of type ``string`` and a return value of type ``string``.
 
 >**CAUTION**
 >This class has no ``getSoapResult`` method, because the result of the action is stored in the ``result`` member, see 'Internals'->'Getting the action result' for more details.
@@ -327,7 +339,7 @@ The next three sections should give an inside view of the plugin architecture.
 
 The ``ckSoapHandler`` class is the default web service request handler class. Because just since PHP 5.2 a method ``SoapServer::setObject(...)`` exists, which allows to set a object, which will handle requests, so to support older versions the ``SoapServer::setClass(...)`` is used.
 Because there should only be one instance of ``ckWebServiceController`` a helper class ``ckSoapHandler`` is defined, which just passes the requests back to the controller instance. This mechanism only works if you use method names of scheme ``module_Action``.
-If you want to use custom web service method names see section 'Custom RequestHandler'.
+If you want to use custom web service method names use the ``handler`` option of the wsdl generator task.
 
 ### ckSoapParameterFilter
 
@@ -352,34 +364,6 @@ This default getter has the following behavior:
   *   if both approaches fail nothing is returned 
 
 The described mechanism should be an easy to use, but powerfull way for you to get the result of an action.
-
-## Custom RequestHandler
-
-If the method names of scheme ``module_Action`` are to abstract for you or you have already a wsdl file I recommend to implement your own handler class.  Don't forget to set this new handler class in ``app.yml``.
-
-### Example
-
-The following example assumes you have a wsdl with a web service method named ``descriptiveFooMethod`` and two parameters ``foo`` and ``bar``. And a call to this should be redirected to the action ``index`` in the module ``fooModule``.
-
-    [php]
-    <?php
-    class mySoapHandler
-    {
-      public function descriptiveFooMethod($foo, $bar)
-      {
-        return sfContext::getInstance()->getController()->invokeSoapEnabledAction('fooModule', 'index', array($foo, $bar));
-      }
-    }
-
-If you have configured the ``module.yml`` of the ``fooModule`` in the following way:
-  
-    # your enviroment for web service mode
-    soap:
-      index:
-        enable: true
-        parameter: [foo, bar]
-  
-parameter mapping will work like you expect it.
 
 ## TODO
 
