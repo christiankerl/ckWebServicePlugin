@@ -274,15 +274,17 @@ EOF;
   protected function buildHandlerMethods($methods)
   {
     $result = '';
-    $append_dollar = create_function('$in', 'return "$".$in;');
+    $append_dollar = create_function('&$in', '$in = "$".$in;');
 
     foreach($methods as $name => $params)
     {
+      array_walk($params['parameter'], $append_dollar);
+
       $result .= $this->replaceTokens($this->getHandlerMethodTemplate(), array(
       	'NAME'   => $name,
       	'MODULE' => $params['module'],
       	'ACTION' => $params['action'],
-      	'PARAMS' => implode(', ', array_walk($params['parameter'], $append_dollar))
+      	'PARAMS' => implode(', ', $params['parameter'])
       ), '##', '##');
     }
 
