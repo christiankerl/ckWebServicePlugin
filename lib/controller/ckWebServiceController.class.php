@@ -16,7 +16,7 @@
  * @subpackage controller
  * @author     Christian Kerl <christian-kerl@web.de>
  */
-class ckWebServiceController extends sfController
+class ckWebServiceController extends sfWebController
 {
   const DEFAULT_RESULT_CALLBACK = 'defaultResultCallback';
 
@@ -306,5 +306,15 @@ class ckWebServiceController extends sfController
         throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $event['module'], $event['action']));
       }
     }
+  }
+
+  /**
+   * Hides sfWebController::redirect() because redirect is not supported.
+   *
+   * @see sfWebController
+   */
+  public function redirect($url, $delay = 0, $statusCode = 302)
+  {
+
   }
 }

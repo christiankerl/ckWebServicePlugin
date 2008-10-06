@@ -109,7 +109,7 @@ Also it generates:
 Module actions are enabled for export by adding a ``@ws-enable`` to the doc comment block. Also actions have no parameters in their signature you should add a ``@param`` tag foreach request parameter and one ``@return`` tag to each comment block, so the web service methods have the proper input and output types.
 The Generator allows complex types as input/output values so you can use classes.
   
-The webservice method's name follows the scheme ``module_Action`` by default.
+The webservice method's name follows the scheme ``module_action`` by default.
   
 The generator is used through the ``webservice:generate-wsdl`` symfony cli task, it has the following syntax:
 
@@ -118,6 +118,7 @@ The generator is used through the ``webservice:generate-wsdl`` symfony cli task,
 It will generate a wsdl file, a controller script in the ``web/`` folder and add / modify all ``module.yml`` files of your modules.
 
 If the ``handler`` option is set to on, it will also generate a custom soap handler class file in the application's ``lib/`` folder and you can change the default method name using the ``@ws-method`` tag.
+The generated handler will be __overwritten__ with every execution of this task, if you don't change the ``webservice_name`` parameter!
 
 ### Example
 
@@ -171,7 +172,7 @@ Howto enable actions for export shows this example:
       }
     }
   
-*   This will generate a method with the name ``foo_Index``, or ``ExecFooIndex`` when handler generation is enabled, with a parameter named ``test`` of type ``string`` and a return value of type ``string``.
+*   This will generate a method with the name ``foo_index``, or ``ExecFooIndex`` when handler generation is enabled, with a parameter named ``test`` of type ``string`` and a return value of type ``string``.
 
 >**CAUTION**
 >This class has no ``getSoapResult`` method, because the result of the action is stored in the ``result`` member, see 'Internals'->'Getting the action result' for more details.
@@ -367,7 +368,6 @@ The described mechanism should be an easy to use, but powerfull way for you to g
 
 ## TODO
 
-*   decide how to handle redirects
 *   write tests
 *   enable nusoap, PEAR::SOAP as soap_server
 

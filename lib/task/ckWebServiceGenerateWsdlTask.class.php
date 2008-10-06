@@ -18,11 +18,32 @@
  */
 class ckWebServiceGenerateWsdlTask extends sfGeneratorBaseTask
 {
+  /**
+   * The path to the standard symfony controller template file.
+   */
   const CONTROLLER_TEMPLATE_PATH = '/task/generator/skeleton/app/web/index.php';
 
+  /**
+   * The path to the custom soap handler template file.
+   */
   const HANDLER_TEMPLATE_PATH    = '/lib/task/skeleton/SoapHandler.class.php';
 
-  protected $handler_method_template = '';
+  /**
+   * Gets the template string for a soap handler method.
+   *
+   * @return string The template string
+   */
+  public function getHandlerMethodTemplate()
+  {
+    return <<<EOF
+
+  public function ##NAME##(##PARAMS##)
+  {
+  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
+  }
+
+EOF;
+  }
 
   /**
    * @see sfTask
@@ -73,15 +94,6 @@ You can enable the creation of a custom soap handler by using the [handler|COMME
   or
 
   [./symfony webservice:generate-wsdl frontend -h=on|INFO]
-
-EOF;
-
-    $this->handler_method_template = <<<EOF
-
-  public function ##NAME##(##PARAMS##)
-  {
-  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
-  }
 
 EOF;
 
@@ -200,8 +212,9 @@ EOF;
             foreach(ckDocBlockParser::parseParameters($method->getDocComment()) as $param)
             {
               $yml[$env][$action]['parameter'][] = $param['name'];
-              $handler_map[$name]['parameter'][] = '$'.$param['name'];
             }
+
+            $handler_map[$name]['parameter'] = $yml[$env][$action]['parameter'];
           }
         }
 
@@ -251,24 +264,42 @@ EOF;
     $autoload->addDirectory($this->getPluginDir().'/lib/util');
   }
 
+  /**
+   * Generates soap handler methods.
+   *
+   * @param array $methods An array with the methods as keys and the corresponding options as values
+   *
+   * @return string The generated methods.
+   */
   protected function buildHandlerMethods($methods)
   {
     $result = '';
+    $append_dollar = create_function('$in', 'return "$".$in;');
 
     foreach($methods as $name => $params)
     {
-      $result .= $this->replaceTokens($this->handler_method_template, '##', '##', array(
+      $result .= $this->replaceTokens($this->getHandlerMethodTemplate(), array(
       	'NAME'   => $name,
       	'MODULE' => $params['module'],
       	'ACTION' => $params['action'],
-      	'PARAMS' => implode(', ', $params['parameter'])
-      ));
+      	'PARAMS' => implode(', ', array_walk($params['parameter'], $append_dollar))
+      ), '##', '##');
     }
 
     return $result;
   }
 
-  protected function replaceTokens($str, $start_delimiter, $end_delimiter, $tokens)
+  /**
+   * Replaces all tokens in a given string with the given values.
+   *
+   * @param string $str             The string in which the tokens should be replaced
+   * @param array  $tokens          An array with the tokens as keys and the corresponding replacment values as values
+   * @param string $start_delimiter The string, which marks the start of a token
+   * @param string $end_delimiter   The string, which marks the end of a token
+   *
+   * @return string The string with the tokens replaced
+   */
+  protected function replaceTokens($str, $tokens, $start_delimiter, $end_delimiter)
   {
     $result = $str;
 
