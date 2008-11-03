@@ -39,7 +39,7 @@ class ckWebServiceGenerateWsdlTask extends sfGeneratorBaseTask
 
   public function ##NAME##(##PARAMS##)
   {
-  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
+  	return \$this->context->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
   }
 
 EOF;
@@ -206,7 +206,7 @@ EOF;
               continue;
             }
 
-            $yml[$env][$action] = array('enable'=>true, 'parameter'=>array(), 'result'=>null, 'render'=>false);
+            $yml[$env][$action] = array('enable'=>true, 'parameter'=>array(), 'result'=>array('class'=>'ckMemberResultAdapter', 'param'=>array('member'=>'result')));
             $handler_map[$name] = array('module' => $module_dir, 'action' => $action, 'parameter' => array());
 
             foreach(ckDocBlockParser::parseParameters($method->getDocComment()) as $param)

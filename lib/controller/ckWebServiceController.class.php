@@ -18,13 +18,13 @@
  */
 class ckWebServiceController extends sfWebController
 {
-  const DEFAULT_RESULT_CALLBACK = 'defaultResultCallback';
-
   protected $soap_server = null;
 
   protected $soap_headers = array();
 
   protected $isFirstForward = false;
+
+  protected $resultAdapter = null;
 
   /**
    * Initializes this controller.
@@ -47,21 +47,23 @@ class ckWebServiceController extends sfWebController
    */
   public function getRenderMode()
   {
-    return $this->doRender() ? sfView::RENDER_VAR : sfView::RENDER_NONE;
+    return $this->getResultAdapter()->getRenderMode();
   }
 
-  /**
-   * Indicates wether or not the current action should be rendered.
-   *
-   * @return bool True, if the action should be rendered, otherwise false
-   */
-  protected function doRender()
+  public function getResultAdapter()
   {
-    $result = sfConfig::get('app_ck_web_service_plugin_render', false);
+    if(is_null($this->resultAdapter))
+    {
+      $result = sfConfig::get(sprintf('mod_%s_%s_result', $this->context->getModuleName(), $this->context->getActionName()), array());
+      $class  = isset($result['class']) ? $result['class'] : 'ckMemberResultAdapter';
+      $param  = isset($result['param']) ? $result['param'] : array();
 
-    $result = sfConfig::get(sprintf('mod_%s_%s_render', $this->context->getModuleName(), $this->context->getActionName()), $result);
+      $adapter = new $class($param);
 
-    return $result;
+      $this->resultAdapter = $adapter instanceof ckAbstractResultAdapter ? $adapter : new ckMemberResultAdapter();
+    }
+
+    return $this->resultAdapter;
   }
 
   /**
@@ -72,6 +74,16 @@ class ckWebServiceController extends sfWebController
   public function dispatch()
   {
     $this->handle();
+  }
+
+  /**
+   * Hides sfWebController::redirect() because redirect is not supported.
+   *
+   * @see sfWebController
+   */
+  public function redirect($url, $delay = 0, $statusCode = 302)
+  {
+
   }
 
   /**
@@ -121,43 +133,6 @@ class ckWebServiceController extends sfWebController
   }
 
   /**
-   * Redirects webservice methods to a module action, to work the method name must follow the scheme MODULE_ACTION.
-   * If only MODULE is provided, the standard action 'index' will be used.
-   *
-   * @param string $method    The method name
-   * @param array  $arguments The method arguments
-   *
-   * @return mixed            The result of the called action
-   *
-   * @see function invokeSoapEnabledAction
-   */
-  public function __call($method, $arguments)
-  {
-    if(isset($this->soap_headers[$method]))
-    {
-      $event = $this->dispatcher->notifyUntil(new sfEvent($this, 'webservice.handle_header', array('header'=>$method, 'data'=>$arguments[0])));
-
-      if(!$event->isProcessed() && sfConfig::get('sf_logging_enabled'))
-      {
-        $this->context->getLogger()->info(sprintf('{%s} SoapHeader \'%s\' unhandled.', __CLASS__, $method));
-      }
-
-      $result = $event->getReturnValue();
-
-      return !is_null($result) ? $result : $arguments[0];
-    }
-    else
-    {
-      $method = explode('_', $method);
-
-      $moduleName = $method[0];
-      $actionName = isset($method[1]) && strlen($method[1]) > 0 ? $method[1] : 'index';
-
-      return $this->invokeSoapEnabledAction($moduleName, $actionName, $arguments);
-    }
-  }
-
-  /**
    * Invokes an action requested by a webservice call and returns the action result.
    *
    * @param string $moduleName A module name
@@ -175,7 +150,7 @@ class ckWebServiceController extends sfWebController
 
     $request = $this->context->getRequest();
 
-    $request->setParameter('param', $parameters, 'ckWebServicePlugin');
+    $request->setParameter('ck_web_service_plugin.param', $parameters);
 
     try
     {
@@ -189,9 +164,6 @@ class ckWebServiceController extends sfWebController
       // use forward to invoke the action, so we have to pass the filter chain
       $this->forward($moduleName, $actionName);
 
-      // get the function which retrieves the action result
-      $soapResultCallback = sfConfig::get('app_ck_web_service_plugin_result_callback', 'getSoapResult');
-
       // get the last executed action
       $actionInstance = $this->getActionStack()->getLastEntry()->getActionInstance();
 
@@ -201,92 +173,12 @@ class ckWebServiceController extends sfWebController
         throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $moduleName, $actionName));
       }
 
-      // check if we are able to call a custom result getter
-      if(!method_exists($actionInstance, $soapResultCallback))
-      {
-        $soapResultCallback = self::DEFAULT_RESULT_CALLBACK;
-
-        if (sfConfig::get('sf_logging_enabled'))
-        {
-          $this->context->getLogger()->info(sprintf('{%s} Start listening to \'component.method_not_found event\'.', __CLASS__, $soapResultCallback));
-        }
-
-        // listen to the component.method_not_found event
-        $this->dispatcher->connect('component.method_not_found', array($this, 'listenToComponentMethodNotFoundEvent'));
-      }
-
-      if (sfConfig::get('sf_logging_enabled'))
-      {
-        $this->context->getLogger()->info(sprintf('{%s} Calling soapResultCallback \'%s\'.', __CLASS__, $soapResultCallback));
-      }
-
-      // return the result of our action
-      return $actionInstance->$soapResultCallback();
+      return $this->getResultAdapter()->getResult($actionInstance);
     }
     catch(Exception $e)
     {
       // we return all exceptions as soap faults to the remote caller
       throw new SoapFault('1', $e->getMessage(), '', $e->getTraceAsString());
-    }
-  }
-
-  /**
-   * Implements the default behavior to get the result of a soap action.
-   *
-   * @param sfAction $actionInstance A sfAction instance
-   *
-   * @return mixed The result of the sfAction instance
-   */
-  public function defaultResultCallback($actionInstance)
-  {
-    $vars = $actionInstance->getVarHolder()->getAll();
-
-    // if we have one or more vars and shouldn't render
-    if(count($vars) > 0 && !$this->doRender())
-    {
-      // get the default result array key
-      $default_key = sfConfig::get(sprintf('mod_%s_%s_result', $actionInstance->getModuleName(), $actionInstance->getActionName()), 'result');
-
-      // if there is only one var stored we return it
-      if(count($vars) == 1)
-      {
-        reset($vars);
-        return current($vars);
-      }
-      // if the default key exists we return the value
-      else if(array_key_exists($default_key, $vars))
-      {
-        return $vars[$default_key];
-      }
-    }
-    // if we should render
-    else if($this->doRender())
-    {
-      // return the rendered view
-      return $this->getActionStack()->getLastEntry()->getPresentation();
-    }
-
-    return;
-  }
-
-  /**
-   * Listens to the component.method_not_found event.
-   *
-   * @param  sfEvent $event An sfEvent instance
-   *
-   * @return bool True, if the method is the DEFAULT_RESULT_CALLBACK, false otherwise
-   */
-  public function listenToComponentMethodNotFoundEvent(sfEvent $event)
-  {
-    if($event['method'] == self::DEFAULT_RESULT_CALLBACK)
-    {
-      $event->setReturnValue($this->{self::DEFAULT_RESULT_CALLBACK}($event->getSubject()));
-
-      return true;
-    }
-    else
-    {
-      return false;
     }
   }
 
@@ -306,15 +198,5 @@ class ckWebServiceController extends sfWebController
         throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $event['module'], $event['action']));
       }
     }
-  }
-
-  /**
-   * Hides sfWebController::redirect() because redirect is not supported.
-   *
-   * @see sfWebController
-   */
-  public function redirect($url, $delay = 0, $statusCode = 302)
-  {
-
   }
 }

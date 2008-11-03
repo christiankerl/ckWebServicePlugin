@@ -28,7 +28,7 @@ class ckSoapParameterFilter extends sfFilter
     if($this->isFirstCall())
     {
       $request = $this->getContext()->getRequest();
-      $param   = $request->getParameter('param', null, 'ckWebServicePlugin');
+      $param   = $request->getParameter('ck_web_service_plugin.param', null);
       $map     = sfConfig::get(sprintf('mod_%s_%s_parameter', strtolower($this->getContext()->getModuleName()), $this->getContext()->getActionName()));
 
       if(is_array($param) && is_array($map))
