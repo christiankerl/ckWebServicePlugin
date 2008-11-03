@@ -29,7 +29,6 @@ class ckSoapHandler
 
   /**
    * Standard constructor.
-   *
    */
   public function __construct()
   {
@@ -59,13 +58,13 @@ class ckSoapHandler
   }
 
   /**
-   * Removes the header prefix from a given string, if it is present.
+   * Removes the header suffix from a given string, if it is present.
    *
    * @param string $name A name
    *
-   * @return string The name without the header prefix
+   * @return string The name without the header suffix
    *
-   * @see HEADER_PREFIX
+   * @see HEADER_SUFFIX
    */
   protected function getSoapHeaderName($name)
   {

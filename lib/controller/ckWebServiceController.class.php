@@ -39,11 +39,9 @@ class ckWebServiceController extends sfWebController
   }
 
   /**
-   * Retrieves the presentation rendering mode.
+   * Retrieves the render mode depending on the result adapter of the current module.
    *
-   * @return int One of the following:
-   *             - sfView::RENDER_NONE
-   *             - sfView::RENDER_VAR
+   * @return int A render mode
    */
   public function getRenderMode()
   {

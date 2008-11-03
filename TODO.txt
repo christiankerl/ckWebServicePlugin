@@ -1,8 +1,0 @@
-TODO
-
-controller:
-  introduce 'isSoapHeader', 'handleSoapHeader', 'handleSoapOperation'
-  extract 'defaultResultCallback' into AbstractResultAdapter ( Member[=default], Method, Render )
-  
-wsdlgenerator:
-  introduce compatibility mode to .net, java, php  

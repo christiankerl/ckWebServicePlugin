@@ -9,18 +9,35 @@
  * @version   SVN: $Id$
  */
 
+/**
+ * ckRenderResultAdapter gets the result of an action by executing the standard rendering pipeline
+ * and saving the result to a variable.
+ *
+ * @package    ckWebServicePlugin
+ * @subpackage adapter
+ * @author     Christian Kerl <christian-kerl@web.de>
+ */
 class ckRenderResultAdapter extends ckAbstractResultAdapter
 {
+  /**
+   * @see ckAbstractResultAdapter::getRenderMode()
+   */
   public function getRenderMode()
   {
     return sfView::RENDER_VAR;
   }
 
+  /**
+   * @see ckAbstractResultAdapter::__construct()
+   */
   public function __construct($parameters = array())
   {
 
   }
 
+  /**
+   * @see ckAbstractResultAdapter::getResult()
+   */
   public function getResult(sfAction $action)
   {
     $lastStackEntry = $action->getContext()->getActionStack()->getLastEntry();
