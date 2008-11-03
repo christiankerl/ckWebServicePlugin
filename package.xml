@@ -46,7 +46,6 @@
 						name="ckWebServiceGenerateWsdlTask.class.php" />
 				</dir>
 				<dir name="util">
-					<file role="data" name="ckString.class.php" />
 					<file role="data"
 						name="ckComponentEventListener.class.php" />
 				</dir>
@@ -74,6 +73,9 @@
                         <file role="data" name="ckXsdNamespace.class.php" />
                         <file role="data" name="ckXsdSimpleType.class.php" />
                         <file role="data" name="ckXsdType.class.php" />
+                    </dir>
+                    <dir name="util">
+						<file role="data" name="ckString.class.php" />
                     </dir>
                 </dir>
 				<file role="data" name="ckSoapHandler.class.php" />

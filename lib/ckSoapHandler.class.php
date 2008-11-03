@@ -133,7 +133,7 @@ class ckSoapHandler
   {
     if (sfConfig::get('sf_logging_enabled'))
     {
-      $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', $message));
+      $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array($message)));
     }
   }
 }
