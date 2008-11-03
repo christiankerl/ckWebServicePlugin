@@ -18,7 +18,7 @@
  */
 class ckSoapHandler
 {
-  const HEADER_PREFIX = 'Element';
+  const HEADER_SUFFIX = 'Element';
 
   /**
    * The current context.
@@ -69,11 +69,11 @@ class ckSoapHandler
    */
   protected function getSoapHeaderName($name)
   {
-    $result = $str;
+    $result = $name;
 
-    if(ckString::endsWith($result, self::HEADER_PREFIX))
+    if(ckString::endsWith($result, self::HEADER_SUFFIX))
     {
-      $result = substr($result, 0, - strlen(self::HEADER_PREFIX));
+      $result = substr($result, 0, - strlen(self::HEADER_SUFFIX));
     }
 
     return $result;
