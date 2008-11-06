@@ -90,9 +90,9 @@ class ckSoapHandler
   {
     $event = $this->context->getEventDispatcher()->notifyUntil(new sfEvent($this, 'webservice.handle_header', array('header' => $name, 'data' => $data)));
 
-    if(!$event->isProcessed())
+    if(!$event->isProcessed() && sfConfig::get('sf_logging_enabled'))
     {
-      $this->log(sprintf("SoapHeader '%s' unhandled.", $header_name));
+      $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf("SoapHeader '%s' unhandled.", $header_name))));
     }
 
     return !is_null($event->getReturnValue()) ? $event->getReturnValue() : $data;
@@ -120,19 +120,6 @@ class ckSoapHandler
       $action = isset($parts[1]) && strlen($parts[1]) > 0 ? $parts[1] : 'index';
 
       return $this->context->getController()->invokeSoapEnabledAction($module, $action, $arguments);
-    }
-  }
-
-  /**
-   * Writes a given message to the log after inserting the class name at the beginning.
-   *
-   * @param string $message A message
-   */
-  protected function log($message)
-  {
-    if (sfConfig::get('sf_logging_enabled'))
-    {
-      $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array($message)));
     }
   }
 }

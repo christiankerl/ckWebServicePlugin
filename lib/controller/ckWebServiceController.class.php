@@ -20,22 +20,16 @@ class ckWebServiceController extends sfWebController
 {
   protected $soap_server = null;
 
-  protected $soap_headers = array();
-
-  protected $isFirstForward = false;
-
   protected $resultAdapter = null;
 
   /**
-   * Initializes this controller.
+   * Initializes the controller.
    *
-   * @param sfContext $context A sfContext implementation instance
+   * @param sfContext $context A sfContext instance
    */
   public function initialize($context)
   {
     parent::initialize($context);
-
-    $this->dispatcher->connect('controller.change_action', array($this, 'listenToControllerChangeActionEvent'));
   }
 
   /**
@@ -48,6 +42,11 @@ class ckWebServiceController extends sfWebController
     return $this->getResultAdapter()->getRenderMode();
   }
 
+  /**
+   * Gets the result adapter for the current action, if no instance exists, one is created.
+   *
+   * @return ckAbstractResultAdapter A result adapter for the current action
+   */
   public function getResultAdapter()
   {
     if(is_null($this->resultAdapter))
@@ -97,14 +96,14 @@ class ckWebServiceController extends sfWebController
     $handler = sfConfig::get('app_ck_web_service_plugin_handler', 'ckSoapHandler');
     $persist = sfConfig::get('app_ck_web_service_plugin_persist', SOAP_PERSISTENCE_SESSION);
 
-    $this->soap_headers = sfConfig::get('app_ck_web_service_plugin_soap_headers', array());
+    $soap_headers = sfConfig::get('app_ck_web_service_plugin_soap_headers', array());
 
     if(!isset($options['classmap']) || !is_array($options['classmap']))
     {
       $options['classmap'] = array();
     }
 
-    foreach($this->soap_headers as $header_name => $header_options)
+    foreach($soap_headers as $header_name => $header_options)
     {
       if(isset($header_options['class']))
       {
@@ -114,7 +113,7 @@ class ckWebServiceController extends sfWebController
 
     if (sfConfig::get('sf_logging_enabled'))
     {
-      $this->context->getLogger()->info(sprintf('{%s} Starting SoapServer with \'%s\' and Handler \'%s\'.', __CLASS__, $wsdl, $handler));
+       $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Starting SoapServer with \'%s\' and handler \'%s\'.', $wsdl, $handler))));
     }
 
     // construct the server
@@ -154,10 +153,8 @@ class ckWebServiceController extends sfWebController
     {
       if (sfConfig::get('sf_logging_enabled'))
       {
-        $this->context->getLogger()->info(sprintf('{%s} Forwarding to \'%s/%s\'.', __CLASS__, $moduleName, $actionName));
+         $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Forwarding to \'%s/%s\'.', $moduleName, $actionName))));
       }
-
-      $this->isFirstForward = true;
 
       // use forward to invoke the action, so we have to pass the filter chain
       $this->forward($moduleName, $actionName);
@@ -177,24 +174,6 @@ class ckWebServiceController extends sfWebController
     {
       // we return all exceptions as soap faults to the remote caller
       throw new SoapFault('1', $e->getMessage(), '', $e->getTraceAsString());
-    }
-  }
-
-  /**
-   * Listens to the controller.change_action event.
-   *
-   * @param sfEvent $event An sfEvent instance
-   */
-  public function listenToControllerChangeActionEvent(sfEvent $event)
-  {
-    if($event->getSubject() === $this && $this->isFirstForward)
-    {
-      $this->isFirstForward = false;
-
-      if(!sfConfig::get(sprintf('mod_%s_%s_enable', $event['module'], $event['action']), false))
-      {
-        throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $event['module'], $event['action']));
-      }
     }
   }
 }

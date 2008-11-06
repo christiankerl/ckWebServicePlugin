@@ -49,7 +49,7 @@ class ckMemberResultAdapter extends ckAbstractResultAdapter
    */
   public function __construct($parameters = array())
   {
-    $this->resultMember = isset($parameter['member']) ? $parameter['member'] : DEFAULT_RESULT_MEMBER;
+    $this->resultMember = isset($parameter['member']) ? $parameter['member'] : self::DEFAULT_RESULT_MEMBER;
   }
 
   /**

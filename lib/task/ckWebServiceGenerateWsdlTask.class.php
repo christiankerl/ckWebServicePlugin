@@ -201,12 +201,12 @@ EOF;
 
             if(!$gen->addMethod($name, $method))
             {
-              $yml[$env][$action] = array('enable'=>false);
+              $yml[$env][$action] = array();
 
               continue;
             }
 
-            $yml[$env][$action] = array('enable'=>true, 'parameter'=>array(), 'result'=>array('class'=>'ckMemberResultAdapter', 'param'=>array('member'=>'result')));
+            $yml[$env][$action] = array('parameter'=>array(), 'result'=>array('class'=>'ckMemberResultAdapter', 'param'=>array('member'=>'result')));
             $handler_map[$name] = array('module' => $module_dir, 'action' => $action, 'parameter' => array());
 
             foreach(ckDocBlockParser::parseParameters($method->getDocComment()) as $param)
