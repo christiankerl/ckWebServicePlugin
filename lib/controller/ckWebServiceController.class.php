@@ -52,12 +52,12 @@ class ckWebServiceController extends sfWebController
     if(is_null($this->resultAdapter))
     {
       $result = sfConfig::get(sprintf('mod_%s_%s_result', $this->context->getModuleName(), $this->context->getActionName()), array());
-      $class  = isset($result['class']) ? $result['class'] : 'ckMemberResultAdapter';
+      $class  = isset($result['class']) ? $result['class'] : 'ckPropertyResultAdapter';
       $param  = isset($result['param']) ? $result['param'] : array();
 
       $adapter = new $class($param);
 
-      $this->resultAdapter = $adapter instanceof ckAbstractResultAdapter ? $adapter : new ckMemberResultAdapter();
+      $this->resultAdapter = $adapter instanceof ckAbstractResultAdapter ? $adapter : new ckPropertyResultAdapter();
     }
 
     return $this->resultAdapter;

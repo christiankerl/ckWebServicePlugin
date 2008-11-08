@@ -10,32 +10,32 @@
  */
 
 /**
- * ckMemberResultAdapter gets the result of an action from a member variable.
+ * ckPropertyResultAdapter gets the result of an action from a property.
  *
  * @package    ckWebServicePlugin
  * @subpackage adapter
  * @author     Christian Kerl <christian-kerl@web.de>
  */
-class ckMemberResultAdapter extends ckAbstractResultAdapter
+class ckPropertyResultAdapter extends ckAbstractResultAdapter
 {
   /**
-   * The name of the member variable used as result by default.
+   * The name of the property used as result by default.
    */
-  const DEFAULT_RESULT_MEMBER = 'result';
+  const DEFAULT_RESULT_PROPERTY = 'result';
 
   /**
-   * The name of the member variable used as result.
+   * The name of the property used as result.
    *
    * @var string
    */
-  protected $resultMember;
+  protected $resultProperty;
 
   /**
-   * Gets the name of the member variable used as result.
+   * Gets the name of the property used as result.
    *
-   * @return string A name of the member variable
+   * @return string The name of the property
    */
-  public function getResultMember()
+  public function getResultProperty()
   {
     return $this->resultMember;
   }
@@ -43,13 +43,13 @@ class ckMemberResultAdapter extends ckAbstractResultAdapter
   /**
    * Constructor initializing the result adapter with a given array of adapter specific parameters.
    * Possible parameters are:
-   *   'member': configures the result member name
+   *   'property': configures the result property name
    *
    * @param array $parameters An array of adapter specific parameters
    */
   public function __construct($parameters = array())
   {
-    $this->resultMember = isset($parameter['member']) ? $parameter['member'] : self::DEFAULT_RESULT_MEMBER;
+    $this->resultProperty = isset($parameter['property']) ? $parameter['property'] : self::DEFAULT_RESULT_PROPERTY;
   }
 
   /**
@@ -60,9 +60,9 @@ class ckMemberResultAdapter extends ckAbstractResultAdapter
     $result = null;
     $vars   = $action->getVarHolder()->getAll();
 
-    if(isset($vars[$this->getResultMember()]))
+    if(isset($vars[$this->getResultProperty()]))
     {
-      $result = $vars[$this->getResultMember()];
+      $result = $vars[$this->getResultProperty()];
     }
     else if(count($vars) == 1)
     {
