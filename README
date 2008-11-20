@@ -742,7 +742,7 @@ You can do this by modifying your `php.ini`:
 
     soap.wsdl_cache_enabled=0
 
-### Checking for SOAP request in actions
+### Checking for webservice mode
 
 If you want to check in an action if it is executed in webservice mode, you can use the `isSoapRequest()` method, e.g.:
 
