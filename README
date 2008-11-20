@@ -343,12 +343,12 @@ The `param` array in the `module.yml` file is passed to the result adapter's con
 There are three built-in adapters:
 
 *   `ckPropertyResultAdapter`:
-    *   gets the result from a property
+    *   gets the result from a property of the action object
     *   parameters:
         *   `property`:
             *   specifies the property name
             *   defaults to `result`
-    *   if there is only one property, this one is returned, also it name doesn't match the specified `member`
+    *   if there is only one property, this one is returned, also its name doesn't match the specified `property`
 *   `ckMethodResultAdapter`:
     *   gets the result from a method call on the action object
     *   parameters:
@@ -736,7 +736,7 @@ All primitive PHP types are supported:
 
 ### Disable wsdl caching during development
 
-If you often regenerate your wsdl file during development, you propably want to disable caching of this file, so changes become usable immidiatly.
+If you often regenerate your wsdl file during development, you propably want to disable caching of this file, so changes become usable immediatly.
 
 You can do this by modifying your `php.ini`:
 

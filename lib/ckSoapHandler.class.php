@@ -92,7 +92,7 @@ class ckSoapHandler
 
     if(!$event->isProcessed() && sfConfig::get('sf_logging_enabled'))
     {
-      $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf("SoapHeader '%s' unhandled.", $header_name))));
+      $this->context->getLogger()->info(sprintf("{%s} SoapHeader '%s' unhandled.", __CLASS__, $header_name));
     }
 
     return !is_null($event->getReturnValue()) ? $event->getReturnValue() : $data;

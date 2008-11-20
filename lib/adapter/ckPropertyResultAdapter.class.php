@@ -37,7 +37,7 @@ class ckPropertyResultAdapter extends ckAbstractResultAdapter
    */
   public function getResultProperty()
   {
-    return $this->resultMember;
+    return $this->resultProperty;
   }
 
   /**
