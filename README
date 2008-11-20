@@ -742,6 +742,31 @@ You can do this by modifying your `php.ini`:
 
     soap.wsdl_cache_enabled=0
 
+### Checking for SOAP request in actions
+
+If you want to check in an action if it is executed in webservice mode, you can use the `isSoapRequest()` method, e.g.:
+
+    [php]
+    <?php
+    
+    class FooActions extends sfActions
+    {
+      /**
+       * Some description...
+       *
+       * @ws-enable
+       */
+      public function executeBar($request)
+      {
+        if($this->isSoapRequest())
+        {
+          // do this only in webservice mode...
+        }
+        
+        // do this always...
+      }
+    }
+
 ## Support
 
 If you have any questions concerning the use of the plugin, send me an email to: christian-kerl [at] web [dot] de
