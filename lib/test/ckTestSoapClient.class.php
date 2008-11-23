@@ -132,7 +132,7 @@ class ckTestSoapClient extends SoapClient
 
     $GLOBALS['HTTP_RAW_POST_DATA'] = $this->lastRequest;
 
-    $this->browser->setHttpHeader('soapaction', $action);
+    $this->browser->setHttpHeader('soapaction', strval($action));
 
     $this->lastResponse = $this->browser->post('/')->getResponse()->getContent();
 
