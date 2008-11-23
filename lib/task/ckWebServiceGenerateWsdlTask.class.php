@@ -117,8 +117,8 @@ EOF;
 
     $app = $commandManager->getArgumentValue('application');
     $this->checkAppExists($app);
-    sfConfig::set('sf_app_module_dir', sprintf('%s/../../apps/%s/modules', $this->getPluginDir(), $app));
-    sfConfig::set('sf_app_lib_dir', sprintf('%s/../../apps/%s/lib', $this->getPluginDir(), $app));
+    sfConfig::set('sf_app_module_dir', sprintf('%s/%s/modules', sfConfig::get('sf_apps_dir'), $app));
+    sfConfig::set('sf_app_lib_dir', sprintf('%s/%s/lib', sfConfig::get('sf_apps_dir'), $app));
 
     $this->registerLibDirs();
 

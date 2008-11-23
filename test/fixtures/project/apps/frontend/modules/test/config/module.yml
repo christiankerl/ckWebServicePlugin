@@ -1,0 +1,2 @@
+soaptest:
+  test: { parameter: [input], result: { class: ckPropertyResultAdapter, param: { property: result } } }

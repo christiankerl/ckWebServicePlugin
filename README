@@ -32,8 +32,8 @@ Configure general plugin settings in your application's `app.yml` file.
       # enable the `ckSoapParameterFilter`
       enable_soap_parameter: on
       ck_web_service_plugin:
-        # the location of your wsdl file, relative to your project's `web/` folder
-        wsdl: myWebService.wsdl 
+        # the location of your wsdl file
+        wsdl: %SF_WEB_DIR%/myWebService.wsdl 
         # the class that will be registered as handler for webservice requests
         handler: ckSoapHandler
 

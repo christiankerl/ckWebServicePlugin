@@ -64,6 +64,16 @@ class ckWebServiceController extends sfWebController
   }
 
   /**
+   * Gets the raw soap request, which was send to the server either from '$HTTP_RAW_POST_DATA' or from 'php://input'.
+   *
+   * @return string
+   */
+  protected function getSoapRequest()
+  {
+    return isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : file_get_contents('php://input');
+  }
+
+  /**
    * Wrapper method around ckWebServiceController::handle() for compatibility with standard controller generator.
    *
    * @see function handle
@@ -126,7 +136,7 @@ class ckWebServiceController extends sfWebController
     $this->soap_server->setPersistence($persist);
 
     // start the server
-    $this->soap_server->handle();
+    $this->soap_server->handle($this->getSoapRequest());
   }
 
   /**
