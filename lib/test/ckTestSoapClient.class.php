@@ -54,6 +54,13 @@ class ckTestSoapClient extends SoapClient
   protected $lastResult;
 
   /**
+   * The soap fault of the last request.
+   *
+   * @var SoapFault
+   */
+  protected $lastSoapFault;
+
+  /**
    * The soap headers for the next request.
    *
    * @var array
@@ -82,6 +89,34 @@ class ckTestSoapClient extends SoapClient
   }
 
   /**
+   * Sets the target namespace of the xsd types, especially the soap header types.
+   *
+   * @param string $namespace
+   *
+   * @return ckTestSoapClient
+   */
+  public function setNamespace($namespace)
+  {
+    $this->namespace = $namespace;
+
+    return $this;
+  }
+
+  /**
+   * Adds required settings to a given soap option array.
+   *
+   * @param array $presets An array of soap option presets
+   *
+   * @return array A modified soap option preset array
+   */
+  public function getOptions($presets = array())
+  {
+    $presets['trace'] = 1;
+
+    return $presets;
+  }
+
+  /**
    * @see sfTestBrowser::test()
    *
    * @return lime_test
@@ -102,17 +137,13 @@ class ckTestSoapClient extends SoapClient
   }
 
   /**
-   * Adds required settings to a given soap option array.
+   * Gets the soap fault of the last response.
    *
-   * @param array $presets An array of soap option presets
-   *
-   * @return array A modified soap option preset array
+   * @return SoapFault The last soap fault
    */
-  public function getOptions($presets = array())
+  public function getFault()
   {
-    $presets['trace'] = 1;
-
-    return $presets;
+    return $this->lastSoapFault;
   }
 
   /**
@@ -148,20 +179,6 @@ class ckTestSoapClient extends SoapClient
   public function getResponseHeaders()
   {
     return $this->responseHeaders;
-  }
-
-  /**
-   * Sets the target namespace of the xsd types, especially the soap header types.
-   *
-   * @param string $namespace
-   *
-   * @return ckTestSoapClient
-   */
-  public function setNamespace($namespace)
-  {
-    $this->namespace = $namespace;
-
-    return $this;
   }
 
   /**
@@ -215,6 +232,8 @@ class ckTestSoapClient extends SoapClient
     $this->lastResult      = null;
     $this->lastSoapFault   = null;
     $this->responseHeaders = array();
+
+    $this->test()->comment(sprintf('%s(%s)', $method, !empty($parameters) ? '...' : ''));
 
     try
     {
@@ -315,6 +334,8 @@ class ckTestSoapClient extends SoapClient
    * @param string $selector The child object selector
    * @param string $type     The test type, one of 'value', 'type' or 'count'
    * @param mixed  $value    The value to test against
+   *
+   * @return ckTestSoapClient
    */
   protected function isObject($object, $selector, $type, $value)
   {
@@ -373,6 +394,60 @@ class ckTestSoapClient extends SoapClient
     {
       return null;
     }
+  }
+
+  /**
+   * Tests if the last response contained no soap fault.
+   *
+   * @return ckTestSoapClient
+   */
+  public function isFaultEmpty()
+  {
+    if(!is_null($this->getFault()))
+    {
+      $this->test()->fail('response contains a soap fault');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Tests if the last response contained a soap fault, if a message is given the soap fault message is tested against it.
+   *
+   * @param string $message A message to test against
+   *
+   * @return ckTestSoapClient
+   */
+  public function hasFault($message = null)
+  {
+    $f = $this->getFault();
+
+    if($f === null)
+    {
+      $this->test()->fail('response contains no soap fault');
+    }
+    else
+    {
+      // START copy from sfTestBrowser.class.php
+      if (null !== $message && preg_match('/^(!)?([^a-zA-Z0-9\\\\]).+?\\2[ims]?$/', $message, $match))
+      {
+        if ($match[1] == '!')
+        {
+          $this->test()->unlike($f->getMessage(), substr($message, 1), sprintf('response soap fault message does not match regex \'%s\'', $message));
+        }
+        else
+        {
+          $this->test()->like($f->getMessage(), $message, sprintf('response soap fault message matches regex \'%s\'', $message));
+        }
+      }
+      else if (null !== $message)
+      {
+        $this->test()->is($f->getMessage(), $message, sprintf('response soap fault message is \'%s\'', $message));
+      }
+      // END copy from sfTestBrowser.class.php
+    }
+
+    return $this;
   }
 
   /**

@@ -19,6 +19,10 @@ $c = new ckTestSoapClient();
 $testInput = 'some string';
 
 
+$c->non_existant()
+  ->hasFault('Function ("non_existant") is not a valid method for this service');
+
 $c->test_test($testInput)
+  ->isFaultEmpty()
   ->isType('', 'string')
   ->is('', $testInput);
