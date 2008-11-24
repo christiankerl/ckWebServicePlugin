@@ -210,7 +210,7 @@ We have to change the `wsdl` option in the application's `app.yml` file to `Math
       # ...
       ck_web_service_plugin:
         # the location of your wsdl file, relative to your project's `web/` folder
-        wsdl: MathApi.wsdl
+        wsdl: %SF_WEB_DIR%/MathApi.wsdl
 
 and we have to clear the cache.
 

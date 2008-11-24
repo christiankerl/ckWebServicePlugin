@@ -14,16 +14,11 @@ $debug = false;
 
 include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
-$c = new ckTestSoapClient(new sfTestBrowser());
+$c = new ckTestSoapClient();
 
 $testInput = 'some string';
 
 
-if($c->test_test($testInput)->getResult() == $testInput)
-{
-  echo 'Test succeded!';
-}
-else
-{
-  echo 'Test failed!';
-}
+$c->test_test($testInput)
+  ->isType('', 'string')
+  ->is('', $testInput);
