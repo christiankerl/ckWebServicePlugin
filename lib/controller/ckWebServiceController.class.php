@@ -30,6 +30,8 @@ class ckWebServiceController extends sfWebController
   public function initialize($context)
   {
     parent::initialize($context);
+
+    sfConfig::set('sf_format', 'soap');
   }
 
   /**
