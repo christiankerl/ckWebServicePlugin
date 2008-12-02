@@ -125,7 +125,7 @@ class ckWebServiceController extends sfWebController
 
     if (sfConfig::get('sf_logging_enabled'))
     {
-       $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Starting SoapServer with \'%s\' and handler \'%s\'.', $wsdl, $handler))));
+       $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Starting SoapServer with "%s" and handler "%s".', $wsdl, $handler))));
     }
 
     // construct the server
@@ -165,7 +165,7 @@ class ckWebServiceController extends sfWebController
     {
       if (sfConfig::get('sf_logging_enabled'))
       {
-         $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Forwarding to \'%s/%s\'.', $moduleName, $actionName))));
+         $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Forwarding to "%s/%s".', $moduleName, $actionName))));
       }
 
       // use forward to invoke the action, so we have to pass the filter chain
@@ -177,15 +177,19 @@ class ckWebServiceController extends sfWebController
       // if we have been redirected to the 404 module, we raise an exception
       if($actionInstance->getModuleName() == sfConfig::get('sf_error_404_module') && $actionInstance->getActionName() == sfConfig::get('sf_error_404_action'))
       {
-        throw new sfError404Exception(sprintf('{%s} SoapFunction \'%s_%s\' not found.', __CLASS__, $moduleName, $actionName));
+        throw new sfError404Exception(sprintf('{%s} SoapFunction "%s_%s" not found.', __CLASS__, $moduleName, $actionName));
       }
 
       return $this->getResultAdapter()->getResult($actionInstance);
     }
+    catch(SoapFault $f)
+    {
+      throw $f;
+    }
     catch(Exception $e)
     {
       // we return all exceptions as soap faults to the remote caller
-      throw new SoapFault('1', $e->getMessage(), '', $e->getTraceAsString());
+      throw new SoapFault('Server', $e->getMessage(), '', $e->getTraceAsString());
     }
   }
 }

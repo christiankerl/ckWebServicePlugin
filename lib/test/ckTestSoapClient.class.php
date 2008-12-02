@@ -19,9 +19,16 @@
 class ckTestSoapClient extends SoapClient
 {
   /**
-   * A sfTestBrowser to dispatch requests to the tested application.
+   * The lime_test shared amongst all instances of ckTestSoapClient.
    *
-   * @var sfTestBrowser
+   * @var lime_test
+   */
+  protected static $test;
+
+  /**
+   * A sfBrowser to dispatch requests to the tested application.
+   *
+   * @var sfBrowser
    */
   protected $browser;
 
@@ -82,7 +89,7 @@ class ckTestSoapClient extends SoapClient
   public function __construct($options = array())
   {
     $wsdl = sfConfig::get('app_ck_web_service_plugin_wsdl');
-    $this->browser = new sfTestBrowser();
+    $this->browser = new sfBrowser();
     $this->namespace = $this->getNamespaceFromWsdl($wsdl);
 
     parent::__construct($wsdl, $this->getOptions($options));
@@ -117,13 +124,18 @@ class ckTestSoapClient extends SoapClient
   }
 
   /**
-   * @see sfTestBrowser::test()
+   * Gets the lime_test shared amongst all instances of ckTestSoapClient.
    *
-   * @return lime_test
+   * @return lime_test A lime_test instance
    */
   public function test()
   {
-    return $this->browser->test();
+    if(is_null(self::$test))
+    {
+      self::$test = new lime_test();
+    }
+
+    return self::$test;
   }
 
   /**
@@ -233,7 +245,7 @@ class ckTestSoapClient extends SoapClient
     $this->lastSoapFault   = null;
     $this->responseHeaders = array();
 
-    $this->test()->comment(sprintf('%s(%s)', $method, !empty($parameters) ? '...' : ''));
+    $this->test()->diag(sprintf('%s(%s)', $method, !empty($parameters) ? '...' : ''));
 
     try
     {
@@ -349,13 +361,13 @@ class ckTestSoapClient extends SoapClient
     switch($type)
     {
       case 'value':
-        $this->test()->is($object, $value, sprintf('response object \'%s\' is \'%s\'', $selector, $value));
+        $this->test()->is($object, $value, sprintf('response object "%s" is "%s"', $selector, $value));
         break;
       case 'type':
-        $this->test()->isa_ok($object, $value, sprintf('response object \'%s\' is a \'%s\'', $selector, $value));
+        $this->test()->isa_ok($object, $value, sprintf('response object "%s" is a "%s"', $selector, $value));
         break;
       case 'count':
-        $this->test()->is(count($object), $value, sprintf('response object \'%s\' contains \'%s\' elements', $selector, $value));
+        $this->test()->is(count($object), $value, sprintf('response object "%s" contains "%s" elements', $selector, $value));
         break;
       default:
         $this->test()->fail('unknown check type');
@@ -378,17 +390,15 @@ class ckTestSoapClient extends SoapClient
    */
   protected function getChildObject($object, $index)
   {
-    if(is_array($object) && array_key_exists($index, $object))
-    {
-      return $object[$index];
-    }
-    else if(is_object($object) && property_exists($object, $index))
-    {
-      return $object->$index;
-    }
-    else if(strlen($index) == 0)
+    if(strlen($index) == 0)
     {
       return $object;
+    }
+    else if(is_array($object) || is_object($object))
+    {
+      $object = new ArrayObject($object);
+
+      return array_key_exists($index, $object) ? $object[$index] : null;
     }
     else
     {
@@ -433,16 +443,16 @@ class ckTestSoapClient extends SoapClient
       {
         if ($match[1] == '!')
         {
-          $this->test()->unlike($f->getMessage(), substr($message, 1), sprintf('response soap fault message does not match regex \'%s\'', $message));
+          $this->test()->unlike($f->getMessage(), substr($message, 1), sprintf('response soap fault message does not match regex "%s"', $message));
         }
         else
         {
-          $this->test()->like($f->getMessage(), $message, sprintf('response soap fault message matches regex \'%s\'', $message));
+          $this->test()->like($f->getMessage(), $message, sprintf('response soap fault message matches regex "%s"', $message));
         }
       }
       else if (null !== $message)
       {
-        $this->test()->is($f->getMessage(), $message, sprintf('response soap fault message is \'%s\'', $message));
+        $this->test()->is($f->getMessage(), $message, sprintf('response soap fault message is "%s"', $message));
       }
       // END copy from sfTestBrowser.class.php
     }
