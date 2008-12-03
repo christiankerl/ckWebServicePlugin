@@ -182,13 +182,14 @@ class ckWebServiceController extends sfWebController
 
       return $this->getResultAdapter()->getResult($actionInstance);
     }
-    catch(SoapFault $f)
+    catch(SoapFault $e)
     {
-      throw $f;
+      // soap fault with custom fault codes thrown in the actions will be left untouched 
+      throw $e;
     }
     catch(Exception $e)
     {
-      // we return all exceptions as soap faults to the remote caller
+      // we return all other exceptions as soap faults to the remote caller
       throw new SoapFault('Server', $e->getMessage(), '', $e->getTraceAsString());
     }
   }
