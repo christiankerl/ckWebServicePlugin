@@ -13,6 +13,7 @@ if (!isset($_SERVER['SYMFONY']))
 {
   throw new RuntimeException('Could not find symfony core libraries.');
 }
+require_once($_SERVER['SYMFONY'].'/vendor/lime/lime.php');
 
 require_once($_SERVER['SYMFONY'].'/autoload/sfCoreAutoload.class.php');
 sfCoreAutoload::register();
@@ -24,11 +25,11 @@ $configuration = ProjectConfiguration::getApplicationConfiguration($app, 'soapte
 sfContext::createInstance($configuration);
 
 // remove all cache
-functional_test_shutdown();
+ck_functional_test_shutdown();
 
-register_shutdown_function('functional_test_shutdown');
+register_shutdown_function('ck_functional_test_shutdown');
 
-function functional_test_shutdown()
+function ck_functional_test_shutdown()
 {
   sfToolkit::clearDirectory(sfConfig::get('sf_cache_dir'));
   sfToolkit::clearDirectory(sfConfig::get('sf_log_dir'));

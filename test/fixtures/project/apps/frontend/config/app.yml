@@ -5,4 +5,11 @@ soaptest:
   ck_web_service_plugin:
     wsdl: %SF_WEB_DIR%/TestServiceApi.wsdl
     handler: ckSoapHandler
+    soap_options:
+      classmap:
+        TestData:         TestData
+        IntArray:         ckGenericArray
+        StringArray:      ckGenericArray
+        TestDataArray:    ckGenericArray
+        StringArrayArray: ckGenericArray
   

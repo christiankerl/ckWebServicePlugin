@@ -200,13 +200,15 @@ class ckTestSoapClient extends SoapClient
    */
   public function __doRequest($request, $location, $action, $version)
   {
-    $this->lastRequest = $request;
+    $this->lastRequest = strval($request);
 
     $GLOBALS['HTTP_RAW_POST_DATA'] = $this->lastRequest;
 
     $this->browser->setHttpHeader('soapaction', strval($action));
 
-    $this->lastResponse = $this->browser->post('/')->getResponse()->getContent();
+    sfFilter::$filterCalled = array();
+
+    $this->lastResponse = strval($this->browser->post('/')->getResponse()->getContent());
 
     return $this->lastResponse;
   }
@@ -394,11 +396,13 @@ class ckTestSoapClient extends SoapClient
     {
       return $object;
     }
-    else if(is_array($object) || is_object($object))
+    else if(is_array($object) || $object instanceof ArrayAccess)
     {
-      $object = new ArrayObject($object);
-
-      return array_key_exists($index, $object) ? $object[$index] : null;
+      return $object[$index];
+    }
+    else if(is_object($object))
+    {
+      return $object->$index;
     }
     else
     {

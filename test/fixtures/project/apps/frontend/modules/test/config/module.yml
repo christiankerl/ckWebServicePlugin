@@ -1,2 +1,11 @@
 soaptest:
-  test: { parameter: [input], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  simple: { parameter: [boolVal, intVal, stringVal, floatVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  complex: { parameter: [testDataVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  arraySimple: { parameter: [intArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  arrayComplex: { parameter: [testDataArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  arrayArray: { parameter: [stringArrayOfArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  headerSingle: {  }
+  headerMulti: {  }
+  exception: {  }
+  methodResult: {  }
+  renderResult: {  }

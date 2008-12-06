@@ -23,7 +23,14 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
    *
    * @var array
    */
-  protected $item = array();
+  protected $_item = array();
+
+  /**
+   * True if the 'item' property was set, false otherwise.
+   *
+   * @var bool
+   */
+  protected $initialized = false;
 
   /**
    * Default constructor initializing the generic array with the values from a given array.
@@ -40,7 +47,7 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
    */
   public function getIterator()
   {
-    return new ArrayIterator($this->item);
+    return new ArrayIterator($this->_item);
   }
 
   /**
@@ -48,7 +55,7 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
    */
   public function count()
   {
-    return count($this->item);
+    return count($this->_item);
   }
 
   /**
@@ -56,7 +63,7 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
    */
   public function offsetExists($offset)
   {
-    return isset($this->item[$offset]) ? true : false;
+    return isset($this->_item[$offset]) ? true : false;
   }
 
   /**
@@ -64,7 +71,7 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
    */
   public function offsetGet($offset)
   {
-    return $this->item[$offset];
+    return $this->_item[$offset];
   }
 
   /**
@@ -74,11 +81,11 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
   {
     if(is_null($offset))
     {
-      $this->item[] = value;
+      $this->_item[] = value;
     }
     else
     {
-      $this->item[$offset] = value;
+      $this->_item[$offset] = value;
     }
   }
 
@@ -87,7 +94,7 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
    */
   public function offsetUnset($offset)
   {
-    unset($this->item[$offset]);
+    unset($this->_item[$offset]);
   }
 
   /**
@@ -97,6 +104,38 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
    */
   public function toArray()
   {
-    return $this->item;
+    return array_map(array(__CLASS__, 'toArrayDeep'), $this->_item);
+  }
+
+  /**
+   * Sets the 'item' property once, so a bug with arrays containing only one value is fixed.
+   *
+   * @param string $property A property name
+   * @param mixed  $value    A property value
+   */
+  public function __set($property, $value)
+  {
+    if($property == 'item' && !$this->initialized)
+    {
+      if(!is_array($value))
+      {
+        $value = array($value);
+      }
+
+      $this->_item = $value;
+      $this->initialized = true;
+    }
+  }
+
+  /**
+   * If a given value is a ckGenericArray object its toArray() method is called, otherwise the given value is returned.
+   *
+   * @param mixed $input A value
+   *
+   * @return mixed The given value, or the result of toArray() if it is a ckGenericArray
+   */
+  protected static function toArrayDeep($input)
+  {
+    return $input instanceof ckGenericArray ? $input->toArray() : $input;
   }
 }
