@@ -13,4 +13,8 @@ soaptest:
         StringArray:      ckGenericArray
         TestDataArray:    ckGenericArray
         StringArrayArray: ckGenericArray
-  
+    soap_headers:
+      AuthHeader:
+        class: AuthData
+      ExtraHeader:
+        class: TestData

@@ -130,14 +130,33 @@ class testActions extends sfActions
     }
   }
 
+  /**
+   * Test action for handling a single SoapHeader.
+   *
+   * @ws-enable
+   * @ws-header AuthHeader: AuthData
+   */
   public function executeHeaderSingle($request)
   {
-
+    if(!$this->getUser()->isAuthenticated())
+    {
+      throw new sfException('HeaderHandlingException');
+    }
   }
 
+  /**
+   * Test action for handling multiple SoapHeaders.
+   *
+   * @ws-enable
+   * @ws-header AuthHeader: AuthData
+   * @ws-header ExtraHeader: TestData
+   */
   public function executeHeaderMulti($request)
   {
-
+    if(!$this->getUser()->isAuthenticated())
+    {
+      throw new sfException('HeaderHandlingException');
+    }
   }
 
   /**

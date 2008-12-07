@@ -16,10 +16,10 @@ include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
 $c = new ckTestSoapClient();
 
-// test exception
+// test executeException
 $c->test_exception()
   ->hasFault('TestException');
 
-// test soapFault
+// test executeSoapFault
 $c->test_soapFault()
   ->hasFault('TestSoapFault');

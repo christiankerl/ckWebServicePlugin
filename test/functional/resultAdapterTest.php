@@ -16,14 +16,14 @@ include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
 $c = new ckTestSoapClient();
 
-// test methodResult
+// test executeMethodResult
 $c->test_methodResult()
   ->isFaultEmpty()
   ->isType('', 'string')
   ->is('', 'TestResponse')
   ;
 
-// test renderResult
+// test executeRenderResult
 $c->test_renderResult()
   ->isFaultEmpty()
   ->isType('', 'string')
