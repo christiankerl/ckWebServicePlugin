@@ -199,7 +199,7 @@
     <wsdl:part name="boolVal" type="xsd:boolean"/>
     <wsdl:part name="intVal" type="xsd:int"/>
     <wsdl:part name="stringVal" type="xsd:string"/>
-    <wsdl:part name="floatVal" type="xsd:float"/>
+    <wsdl:part name="floatVal" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="test_simpleResponse">
     <wsdl:part name="result" type="xsd:boolean"/>

@@ -9,16 +9,16 @@
         </xsd:sequence>
       </xsd:complexType>
       <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AuthHeaderElement" type="tns:AuthHeader"/>
-      <xsd:complexType name="FloatArray">
+      <xsd:complexType name="DoubleArray">
         <xsd:sequence>
-          <xsd:element name="item" type="xsd:float" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element name="item" type="xsd:double" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
       </xsd:complexType>
-      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="FloatArrayElement" type="tns:FloatArray"/>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoubleArrayElement" type="tns:DoubleArray"/>
       <xsd:complexType name="ComplexNumber">
         <xsd:sequence>
-          <xsd:element name="realPart" type="xsd:float"/>
-          <xsd:element name="imaginaryPart" type="xsd:float"/>
+          <xsd:element name="realPart" type="xsd:double"/>
+          <xsd:element name="imaginaryPart" type="xsd:double"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ComplexNumberElement" type="tns:ComplexNumber"/>
@@ -103,33 +103,33 @@
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:message name="math_multiplyRequest">
-    <wsdl:part name="a" type="xsd:float"/>
-    <wsdl:part name="b" type="xsd:float"/>
+    <wsdl:part name="a" type="xsd:double"/>
+    <wsdl:part name="b" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="math_multiplyResponse">
-    <wsdl:part name="result" type="xsd:float"/>
+    <wsdl:part name="result" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="SimpleMultiplyRequest">
-    <wsdl:part name="a" type="xsd:float"/>
-    <wsdl:part name="b" type="xsd:float"/>
+    <wsdl:part name="a" type="xsd:double"/>
+    <wsdl:part name="b" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="SimpleMultiplyResponse">
-    <wsdl:part name="result" type="xsd:float"/>
+    <wsdl:part name="result" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="SimpleMultiplyWithHeaderRequest">
     <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
-    <wsdl:part name="a" type="xsd:float"/>
-    <wsdl:part name="b" type="xsd:float"/>
+    <wsdl:part name="a" type="xsd:double"/>
+    <wsdl:part name="b" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="SimpleMultiplyWithHeaderResponse">
     <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
-    <wsdl:part name="result" type="xsd:float"/>
+    <wsdl:part name="result" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="ArrayMultiplyRequest">
-    <wsdl:part name="factors" type="tns:FloatArray"/>
+    <wsdl:part name="factors" type="tns:DoubleArray"/>
   </wsdl:message>
   <wsdl:message name="ArrayMultiplyResponse">
-    <wsdl:part name="result" type="xsd:float"/>
+    <wsdl:part name="result" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="ComplexMultiplyRequest">
     <wsdl:part name="input" type="tns:ComplexNumberArray"/>

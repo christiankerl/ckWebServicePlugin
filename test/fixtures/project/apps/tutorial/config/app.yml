@@ -7,7 +7,7 @@ soaptest:
     handler: MathApiHandler
     soap_options:
       classmap:
-        FloatArray:         ckGenericArray
+        DoubleArray:        ckGenericArray
         ComplexNumber:      ComplexNumber
         ComplexNumberArray: ckGenericArray
     soap_headers:
