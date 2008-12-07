@@ -167,8 +167,14 @@ class ckWebServiceController extends sfWebController
          $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Forwarding to "%s/%s".', $moduleName, $actionName))));
       }
 
-      // use forward to invoke the action, so we have to pass the filter chain
-      $this->forward($moduleName, $actionName);
+      try
+      {
+        // use forward to invoke the action, so we have to pass the filter chain
+        $this->forward($moduleName, $actionName);
+      }
+      catch(sfStopException $e)
+      {
+      }
 
       // get the last executed action
       $actionInstance = $this->getActionStack()->getLastEntry()->getActionInstance();
@@ -189,7 +195,7 @@ class ckWebServiceController extends sfWebController
     catch(Exception $e)
     {
       // we return all other exceptions as soap faults to the remote caller
-      throw new SoapFault('Server', $e->getMessage(), '', $e->getTraceAsString());
+      throw new SoapFault('Server', $e->getMessage(), get_class($e), $e->getTraceAsString());
     }
   }
 }

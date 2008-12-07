@@ -39,7 +39,7 @@ class ckWebServiceGenerateWsdlTask extends sfGeneratorBaseTask
 
   public function ##NAME##(##PARAMS##)
   {
-  	return \$this->context->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
+  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
   }
 
 EOF;
