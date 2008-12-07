@@ -44,11 +44,12 @@ class ckMethodResultAdapter extends ckAbstractResultAdapter
    */
   public function __construct($parameters = array())
   {
-    if(!isset($parameter['method']))
+    if(!isset($parameters['method']))
     {
       throw new sfConfigurationException('The \'method\' parameter has to be specified.');
     }
-    $this->resultMethod = $parameter['method'];
+
+    $this->resultMethod = $parameters['method'];
   }
 
   /**

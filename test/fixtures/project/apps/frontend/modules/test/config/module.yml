@@ -6,6 +6,7 @@ soaptest:
   arrayArray: { parameter: [stringArrayOfArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
   headerSingle: {  }
   headerMulti: {  }
-  exception: {  }
-  methodResult: {  }
-  renderResult: {  }
+  exception: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  soapFault: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  methodResult: { parameter: {  }, result: { class: ckMethodResultAdapter, param: { method: getFilteredResult } } }
+  renderResult: { parameter: {  }, result: { class: ckRenderResultAdapter, param: { property: result } } }

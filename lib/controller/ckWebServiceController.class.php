@@ -30,8 +30,6 @@ class ckWebServiceController extends sfWebController
   public function initialize($context)
   {
     parent::initialize($context);
-
-    sfConfig::set('sf_format', 'soap');
   }
 
   /**
@@ -159,6 +157,7 @@ class ckWebServiceController extends sfWebController
 
     $request = $this->context->getRequest();
 
+    $request->setRequestFormat('soap');
     $request->setParameter('ck_web_service_plugin.param', $parameters);
 
     try

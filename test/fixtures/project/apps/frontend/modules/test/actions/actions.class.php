@@ -140,21 +140,65 @@ class testActions extends sfActions
 
   }
 
+  /**
+   * Test action for throwing custom Exceptions.
+   *
+   * @ws-enable
+   */
   public function executeException($request)
   {
     if($this->isSoapRequest())
     {
-      throw new sfExeption('TestException');
+      throw new sfException('TestException');
     }
   }
 
-  public function executeMethodResult($request)
+  /**
+   * Test action for throwing custom SoapFaults.
+   *
+   * @ws-enable
+   */
+  public function executeSoapFault($request)
   {
-
+    if($this->isSoapRequest())
+    {
+      throw new SoapFault('Server', 'TestSoapFault');
+    }
   }
 
+  /**
+   * Test action for the ckMethodResultAdapter.
+   *
+   * @ws-enable
+   *
+   * @return string
+   */
+  public function executeMethodResult($request)
+  {
+    $this->result = 'T3stR3spons3';
+  }
+
+  /**
+   * Test action for the ckRenderResultAdapter.
+   *
+   * @ws-enable
+   *
+   * @return string
+   */
   public function executeRenderResult($request)
   {
+    if($this->isSoapRequest())
+    {
+      $this->setLayout(false);
+    }
+
+    $this->result = array('a', 'b', 1, 2);
+
     return sfView::SUCCESS;
+  }
+
+  public function getFilteredResult()
+  {
+    return str_replace('3', 'e', $this->result);
   }
 }
