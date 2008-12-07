@@ -135,7 +135,7 @@ class ckWebServiceController extends sfWebController
     $this->soap_server->setClass($handler);
 
     // set the persistence mode
-    //$this->soap_server->setPersistence($persist);
+    $this->soap_server->setPersistence($persist);
 
     // start the server
     $this->soap_server->handle($this->getSoapRequest());

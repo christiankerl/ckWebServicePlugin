@@ -26,7 +26,6 @@ $_options = array(
 $c = new ckTestSoapClient($_options);
 
 // test executeSimple
-
 $c->test_simple(true, 5, 'a string', 1.5)
   ->isFaultEmpty()
   ->isType('', 'boolean')
@@ -60,6 +59,7 @@ $c->test_arrayComplex($array)
   ->isFaultEmpty()
   ->isType('', 'ckGenericArray')
   ->isCount('', 1)
+  ->isType('0', 'TestData')
   ->is('0.content', $object->content);
 
 // test arrayArray

@@ -5,6 +5,7 @@ soaptest:
   ck_web_service_plugin:
     wsdl: %SF_WEB_DIR%/TestServiceApi.wsdl
     handler: ckSoapHandler
+    persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>
     soap_options:
       classmap:
         TestData:         TestData

@@ -21,18 +21,10 @@ class ckSoapHandler
   const HEADER_SUFFIX = 'Element';
 
   /**
-   * The current context.
-   *
-   * @var sfContext
-   */
-  protected $context;
-
-  /**
    * Standard constructor.
    */
   public function __construct()
   {
-    $this->context = sfContext::getInstance();
   }
 
   /**
@@ -88,11 +80,11 @@ class ckSoapHandler
    */
   protected function dispatchSoapHeaderEvent($name, $data)
   {
-    $event = $this->context->getEventDispatcher()->notifyUntil(new sfEvent($this, 'webservice.handle_header', array('header' => $name, 'data' => $data)));
+    $event = sfContext::getInstance()->getEventDispatcher()->notifyUntil(new sfEvent($this, 'webservice.handle_header', array('header' => $name, 'data' => $data)));
 
     if(!$event->isProcessed() && sfConfig::get('sf_logging_enabled'))
     {
-      $this->context->getLogger()->info(sprintf('{%s} SoapHeader "%s" unhandled.', __CLASS__, $header_name));
+      sfContext::getInstance()->getLogger()->info(sprintf('{%s} SoapHeader "%s" unhandled.', __CLASS__, $header_name));
     }
 
     return !is_null($event->getReturnValue()) ? $event->getReturnValue() : $data;
@@ -119,7 +111,7 @@ class ckSoapHandler
       $module = $parts[0];
       $action = isset($parts[1]) && strlen($parts[1]) > 0 ? $parts[1] : 'index';
 
-      return $this->context->getController()->invokeSoapEnabledAction($module, $action, $arguments);
+      return sfContext::getInstance()->getController()->invokeSoapEnabledAction($module, $action, $arguments);
     }
   }
 }

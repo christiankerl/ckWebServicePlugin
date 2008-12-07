@@ -73,7 +73,7 @@ These are:
           # ...
           ck_web_service_plugin:
           # ...
-          persist: %SOAP_PERSISTENCE_SESSION%
+          persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>
 
     For further information see documentation on `SoapServer::setPersistence()`.
     
@@ -86,7 +86,7 @@ These are:
           # ...
           soap_options:
             encoding: utf-8
-            soap_version: %SOAP_1_2%
+            soap_version: <?php echoln(SOAP_1_2) ?>
 
     For further information see documentation on `SoapServer::__construct()`.
 
@@ -356,6 +356,7 @@ There are three built-in adapters:
             *   specifies the method name
 *   `ckRenderResultAdapter`:
     *   executes the standard render pipeline and returns the resulting text
+    *   the `sf_format` is set to `soap` so template file names have to end with `.soap.php`, e.g.: `indexSuccess.soap.php`
     *   if this adapter is used the return value has to be `string`
     *   parameters:
         *   none
@@ -720,6 +721,11 @@ The last missing thing is a simple test script:
 
 >**TIP**
 >When creating a new `SoapHeader` object with `SoapHeader::__construct()` the name of the SOAP Header has to end with `Element`.
+
+## Functional Testing
+
+As you have seen in the previous examples the plugin comes with a `ckTestSoapClient` class for functional testing of local webservices.
+It provides a similar functionality as `sfTestBrowser`. This section covers the various methods of `ckTestSoapClient` in more detail. 
 
 ## Reference
 

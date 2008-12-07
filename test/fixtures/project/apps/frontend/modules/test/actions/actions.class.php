@@ -157,8 +157,4 @@ class testActions extends sfActions
   {
     return sfView::SUCCESS;
   }
-
-
-
-
 }
