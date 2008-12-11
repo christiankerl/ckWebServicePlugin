@@ -16,10 +16,10 @@ include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
 $_options = array(
   'classmap' => array(
-    'TestData'           => 'TestData',
-    'StringArray'        => 'ckGenericArray',
-    'TestDataArray'      => 'ckGenericArray',
-    'StringArrayArray'   => 'ckGenericArray',
+    'TestData'         => 'TestData',
+    'StringArray'      => 'ckGenericArray',
+    'TestDataArray'    => 'ckGenericArray',
+    'StringArrayArray' => 'ckGenericArray',
   ),
 );
 

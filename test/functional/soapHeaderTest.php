@@ -16,8 +16,8 @@ include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
 $_options = array(
   'classmap' => array(
-    'ExtraHeader' => 'TestData',
-    'AuthHeader' => 'AuthData',
+    'ExtraHeader' => 'ExtraHeaderData',
+    'AuthHeader'  => 'AuthData',
   ),
 );
 
@@ -41,7 +41,7 @@ $authData = new AuthData();
 $authData->username = 'user';
 $authData->password = 'secret';
 
-$testData = new TestData();
+$testData = new ExtraHeaderData();
 $testData->content = 'input';
 
 $c->addRequestHeader('AuthHeaderElement', $authData)
@@ -51,6 +51,6 @@ $c->addRequestHeader('AuthHeaderElement', $authData)
   ->isHeaderType('AuthHeaderElement', 'AuthData')
   ->isHeader('AuthHeaderElement.username', 'reset')
   ->isHeader('AuthHeaderElement.password', 'reset')
-  ->isHeaderType('ExtraHeaderElement', 'TestData')
+  ->isHeaderType('ExtraHeaderElement', 'ExtraHeaderData')
   ->isHeader('ExtraHeaderElement.content', 'HandledInput(input)')
   ;

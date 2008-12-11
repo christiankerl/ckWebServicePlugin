@@ -132,7 +132,7 @@ class ckTestSoapClient extends SoapClient
   {
     if(is_null(self::$test))
     {
-      self::$test = new lime_test();
+      self::$test = new lime_test(null, new lime_output_color());
     }
 
     return self::$test;
@@ -359,6 +359,8 @@ class ckTestSoapClient extends SoapClient
     {
       $object = $this->getChildObject($object, $index);
     }
+
+    $selector = !strlen($selector) ? '.' : $selector;
 
     switch($type)
     {

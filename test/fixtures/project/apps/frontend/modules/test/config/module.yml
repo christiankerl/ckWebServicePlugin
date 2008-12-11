@@ -8,5 +8,5 @@ soaptest:
   headerMulti: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
   exception: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
   soapFault: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
-  methodResult: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
-  renderResult: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  methodResult: { parameter: {  }, result: { class: ckMethodResultAdapter, param: { method: getFilteredResult } } }
+  renderResult: { parameter: {  }, result: { class: ckRenderResultAdapter, param: {  } } }

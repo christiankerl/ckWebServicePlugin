@@ -17,4 +17,4 @@ soaptest:
       AuthHeader:
         class: AuthData
       ExtraHeader:
-        class: TestData
+        class: ExtraHeaderData

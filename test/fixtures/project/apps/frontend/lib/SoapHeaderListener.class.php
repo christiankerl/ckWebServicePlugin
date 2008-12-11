@@ -40,7 +40,7 @@ class SoapHeaderListener
     return $data;
   }
 
-  public static function handleExtraHeader(TestData $data)
+  public static function handleExtraHeader(ExtraHeaderData $data)
   {
     $data->content = sprintf('HandledInput(%s)', $data->content);
 

@@ -149,7 +149,7 @@ class testActions extends sfActions
    *
    * @ws-enable
    * @ws-header AuthHeader: AuthData
-   * @ws-header ExtraHeader: TestData
+   * @ws-header ExtraHeader: ExtraHeaderData
    */
   public function executeHeaderMulti($request)
   {
