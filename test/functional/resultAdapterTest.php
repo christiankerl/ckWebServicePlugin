@@ -10,7 +10,7 @@
  */
 
 $app = 'frontend';
-$debug = false;
+$debug = true;
 
 include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 

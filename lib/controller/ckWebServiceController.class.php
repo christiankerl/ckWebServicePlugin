@@ -195,7 +195,19 @@ class ckWebServiceController extends sfWebController
     catch(Exception $e)
     {
       // we return all other exceptions as soap faults to the remote caller
-      throw new SoapFault('Server', $e->getMessage(), get_class($e), $e->getTraceAsString());
+      throw $this->getSoapFaultFromException($e);
+    }
+  }
+
+  protected function getSoapFaultFromException(Exception $exception)
+  {
+    if(sfConfig::get('sf_debug'))
+    {
+      return new SoapFault('Server', $exception->getMessage(), get_class($exception), $exception->getTraceAsString());
+    }
+    else
+    {
+      return new SoapFault('Server', 'Internal Server Error');
     }
   }
 }

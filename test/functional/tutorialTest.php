@@ -10,7 +10,7 @@
  */
 
 $app = 'tutorial';
-$debug = false;
+$debug = true;
 
 include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 

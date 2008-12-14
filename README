@@ -72,8 +72,8 @@ These are:
         soap:
           # ...
           ck_web_service_plugin:
-          # ...
-          persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>
+            # ...
+            persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>
 
     For further information see documentation on `SoapServer::setPersistence()`.
     
@@ -83,10 +83,10 @@ These are:
         soap:
           # ...
           ck_web_service_plugin:
-          # ...
-          soap_options:
-            encoding: utf-8
-            soap_version: <?php echoln(SOAP_1_2) ?>
+            # ...
+            soap_options:
+              encoding: utf-8
+              soap_version: <?php echoln(SOAP_1_2) ?>
 
     For further information see documentation on `SoapServer::__construct()`.
 
@@ -96,12 +96,12 @@ These are:
         soap:
           # ...
           ck_web_service_plugin:
-          # ...
-          soap_headers:
-            # the name of the soap header
-            MySoapHeader: 
-              # the corresponding data class
-              class: MySoapHeaderDataClass
+            # ...
+            soap_headers:
+              # the name of the soap header
+              MySoapHeader: 
+                # the corresponding data class
+                class: MySoapHeaderDataClass
 
     For more details about the usage of SOAP Headers read the section `Using SOAP Headers`
 
@@ -227,7 +227,7 @@ The script will be named `mathApiTest.php` and placed under the project's `test/
     
     // test/functional/mathApiTest.php    
     $app   = 'frontend';
-    $debug = false;
+    $debug = true;
 
     include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
 
@@ -294,7 +294,7 @@ Our test script has to be updated:
     
     // test/functional/mathApiTest.php    
     $app   = 'frontend';
-    $debug = false;
+    $debug = true;
 
     include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
 
@@ -443,7 +443,7 @@ Our test script might look like this now:
     
     // test/functional/mathApiTest.php    
     $app   = 'frontend';
-    $debug = false;
+    $debug = true;
 
     include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
 
@@ -550,7 +550,7 @@ Our updated test script will look something like this:
     
     // test/functional/mathApiTest.php    
     $app   = 'frontend';
-    $debug = false;
+    $debug = true;
 
     include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
 
@@ -727,10 +727,10 @@ The last missing thing is the updated test script:
     
     // test/functional/mathApiTest.php    
     $app   = 'frontend';
-    $debug = false;
-
+    $debug = true;
+    
     include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
-
+    
     class ClientComplexNumber
     {
       // ...
@@ -824,11 +824,11 @@ It will be named `soaptest.php` and will have the following content:
 
     [php]
     <?php
-
+    
     require_once dirname(__FILE__).'/../../config/ProjectConfiguration.class.php';
     $configuration = ProjectConfiguration::getApplicationConfiguration($app, 'soaptest', isset($debug) ? $debug : true);
     sfContext::createInstance($configuration);
-
+    
     // remove all cache
     sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
 
@@ -837,25 +837,26 @@ This is the same as the default `functional.php` script except the environment p
 >**TIP**
 >You have to run the `webservice:generate-wsdl` task always twice, once for the `soap` environment and once for the `soaptest` environment, do not forget to set the `--environment` switch to the proper value.
 
-## Using `ckTestSoapClient` 
+## Using `ckTestSoapClient`
 
-The `ckTestSoapClient` class lets you execute webservice requests to your symfony application without the need of a webserver.
+The `ckTestSoapClient` class lets you dispatch webservice requests to your symfony application without the need of a webserver.
+Additionally it offers several evaluation methods for the result of each request.
 
 A good starting point for every test script is the following template:
 
     [php]
     <?php
     
-    $app = 'frontend';
-    $debug = false;
-
+    $app   = 'frontend';
+    $debug = true;
+    
     include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
-
+    
     $options = array(
       'classmap' => array(
       ),
     );
-
+    
     $c = new ckTestSoapClient($options);
 
 Change the `$app` variable to the name of the application you want to test.
@@ -863,7 +864,7 @@ Change the `$app` variable to the name of the application you want to test.
 >**TIP**
 >The `$options` array supplied to the constructor is the same as the one of PHP's SoapClient constructor.
 
-...
+
 
 # Reference
 
