@@ -27,6 +27,11 @@ So if you are using this plugin the first time you can skip the `Advanced` secti
 
 Configure general plugin settings in your application's `app.yml` file.
 
+    all:
+      # because by default every filter condition is true, we have to set this var
+      # to off in all other environments
+      enable_soap_parameter: off
+
     # your environment for webservice mode
     soap:
       # enable the `ckSoapParameterFilter`
