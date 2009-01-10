@@ -129,7 +129,7 @@ An example `module.yml` file:
           class: ckPropertyResultAdapter
           # result adapter specific parameters array
           param:
-            member: result
+            property: result
 
 The result adapters will be explained in more detail in the section `Understanding result adapters`.
 
@@ -869,7 +869,49 @@ Change the `$app` variable to the name of the application you want to test.
 >**TIP**
 >The `$options` array supplied to the constructor is the same as the one of PHP's SoapClient constructor.
 
+Calling a SOAP Action is quite easy, just use it as it would be a method of the `ckTestSoapClient` object:
 
+    [php]
+    $c->myMethod($param1, $param2);
+
+The call does not directly return the result, instead it returns the `ckTestSoapClient` object, this offers you a so called fluent interface
+ how it is often found in the symfony framework.
+
+To get the actual result you have to call the `getResult()` method:
+
+    [php]
+    $result = $c->myMethod($param1, $param2)
+                ->getResult();
+
+For evaluating the result, the `ckTestSoapClient` class offers three methods `is()` checks the value, `isType()` checks the type and `isCount()` checks the element count,
+ useful when the result is an array.
+
+The first argument is always a child element selector, so you can easily access and check properties or array elements, the second argument is a value to check against.
+
+A child element selector can either be empty so the result itself is accessed or arbitrary count of property names or array indexes separated by a `.` (dot).
+
+Some examples for selectors:
+
+*   `''` accesses the result,
+*   `'name'` accesses the `name` property of the result object,
+*   `'1.name'` accesses the `name` property of the second object in the result array,
+*   `'cities.0.name'` accesses the `name` property of the first object in the `cities` array, which is a property of the result object. 
+
+Various examples for the use of the three methods `is()`, `isType()` and `isCount()` can be found in the test scripts given in this README.
+
+You can also add SOAP Headers for the next request with the `addRequestHeader()` method, whichs first parameter is the header name and the second is the data object, e.g.:
+
+    [php]
+    $c->addRequestHeader('MyHeaderElement', new MyHeaderData('content'))
+      ->myMethodWithHeader();
+
+The headers are cleared after each request, so do not forget to add them again if you need them more then once.
+
+Similar to the evaluation methods for the result, there are three methods to evaluate the response headers. These are `isHeader()`, `isHeaderType()` and `isHeaderCount()`.
+The parameter list is the same, but the child element selector has to contain at least the header name.
+
+
+- check for faults
 
 # Reference
 
