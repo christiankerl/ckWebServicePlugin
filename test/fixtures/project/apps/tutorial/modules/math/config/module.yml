@@ -1,0 +1,6 @@
+soaptest:
+  multiply: { parameter: [a, b], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  simpleMultiply: { parameter: [a, b], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  arrayMultiply: { parameter: [factors], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  complexMultiply: { parameter: [input], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  simpleMultiplyWithHeader: { parameter: [a, b], result: { class: ckPropertyResultAdapter, param: { property: result } } }

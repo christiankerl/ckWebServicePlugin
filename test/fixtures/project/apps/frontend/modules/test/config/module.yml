@@ -1,0 +1,12 @@
+soaptest:
+  simple: { parameter: [boolVal, intVal, stringVal, floatVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  complex: { parameter: [testDataVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  arraySimple: { parameter: [intArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  arrayComplex: { parameter: [testDataArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  arrayArray: { parameter: [stringArrayOfArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  headerSingle: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  headerMulti: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  exception: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  soapFault: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  methodResult: { parameter: {  }, result: { class: ckMethodResultAdapter, param: { method: getFilteredResult } } }
+  renderResult: { parameter: {  }, result: { class: ckRenderResultAdapter, param: {  } } }

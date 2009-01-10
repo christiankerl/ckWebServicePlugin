@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApi" targetNamespace="http://localhost/" xmlns:tns="http://localhost/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+  <wsdl:types xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://localhost/">
+      <xsd:complexType name="TestData">
+        <xsd:sequence>
+          <xsd:element name="content" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="TestDataElement" type="tns:TestData"/>
+      <xsd:complexType name="IntArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="xsd:int" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="IntArrayElement" type="tns:IntArray"/>
+      <xsd:complexType name="StringArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="StringArrayElement" type="tns:StringArray"/>
+      <xsd:complexType name="TestDataArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:TestData" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="TestDataArrayElement" type="tns:TestDataArray"/>
+      <xsd:complexType name="StringArrayArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:StringArray" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="StringArrayArrayElement" type="tns:StringArrayArray"/>
+      <xsd:complexType name="AuthHeader">
+        <xsd:sequence>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="password" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AuthHeaderElement" type="tns:AuthHeader"/>
+      <xsd:complexType name="ExtraHeader">
+        <xsd:sequence>
+          <xsd:element name="content" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ExtraHeaderElement" type="tns:ExtraHeader"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:portType name="TestServiceApiPortType">
+    <wsdl:operation name="test_simple" parameterOrder="boolVal intVal stringVal floatVal">
+      <wsdl:input message="tns:test_simpleRequest"/>
+      <wsdl:output message="tns:test_simpleResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_complex" parameterOrder="testDataVal">
+      <wsdl:input message="tns:test_complexRequest"/>
+      <wsdl:output message="tns:test_complexResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_arraySimple" parameterOrder="intArrayVal">
+      <wsdl:input message="tns:test_arraySimpleRequest"/>
+      <wsdl:output message="tns:test_arraySimpleResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_arrayComplex" parameterOrder="testDataArrayVal">
+      <wsdl:input message="tns:test_arrayComplexRequest"/>
+      <wsdl:output message="tns:test_arrayComplexResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_arrayArray" parameterOrder="stringArrayOfArrayVal">
+      <wsdl:input message="tns:test_arrayArrayRequest"/>
+      <wsdl:output message="tns:test_arrayArrayResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_headerSingle" parameterOrder="AuthHeader">
+      <wsdl:input message="tns:test_headerSingleRequest"/>
+      <wsdl:output message="tns:test_headerSingleResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_headerMulti" parameterOrder="AuthHeader ExtraHeader">
+      <wsdl:input message="tns:test_headerMultiRequest"/>
+      <wsdl:output message="tns:test_headerMultiResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_exception">
+      <wsdl:input message="tns:test_exceptionRequest"/>
+      <wsdl:output message="tns:test_exceptionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_soapFault">
+      <wsdl:input message="tns:test_soapFaultRequest"/>
+      <wsdl:output message="tns:test_soapFaultResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_methodResult">
+      <wsdl:input message="tns:test_methodResultRequest"/>
+      <wsdl:output message="tns:test_methodResultResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_renderResult">
+      <wsdl:input message="tns:test_renderResultRequest"/>
+      <wsdl:output message="tns:test_renderResultResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApiBinding" type="tns:TestServiceApiPortType">
+    <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_simple">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_simple" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="boolVal intVal stringVal floatVal" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_complex">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_complex" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="testDataVal" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_arraySimple">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_arraySimple" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="intArrayVal" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_arrayComplex">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_arrayComplex" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="testDataArrayVal" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_arrayArray">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_arrayArray" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="stringArrayOfArrayVal" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_headerSingle">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_headerSingle" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerSingleRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerSingleResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_headerMulti">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_headerMulti" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="ExtraHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiResponse" part="ExtraHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_exception">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_exception" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_soapFault">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_soapFault" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_methodResult">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_methodResult" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_renderResult">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_renderResult" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:message name="test_simpleRequest">
+    <wsdl:part name="boolVal" type="xsd:boolean"/>
+    <wsdl:part name="intVal" type="xsd:int"/>
+    <wsdl:part name="stringVal" type="xsd:string"/>
+    <wsdl:part name="floatVal" type="xsd:double"/>
+  </wsdl:message>
+  <wsdl:message name="test_simpleResponse">
+    <wsdl:part name="result" type="xsd:boolean"/>
+  </wsdl:message>
+  <wsdl:message name="test_complexRequest">
+    <wsdl:part name="testDataVal" type="tns:TestData"/>
+  </wsdl:message>
+  <wsdl:message name="test_complexResponse">
+    <wsdl:part name="result" type="tns:TestData"/>
+  </wsdl:message>
+  <wsdl:message name="test_arraySimpleRequest">
+    <wsdl:part name="intArrayVal" type="tns:IntArray"/>
+  </wsdl:message>
+  <wsdl:message name="test_arraySimpleResponse">
+    <wsdl:part name="result" type="tns:StringArray"/>
+  </wsdl:message>
+  <wsdl:message name="test_arrayComplexRequest">
+    <wsdl:part name="testDataArrayVal" type="tns:TestDataArray"/>
+  </wsdl:message>
+  <wsdl:message name="test_arrayComplexResponse">
+    <wsdl:part name="result" type="tns:TestDataArray"/>
+  </wsdl:message>
+  <wsdl:message name="test_arrayArrayRequest">
+    <wsdl:part name="stringArrayOfArrayVal" type="tns:StringArrayArray"/>
+  </wsdl:message>
+  <wsdl:message name="test_arrayArrayResponse">
+    <wsdl:part name="result" type="tns:StringArrayArray"/>
+  </wsdl:message>
+  <wsdl:message name="test_headerSingleRequest">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+  </wsdl:message>
+  <wsdl:message name="test_headerSingleResponse">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+  </wsdl:message>
+  <wsdl:message name="test_headerMultiRequest">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+    <wsdl:part name="ExtraHeader" element="tns:ExtraHeaderElement"/>
+  </wsdl:message>
+  <wsdl:message name="test_headerMultiResponse">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+    <wsdl:part name="ExtraHeader" element="tns:ExtraHeaderElement"/>
+  </wsdl:message>
+  <wsdl:message name="test_exceptionRequest"/>
+  <wsdl:message name="test_exceptionResponse"/>
+  <wsdl:message name="test_soapFaultRequest"/>
+  <wsdl:message name="test_soapFaultResponse"/>
+  <wsdl:message name="test_methodResultRequest"/>
+  <wsdl:message name="test_methodResultResponse">
+    <wsdl:part name="result" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="test_renderResultRequest"/>
+  <wsdl:message name="test_renderResultResponse">
+    <wsdl:part name="result" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:service xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApiService">
+    <wsdl:port xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApiPort" binding="tns:TestServiceApiBinding">
+      <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" location="http://localhost/TestServiceApi.php"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
