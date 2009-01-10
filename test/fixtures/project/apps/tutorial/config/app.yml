@@ -1,0 +1,15 @@
+# default values
+#all:
+soaptest:
+  enable_soap_parameter: on
+  ck_web_service_plugin:
+    wsdl: %SF_WEB_DIR%/MathApi.wsdl
+    handler: MathApiHandler
+    soap_options:
+      classmap:
+        DoubleArray:        ckGenericArray
+        ComplexNumber:      ComplexNumber
+        ComplexNumberArray: ckGenericArray
+    soap_headers:
+      AuthHeader:
+        class: AuthData

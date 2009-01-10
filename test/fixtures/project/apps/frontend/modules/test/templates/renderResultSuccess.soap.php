@@ -1,0 +1,1 @@
+List: <?php echo implode(', ', $result); ?>
