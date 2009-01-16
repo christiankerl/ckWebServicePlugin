@@ -1,4 +1,4 @@
-# ckWebServicePlugin (for symfony 1.1)
+# ckWebServicePlugin (for symfony 1.2)
 
 The ckWebServicePlugin allows you to build a webservice api for your symfony applications.
 It comes with a powerful and easy to use wsdl generator, which creates WS-I compliant wsdl files for a maximum of interopability with PHP, .NET and Java clients.
@@ -11,7 +11,7 @@ To install the latest release, execute:
   
 or to install the current revision, checkout the HEAD revision into a `plugins/ckWebServicePlugin` folder:
   
-    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/trunk
+    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/1.2/
 
 Now configure the plugin how it is described in the next section and clear your cache afterwards.
 
@@ -73,6 +73,7 @@ These are:
 
 *   setting the persistence mode:
         
+        [php]
         # your environment for webservice mode
         soap:
           # ...
@@ -84,6 +85,7 @@ These are:
     
 *   setting the `$options` array used by `SoapServer::__construct()`:
         
+        [php]
         # your environment for webservice mode
         soap:
           # ...
@@ -542,7 +544,7 @@ Again we have to update the `classmap` in the application's `app.yml` file:
         soap_options:
           classmap:
             # mapping of wsdl types to PHP types
-            DoubleArray:         ckGenericArray
+            DoubleArray:        ckGenericArray
             ComplexNumber:      ComplexNumber
             ComplexNumberArray: ckGenericArray
 

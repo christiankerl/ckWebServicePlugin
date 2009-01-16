@@ -9,15 +9,11 @@ sfCoreAutoload::register();
 
 class ProjectConfiguration extends sfProjectConfiguration
 {
+  const PLUGIN_NAME = 'ckWebServicePlugin';
+
   public function setup()
   {
-  }
-
-  public function getPluginPaths()
-  {
-    $paths = parent::getPluginPaths();
-    $paths[] = dirname(__FILE__).'/../../../..';
-
-    return $paths;
+    $this->setPlugins(array(self::PLUGIN_NAME));
+    $this->setPluginPath(self::PLUGIN_NAME, dirname(__FILE__).'/../../../..');
   }
 }
