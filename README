@@ -73,6 +73,7 @@ These are:
 
 *   setting the persistence mode:
         
+        [php]
         # your environment for webservice mode
         soap:
           # ...
@@ -84,6 +85,7 @@ These are:
     
 *   setting the `$options` array used by `SoapServer::__construct()`:
         
+        [php]
         # your environment for webservice mode
         soap:
           # ...
@@ -542,7 +544,7 @@ Again we have to update the `classmap` in the application's `app.yml` file:
         soap_options:
           classmap:
             # mapping of wsdl types to PHP types
-            DoubleArray:         ckGenericArray
+            DoubleArray:        ckGenericArray
             ComplexNumber:      ComplexNumber
             ComplexNumberArray: ckGenericArray
 
