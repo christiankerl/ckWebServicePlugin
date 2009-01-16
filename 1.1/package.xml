@@ -116,7 +116,6 @@
 				</dir>
 			</dir>
 			<file role="data" name="LICENSE" />
-			<file role="data" name="package_contents.xml" />
 			<file role="data" name="README" />
 			<dir name="test">
 				<dir name="bin">
