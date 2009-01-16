@@ -11,7 +11,7 @@ To install the latest release, execute:
   
 or to install the current revision, checkout the HEAD revision into a `plugins/ckWebServicePlugin` folder:
   
-    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/trunk
+    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/1.1/
 
 Now configure the plugin how it is described in the next section and clear your cache afterwards.
 
@@ -908,10 +908,29 @@ You can also add SOAP Headers for the next request with the `addRequestHeader()`
 The headers are cleared after each request, so do not forget to add them again if you need them more then once.
 
 Similar to the evaluation methods for the result, there are three methods to evaluate the response headers. These are `isHeader()`, `isHeaderType()` and `isHeaderCount()`.
-The parameter list is the same, but the child element selector has to contain at least the header name.
+The parameter list is the same, but the child element selector has to contain at least the header name, e.g.:
 
+    [php]
+    $c->addRequestHeader('MyHeaderElement', new MyHeaderData('content'))
+      ->myMethodWithHeader()
+      ->isHeader('MyHeaderElement.myContent', 'content');
 
-- check for faults
+The `ckTestSoapClient` has also methods to check the result for SoapFaults. One method is `isFaultEmpty()` it is usefull to check that the response contains no SoapFaults, e.g.:
+
+    [php]
+    $c->myMethod()
+      ->isFaultEmpty()
+      ->is('', 1);
+
+Another method is `hasFault()` it checks if a SoapFault with the given message exists.
+
+    [php]
+    $c->myMethod()
+      ->hasFault('Internal Server Error');
+
+The method is at all quite similiar to the `throwsException()` method of `sfTestBrowser`. 
+
+So finally this section has shown you how to write functional tests for your webservices by using the `ckTestSoapClient` class.
 
 # Reference
 
