@@ -13,7 +13,7 @@ class testActions extends sfActions
   /**
    * Test action for simple type mapping.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    *
    * @param bool   $boolVal
    * @param int    $intVal
@@ -40,7 +40,7 @@ class testActions extends sfActions
   /**
    * Test action for complex type mapping.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    *
    * @param TestData $testDataVal
    *
@@ -63,7 +63,7 @@ class testActions extends sfActions
   /**
    * Test action for simple array type mapping.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    *
    * @param int[] $intArrayVal
    *
@@ -87,7 +87,7 @@ class testActions extends sfActions
   /**
    * Test action for complex array type mapping.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    *
    * @param TestData[] $testDataArrayVal
    *
@@ -110,7 +110,7 @@ class testActions extends sfActions
   /**
    * Test action for simple array of array type mapping.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    *
    * @param string[][] $stringArrayOfArrayVal
    *
@@ -133,8 +133,8 @@ class testActions extends sfActions
   /**
    * Test action for handling a single SoapHeader.
    *
-   * @ws-enable
-   * @ws-header AuthHeader: AuthData
+   * @WSMethod(webservice='TestServiceApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
    */
   public function executeHeaderSingle($request)
   {
@@ -147,9 +147,9 @@ class testActions extends sfActions
   /**
    * Test action for handling multiple SoapHeaders.
    *
-   * @ws-enable
-   * @ws-header AuthHeader: AuthData
-   * @ws-header ExtraHeader: ExtraHeaderData
+   * @WSMethod(webservice='TestServiceApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
+   * @WSHeader(name='ExtraHeader', type='ExtraHeaderData')
    */
   public function executeHeaderMulti($request)
   {
@@ -162,7 +162,7 @@ class testActions extends sfActions
   /**
    * Test action for throwing custom Exceptions.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    */
   public function executeException($request)
   {
@@ -175,7 +175,7 @@ class testActions extends sfActions
   /**
    * Test action for throwing custom SoapFaults.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    */
   public function executeSoapFault($request)
   {
@@ -188,7 +188,7 @@ class testActions extends sfActions
   /**
    * Test action for the ckMethodResultAdapter.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    *
    * @return string
    */
@@ -200,7 +200,7 @@ class testActions extends sfActions
   /**
    * Test action for the ckRenderResultAdapter.
    *
-   * @ws-enable
+   * @WSMethod(webservice='TestServiceApi')
    *
    * @return string
    */

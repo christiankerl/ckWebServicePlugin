@@ -1,9 +1,8 @@
 <?php
 
 /**
- * Generated ##HND_NAME## soap handler.
+ * SoapHandler for the ##HND_NAME## webservice.
  */
-class ##HND_NAME##Handler extends ckSoapHandler
+class ##HND_NAME##Handler extends Base##HND_NAME##Handler
 {
-##HND_METHOD##
 }
