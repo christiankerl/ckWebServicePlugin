@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package packagerversion="1.4.6" version="2.0"
-	xmlns="http://pear.php.net/dtd/package-2.0"
-	xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+	xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
 	<name>ckWebServicePlugin</name>
@@ -16,10 +15,10 @@
 		<email>christian-kerl@web.de</email>
 		<active>yes</active>
 	</lead>
-	<date>2008-11-20</date>
+	<date>2009-01-17</date>
 	<version>
-		<release>2.2.1</release>
-		<api>2.2.1</api>
+		<release>3.0.0</release>
+		<api>3.0.0</api>
 	</version>
 	<stability>
 		<release>stable</release>
@@ -31,69 +30,233 @@
 	<notes>-</notes>
 	<contents>
 		<dir name="/">
-			<file role="data" name="README" />
-			<file role="data" name="LICENSE" />
 			<dir name="config">
-				<file role="data" name="config.php" />
+				<file role="data" name="ckWebServicePluginConfiguration.class.php" />
 			</dir>
 			<dir name="lib">
-        <dir name="adapter">
-          <file role="data" name="ckAbstractResultAdapter.class.php" />
-          <file role="data" name="ckMethodResultAdapter.class.php" />
-          <file role="data" name="ckPropertyResultAdapter.class.php" />
-          <file role="data" name="ckRenderResultAdapter.class.php" />
-        </dir>
+				<dir name="adapter">
+					<file role="data" name="ckAbstractResultAdapter.class.php" />
+					<file role="data" name="ckMethodResultAdapter.class.php" />
+					<file role="data" name="ckPropertyResultAdapter.class.php" />
+					<file role="data" name="ckRenderResultAdapter.class.php" />
+				</dir>
+				<file role="data" name="ckSoapHandler.class.php" />
+				<file role="data" name="ckSoapParameterFilter.class.php" />
 				<dir name="controller">
-					<file role="data"	name="ckWebServiceController.class.php" />
+					<file role="data" name="ckWebServiceController.class.php" />
 				</dir>
 				<dir name="task">
 					<file role="data" name="ckWebServiceGenerateWsdlTask.class.php" />
 					<dir name="skeleton">
-            <file role="data" name="SoapHandler.class.php" />
-          </dir>
+						<file role="data" name="SoapHandler.class.php" />
+					</dir>
+				</dir>
+				<dir name="test">
+					<file role="data" name="ckTestSoapClient.class.php" />
 				</dir>
 				<dir name="util">
 					<file role="data" name="ckComponentEventListener.class.php" />
 					<file role="data" name="ckGenericArray.class.php" />
 				</dir>
-        <dir name="vendor/ckWsdlGenerator">
-          <file role="data" name="ckDocBlockParser.class.php" />
-          <file role="data" name="ckDOMSerializable.class.php" />
-          <file role="data" name="ckWsdlGenerator.class.php" />
-          <dir name="wsdl">
-            <file role="data" name="ckWsdlBindingDecorator.class.php" />
-            <file role="data" name="ckWsdlDefinitions.class.php" />
-            <file role="data" name="ckWsdlHttpBindingDecorator.class.php" />
-            <file role="data" name="ckWsdlMessage.class.php" />
-            <file role="data" name="ckWsdlOperation.class.php" />
-            <file role="data" name="ckWsdlPart.class.php" />
-            <file role="data" name="ckWsdlPortDecorator.class.php" />
-            <file role="data" name="ckWsdlPortType.class.php" />
-            <file role="data" name="ckWsdlService.class.php" />
-            <file role="data" name="ckWsdlSoapBindingDecorator.class.php" />
-            <file role="data" name="ckWsdlSoapPortDecorator.class.php" />
-          </dir>
-          <dir name="xsd">
-            <file role="data" name="ckXsdArrayType.class.php" />
-            <file role="data" name="ckXsdComplexType.class.php" />
-            <file role="data" name="ckXsdComplexTypeElement.class.php" />
-            <file role="data" name="ckXsdNamespace.class.php" />
-            <file role="data" name="ckXsdSimpleType.class.php" />
-            <file role="data" name="ckXsdType.class.php" />
-          </dir>
-          <dir name="util">
-            <file role="data" name="ckString.class.php" />
-          </dir>
-        </dir>
-				<file role="data" name="ckSoapHandler.class.php" />
-				<file role="data"	name="ckSoapParameterFilter.class.php" />
+				<dir name="vendor">
+					<dir name="ckWsdlGenerator">
+						<dir name="annotation">
+							<file role="data" name="PropertyStrategy.class.php" />
+						</dir>
+						<file role="data" name="ckDocBlockParser.class.php" />
+						<file role="data" name="ckDOMSerializable.class.php" />
+						<file role="data" name="ckWsdlGenerator.class.php" />
+						<dir name="strategy">
+							<file role="data" name="ckAbstractPropertyStrategy.class.php" />
+							<file role="data" name="ckDefaultPropertyStrategy.class.php" />
+						</dir>
+						<dir name="util">
+							<file role="data" name="ckString.class.php" />
+						</dir>
+						<dir name="vendor">
+							<dir name="addendum">
+								<dir name="annotations">
+									<file role="data" name="annotation_parser.php" />
+									<file role="data" name="doc_comment.php" />
+									<dir name="tests">
+										<file role="data" name="acceptance_test.php" />
+										<file role="data" name="all_tests.php" />
+										<file role="data" name="annotation_parser_test.php" />
+										<file role="data" name="annotation_test.php" />
+										<file role="data" name="constrained_annotation_test.php" />
+										<file role="data" name="doc_comment_test.php" />
+									</dir>
+								</dir>
+								<file role="data" name="annotations.php" />
+								<file role="data" name="LICENSE" />
+							</dir>
+						</dir>
+						<dir name="wsdl">
+							<file role="data" name="ckWsdlBindingDecorator.class.php" />
+							<file role="data" name="ckWsdlDefinitions.class.php" />
+							<file role="data" name="ckWsdlHttpBindingDecorator.class.php" />
+							<file role="data" name="ckWsdlMessage.class.php" />
+							<file role="data" name="ckWsdlOperation.class.php" />
+							<file role="data" name="ckWsdlPart.class.php" />
+							<file role="data" name="ckWsdlPortDecorator.class.php" />
+							<file role="data" name="ckWsdlPortType.class.php" />
+							<file role="data" name="ckWsdlService.class.php" />
+							<file role="data" name="ckWsdlSoapBindingDecorator.class.php" />
+							<file role="data" name="ckWsdlSoapPortDecorator.class.php" />
+						</dir>
+						<dir name="xsd">
+							<file role="data" name="ckXsdArrayType.class.php" />
+							<file role="data" name="ckXsdComplexType.class.php" />
+							<file role="data" name="ckXsdComplexTypeElement.class.php" />
+							<file role="data" name="ckXsdNamespace.class.php" />
+							<file role="data" name="ckXsdSimpleType.class.php" />
+							<file role="data" name="ckXsdType.class.php" />
+						</dir>
+					</dir>
+				</dir>
+			</dir>
+			<file role="data" name="LICENSE" />
+			<file role="data" name="README" />
+			<dir name="test">
+				<dir name="bin">
+					<file role="data" name="prove.php" />
+				</dir>
+				<dir name="bootstrap">
+					<file role="data" name="functional.php" />
+				</dir>
+				<dir name="fixtures">
+					<dir name="project">
+						<dir name="apps">
+							<dir name="frontend">
+								<dir name="config">
+									<file role="data" name="app.yml" />
+									<file role="data" name="autoload.yml" />
+									<file role="data" name="cache.yml" />
+									<file role="data" name="factories.yml" />
+									<file role="data" name="filters.yml" />
+									<file role="data" name="frontendConfiguration.class.php" />
+									<file role="data" name="routing.yml" />
+									<file role="data" name="security.yml" />
+									<file role="data" name="settings.yml" />
+									<file role="data" name="view.yml" />
+								</dir>
+								<dir name="i18n" />
+								<dir name="lib">
+									<file role="data" name="AuthData.class.php" />
+									<file role="data" name="ExtraHeaderData.class.php" />
+									<file role="data" name="myUser.class.php" />
+									<file role="data" name="SoapHeaderListener.class.php" />
+									<file role="data" name="TestData.class.php" />
+								</dir>
+								<dir name="modules">
+									<dir name="test">
+										<dir name="actions">
+											<file role="data" name="actions.class.php" />
+										</dir>
+										<dir name="config">
+											<file role="data" name="module.yml" />
+										</dir>
+										<dir name="templates">
+											<file role="data" name="renderResultSuccess.soap.php" />
+										</dir>
+									</dir>
+								</dir>
+								<dir name="templates">
+									<file role="data" name="layout.php" />
+								</dir>
+							</dir>
+							<dir name="tutorial">
+								<dir name="config">
+									<file role="data" name="app.yml" />
+									<file role="data" name="autoload.yml" />
+									<file role="data" name="cache.yml" />
+									<file role="data" name="factories.yml" />
+									<file role="data" name="filters.yml" />
+									<file role="data" name="routing.yml" />
+									<file role="data" name="security.yml" />
+									<file role="data" name="settings.yml" />
+									<file role="data" name="tutorialConfiguration.class.php" />
+									<file role="data" name="view.yml" />
+								</dir>
+								<dir name="i18n" />
+								<dir name="lib">
+									<file role="data" name="AuthData.class.php" />
+									<file role="data" name="AuthHeaderListener.class.php" />
+									<file role="data" name="ComplexNumber.class.php" />
+									<file role="data" name="MathApiHandler.class.php" />
+									<file role="data" name="myUser.class.php" />
+								</dir>
+								<dir name="modules">
+									<dir name="math">
+										<dir name="actions">
+											<file role="data" name="actions.class.php" />
+										</dir>
+										<dir name="config">
+											<file role="data" name="module.yml" />
+										</dir>
+										<dir name="templates" />
+									</dir>
+								</dir>
+								<dir name="templates">
+									<file role="data" name="layout.php" />
+								</dir>
+							</dir>
+						</dir>
+						<dir name="config">
+							<file role="data" name="databases.yml" />
+							<file role="data" name="ProjectConfiguration.class.php" />
+							<file role="data" name="propel.ini" />
+							<file role="data" name="properties.ini" />
+							<file role="data" name="rsync_exclude.txt" />
+							<file role="data" name="schema.yml" />
+						</dir>
+						<dir name="data" />
+						<dir name="doc" />
+						<dir name="lib" />
+						<dir name="log" />
+						<dir name="plugins" />
+						<file role="data" name="symfony" />
+						<dir name="test">
+							<dir name="bootstrap">
+								<file role="data" name="functional.php" />
+								<file role="data" name="unit.php" />
+							</dir>
+							<dir name="functional" />
+							<dir name="unit" />
+						</dir>
+						<dir name="web">
+							<dir name="css">
+								<file role="data" name="main.css" />
+							</dir>
+							<dir name="images" />
+							<dir name="js" />
+							<file role="data" name="MathApi.php" />
+							<file role="data" name="MathApi.wsdl" />
+							<file role="data" name="robots.txt" />
+							<file role="data" name="TestServiceApi.php" />
+							<file role="data" name="TestServiceApi.wsdl" />
+							<dir name="uploads">
+								<dir name="assets" />
+							</dir>
+						</dir>
+					</dir>
+				</dir>
+				<dir name="functional">
+					<file role="data" name="resultAdapterTest.php" />
+					<file role="data" name="soapFaultNoDebugTest.php" />
+					<file role="data" name="soapFaultTest.php" />
+					<file role="data" name="soapHeaderTest.php" />
+					<file role="data" name="tutorialTest.php" />
+					<file role="data" name="typeMappingTest.php" />
+				</dir>
+				<dir name="unit" />
 			</dir>
 		</dir>
 	</contents>
 	<dependencies>
 		<required>
 			<php>
-				<min>5.1.0</min>
+				<min>5.2.4</min>
 			</php>
 			<pearinstaller>
 				<min>1.4.1</min>
@@ -101,9 +264,9 @@
 			<package>
 				<name>symfony</name>
 				<channel>pear.symfony-project.com</channel>
-				<min>1.1.0</min>
-				<max>1.2.0</max>
-				<exclude>1.2.0</exclude>
+				<min>1.2.0</min>
+				<max>1.3.0</max>
+				<exclude>1.3.0</exclude>
 			</package>
 		</required>
 	</dependencies>
