@@ -19,33 +19,6 @@
 class ckWebServiceGenerateWsdlTask extends sfGeneratorBaseTask
 {
   /**
-   * The path to the standard symfony controller template file.
-   */
-  const CONTROLLER_TEMPLATE_PATH = '/task/generator/skeleton/app/web/index.php';
-
-  /**
-   * The path to the custom soap handler template file.
-   */
-  const HANDLER_TEMPLATE_PATH    = '/lib/task/skeleton/SoapHandler.class.php';
-
-  /**
-   * Gets the template string for a soap handler method.
-   *
-   * @return string The template string
-   */
-  public function getHandlerMethodTemplate()
-  {
-    return <<<EOF
-
-  public function ##NAME##(##PARAMS##)
-  {
-  	return sfContext::getInstance()->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
-  }
-
-EOF;
-  }
-
-  /**
    * @see sfTask
    */
   protected function configure()
@@ -87,14 +60,6 @@ You can enable debugging for the controller by using the [debug|COMMENT] option:
 
   [./symfony webservice:generate-wsdl frontend -d=on|INFO]
 
-You can enable the creation of a custom soap handler by using the [handler|COMMENT] option:
-
-  [./symfony webservice:generate-wsdl frontend --handler=on|INFO]
-
-  or
-
-  [./symfony webservice:generate-wsdl frontend -h=on|INFO]
-
 EOF;
 
     $this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
@@ -102,27 +67,7 @@ EOF;
     $this->addArgument('url', sfCommandArgument::REQUIRED, 'The webservice url base');
 
     $this->addOption('environment', 'e', sfCommandOption::PARAMETER_REQUIRED, 'The environment to use for webservice mode', 'soap');
-    $this->addOption('debug', 'd', sfCommandOption::PARAMETER_NONE, 'Enables debugging in generated controller');
-    $this->addOption('handler', 'h', sfCommandOption::PARAMETER_NONE, 'Enables the generation of a custom soap handler class.');
-  }
-
-  /**
-   * @see sfTask
-   */
-  protected function doRun(sfCommandManager $commandManager, $options)
-  {
-    $this->process($commandManager, $options);
-
-    $this->checkProjectExists();
-
-    $app = $commandManager->getArgumentValue('application');
-    $this->checkAppExists($app);
-    sfConfig::set('sf_app_module_dir', sprintf('%s/%s/modules', sfConfig::get('sf_apps_dir'), $app));
-    sfConfig::set('sf_app_lib_dir', sprintf('%s/%s/lib', sfConfig::get('sf_apps_dir'), $app));
-
-    $this->registerLibDirs();
-
-    return $this->execute($commandManager->getArgumentValues(), $commandManager->getOptionValues());
+    //$this->addOption('debug', 'd', sfCommandOption::PARAMETER_NONE, 'Enables debugging in generated controller');
   }
 
   /**
@@ -130,116 +75,106 @@ EOF;
    */
   protected function execute($arguments = array(), $options = array())
   {
+    $this->registerLibDirs();
+
     $app  = $arguments['application'];
     $env  = $options['environment'];
-    $dbg  = $options['debug'];
+    $dbg  = false;//$options['debug'];
     $file = $arguments['name'];
     $url  = $arguments['url'];
-    $url  = ckString::endsWith($url, '/') ? $url : $url.'/';
 
-    $controller_name = $file.'.php';
-    $controller_path = sprintf('%s/%s', sfConfig::get('sf_web_dir'), $controller_name);
+    $this->buildControllerFile($file, $app, $env, $dbg);
 
-    $this->getFilesystem()->remove($controller_path);
-    $this->getFilesystem()->copy(sfConfig::get('sf_symfony_lib_dir').self::CONTROLLER_TEMPLATE_PATH, $controller_path);
+    $gen = new ckWsdlGenerator(new ckWsdlGeneratorContext($file, $url, null, $env == 'soap'));
 
-    $this->getFilesystem()->replaceTokens($controller_path, '##', '##', array(
-      'APP_NAME'    => $app,
-      'ENVIRONMENT' => $env,
-      'IS_DEBUG'    => $dbg ? 'true' : 'false',
-    ));
+    WSMethod::setCreateMethodNameCallback(array($this, 'generateWSMethodName'));
 
-    $finder = sfFinder::type('directory')->name('*')->relative()->maxdepth(0);
+    $handler_methods = array();
 
-    $gen = new ckWsdlGenerator($file, $url, $url.$controller_name);
-    $gen->setCheckEnablement(true);
-
-    $use_handler  = $options['handler'];
-    $handler_file = sfConfig::get('sf_app_lib_dir').'/'.$file.'Handler.class.php';
-    $handler_map  = array();
-
-    foreach($finder->in(sfConfig::get('sf_app_module_dir')) as $module_dir)
+    foreach($this->getModules() as $module)
     {
-      // proposed by Nicolas Martin to avoid problems with 'inited' modules
-      if(!preg_match('/class(.*)Actions(.*)extends(.*)auto/', file_get_contents(sfConfig::get('sf_app_module_dir').'/'.$module_dir.'/actions/actions.class.php')) && file_exists(sfConfig::get('sf_app_module_dir').'/'.$module_dir.'/actions/actions.class.php'))
+      if($this->loadModuleClassFile($module))
       {
-        require_once(sfConfig::get('sf_app_module_dir').'/'.$module_dir.'/actions/actions.class.php');
-
-        $class = new ReflectionClass($module_dir.'Actions');
-
-        $module_config = sfConfig::get('sf_app_module_dir').'/'.$module_dir.'/config/module.yml';
-
-        $this->getFilesystem()->mkdirs(dirname($module_config));
-
-        if(!file_exists($module_config))
-        {
-          $this->getFilesystem()->touch($module_config);
-        }
-
-        $yml = sfYaml::load($module_config);
+        $yml = $this->loadModuleConfigFile($module);
 
         if(!isset($yml[$env]) || !is_array($yml[$env]))
         {
           $yml[$env] = array();
         }
 
-        foreach($class->getMethods() as $method)
+        $class = new ReflectionAnnotatedClass($module.'Actions');
+
+        foreach($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method)
         {
-          $name = $method->getName();
-
-          if(ckString::startsWith($name, 'execute') && strlen($name)>7)
+          try
           {
-            $action = ckString::lcfirst(substr($name, 7));
-            $name = $module_dir.'_'.$action;
+            extract($this->getModuleAndAction($method));
+          }
+          catch(InvalidArgumentException $e)
+          {
+            continue;
+          }
 
-            $wsname = ckDocBlockParser::parseMethod($method->getDocComment());
+          if(!$gen->addMethod($method))
+          {
+            $yml[$env][$action] = array();
 
-            if(!empty($wsname) && $use_handler)
-            {
-              $name = $wsname['name'];
-            }
+            continue;
+          }
 
-            if(!$gen->addMethod($name, $method))
-            {
-              $yml[$env][$action] = array();
+          $name = $method->getAnnotation('WSMethod')->name;
 
-              continue;
-            }
+          $result = isset($yml[$env][$action]['result']) ? $yml[$env][$action]['result'] : array('class' => 'ckPropertyResultAdapter', 'param' => array('property' => 'result'));
 
-            $yml[$env][$action] = array('parameter'=>array(), 'result'=>array('class'=>'ckPropertyResultAdapter', 'param'=>array('property'=>'result')));
-            $handler_map[$name] = array('module' => $module_dir, 'action' => $action, 'parameter' => array());
+          $yml[$env][$action] = array('parameter'=>array(), 'result' => $result);
+          $handler_methods[$name] = array('module' => $module, 'action' => $action, 'parameter' => array());
 
-            foreach(ckDocBlockParser::parseParameters($method->getDocComment()) as $param)
-            {
-              $yml[$env][$action]['parameter'][] = $param['name'];
-            }
-
-            $handler_map[$name]['parameter'] = $yml[$env][$action]['parameter'];
+          foreach(ckDocBlockParser::parseParameters($method->getDocComment()) as $param)
+          {
+            $yml[$env][$action]['parameter'][] = $handler_methods[$name]['parameter'][] = $param['name'];
           }
         }
 
-        // only save if we added something to the configuration
-        if(!empty($yml[$env]))
-        {
-          file_put_contents($module_config, sfYaml::dump($yml));
-        }
+        $this->saveModuleConfigFile($module, $yml);
       }
     }
 
-    if($use_handler)
-    {
-      $this->getFilesystem()->remove($handler_file);
-      $this->getFilesystem()->copy($this->getPluginDir().self::HANDLER_TEMPLATE_PATH, $handler_file);
-
-      $this->getFilesystem()->replaceTokens($handler_file, '##', '##', array(
-      	'HND_NAME'   => $file,
-      	'HND_METHOD' => $this->buildHandlerMethods($handler_map)
-      ));
-    }
+    $this->buildHandlerFile($file);
+    $this->buildBaseHandlerFile($file, $handler_methods);
 
     $file = sprintf('%s/%s.wsdl', sfConfig::get('sf_web_dir'), $file);
     $gen->save($file);
     $this->logSection('file+', $file);
+  }
+
+  protected function getModuleAndAction(ReflectionMethod $method)
+  {
+    $class  = $method->getDeclaringClass()->getName();
+    $method = $method->getName();
+
+    if(!ckString::endsWith($class, 'Actions') || !ckString::startsWith($method, 'execute') || strlen($method) <= 7)
+    {
+      throw new InvalidArgumentException();
+    }
+
+    return array('module' => substr($class, 0, -7), 'action' => ckString::lcfirst(substr($method, 7)));
+  }
+
+  public function generateWSMethodName(ReflectionMethod $method)
+  {
+    return implode('_', $this->getModuleAndAction($method));
+  }
+
+  /**
+   * Registers required class files for autoloading.
+   */
+  protected function registerLibDirs()
+  {
+    $autoload = sfSimpleAutoload::getInstance();
+    //$autoload->addDirectory(sfConfig::get('sf_lib_dir'));
+    //$autoload->addDirectory(sfConfig::get('sf_app_lib_dir'));
+    $autoload->addDirectory($this->getPluginDir().'/lib/vendor/ckWsdlGenerator');
+    $autoload->addDirectory($this->getPluginDir().'/lib/util');
   }
 
   /**
@@ -252,16 +187,84 @@ EOF;
     return dirname(__FILE__).'/../..';
   }
 
-  /**
-   * Registers required class files for autoloading.
-   */
-  protected function registerLibDirs()
+  protected function getModules()
   {
-    $autoload = sfSimpleAutoload::getInstance();
-    $autoload->addDirectory(sfConfig::get('sf_lib_dir'));
-    $autoload->addDirectory(sfConfig::get('sf_app_lib_dir'));
-    $autoload->addDirectory($this->getPluginDir().'/lib/vendor/ckWsdlGenerator');
-    $autoload->addDirectory($this->getPluginDir().'/lib/util');
+    return sfFinder::type('directory')->name('*')->relative()->maxdepth(0)->in(sfConfig::get('sf_app_module_dir'));
+  }
+
+  protected function getModuleConfigFilePath($module)
+  {
+    return sfConfig::get('sf_app_module_dir').'/'.$module.'/config/module.yml';
+  }
+
+  protected function loadModuleClassFile($module)
+  {
+    $module_classfile = sfConfig::get('sf_app_module_dir').'/'.$module.'/actions/actions.class.php';
+
+    return file_exists($module_classfile) && !preg_match('/class(.*)Actions(.*)extends(.*)auto/', file_get_contents($module_classfile)) ? require_once($module_classfile) : false;
+  }
+
+  protected function loadModuleConfigFile($module)
+  {
+    $module_configfile = $this->getModuleConfigFilePath($module);
+
+    $this->getFilesystem()->mkdirs(dirname($module_configfile));
+
+    if(!file_exists($module_configfile))
+    {
+      $this->getFilesystem()->touch($module_configfile);
+    }
+
+    return sfYaml::load($module_configfile);
+  }
+
+  protected function saveModuleConfigFile($module, $config)
+  {
+    file_put_contents($this->getModuleConfigFilePath($module), sfYaml::dump($config));
+  }
+
+  protected function buildControllerFile($controller, $application, $environment, $debug)
+  {
+    $template = sfConfig::get('sf_symfony_lib_dir').'/task/generator/skeleton/app/web/index.php';
+    $pathname = sprintf('%s/%s.php', sfConfig::get('sf_web_dir'), $controller);
+
+    $this->getFilesystem()->copy($template, $pathname);
+    $this->getFilesystem()->replaceTokens($pathname, '##', '##', array(
+      'IP_CHECK'    => '',
+      'APP_NAME'    => $application,
+      'ENVIRONMENT' => $environment,
+      'IS_DEBUG'    => $debug ? 'true' : 'false',
+    ));
+  }
+
+  protected function buildHandlerFile($handler_name)
+  {
+    $template = $this->getPluginDir().'/lib/task/skeleton/SoapHandler.class.php';
+    $pathname = sprintf('%s/%sHandler.class.php', sfConfig::get('sf_app_lib_dir'), $handler_name);
+
+    if(!file_exists($pathname))
+    {
+      $this->getFilesystem()->copy($template, $pathname);
+      $this->getFilesystem()->replaceTokens($pathname, '##', '##', array(
+        'HND_NAME'   => $handler_name
+      ));
+    }
+  }
+
+  protected function buildBaseHandlerFile($handler_name, $methods)
+  {
+    $template = $this->getPluginDir().'/lib/task/skeleton/BaseSoapHandler.class.php';
+    $pathname = sprintf('%s/Base%sHandler.class.php', sfConfig::get('sf_app_lib_dir'), $handler_name);
+
+    if(file_exists($pathname))
+    {
+      $this->getFilesystem()->remove($pathname);
+    }
+    $this->getFilesystem()->copy($template, $pathname);
+    $this->getFilesystem()->replaceTokens($pathname, '##', '##', array(
+      'HND_NAME'   => $handler_name,
+      'HND_METHOD' => $this->buildHandlerMethods($methods)
+    ));
   }
 
   /**
@@ -273,14 +276,14 @@ EOF;
    */
   protected function buildHandlerMethods($methods)
   {
-    $result = '';
+    $result = array();
     $append_dollar = create_function('&$in', '$in = "$".$in;');
 
     foreach($methods as $name => $params)
     {
       array_walk($params['parameter'], $append_dollar);
 
-      $result .= $this->replaceTokens($this->getHandlerMethodTemplate(), array(
+      $result[] = $this->replaceTokens($this->getHandlerMethodTemplate(), array(
       	'NAME'   => $name,
       	'MODULE' => $params['module'],
       	'ACTION' => $params['action'],
@@ -288,7 +291,22 @@ EOF;
       ), '##', '##');
     }
 
-    return $result;
+    return implode("\n\n", $result);
+  }
+
+  /**
+   * Gets the template string for a soap handler method.
+   *
+   * @return string The template string
+   */
+  protected function getHandlerMethodTemplate()
+  {
+    return <<<EOF
+  public function ##NAME##(##PARAMS##)
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('##MODULE##', '##ACTION##', array(##PARAMS##));
+  }
+EOF;
   }
 
   /**

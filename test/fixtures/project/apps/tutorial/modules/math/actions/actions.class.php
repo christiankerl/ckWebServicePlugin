@@ -13,7 +13,7 @@ class mathActions extends sfActions
   /**
    * An action multiplying two numbers.
    *
-   * @ws-enable
+   * @WSMethod(webservice='MathApi')
    *
    * @param float $a Factor A
    * @param float $b Factor B
@@ -40,8 +40,7 @@ class mathActions extends sfActions
   /**
    * An action multiplying two numbers.
    *
-   * @ws-enable
-   * @ws-method SimpleMultiply
+   * @WSMethod(name='SimpleMultiply', webservice='MathApi')
    *
    * @param float $a Factor A
    * @param float $b Factor B
@@ -56,9 +55,8 @@ class mathActions extends sfActions
   /**
    * An action multiplying two numbers.
    *
-   * @ws-enable
-   * @ws-method SimpleMultiplyWithHeader
-   * @ws-header AuthHeader: AuthData
+   * @WSMethod(name='SimpleMultiplyWithHeader', webservice='MathApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
    *
    * @param float $a Factor A
    * @param float $b Factor B
@@ -85,8 +83,7 @@ class mathActions extends sfActions
   /**
    * An action multiplying any number of factors.
    *
-   * @ws-enable
-   * @ws-method ArrayMultiply
+   * @WSMethod(name='ArrayMultiply', webservice='MathApi')
    *
    * @param float[] $factors An array of factors
    *
@@ -105,8 +102,7 @@ class mathActions extends sfActions
   /**
    * An action multiplying any number of complex factors.
    *
-   * @ws-enable
-   * @ws-method ComplexMultiply
+   * @WSMethod(name='ComplexMultiply', webservice='MathApi')
    *
    * @param ComplexNumber[] $input
    *
