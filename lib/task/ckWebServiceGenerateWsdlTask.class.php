@@ -19,6 +19,13 @@
 class ckWebServiceGenerateWsdlTask extends sfGeneratorBaseTask
 {
   /**
+   * The default environment.
+   *
+   * @var string
+   */
+  const DEFAULT_ENVIRONMENT = 'soap';
+
+  /**
    * @see sfTask
    */
   protected function configure()
@@ -40,9 +47,11 @@ This task also creates a front controller script in the [web/|COMMENT] directory
 
   [web/%name%.php|INFO]
 
-and a custom soap handler class in the application's lib directory:
+a custom soap handler class and corresponding base soap handler class, in the application's lib directory:
 
   [apps/%application%/lib/%name%Handler.class.php]
+
+  [apps/%application%/lib/Base%name%Handler.class.php]
 
 You can set the environment by using the [environment|COMMENT] option:
 
@@ -52,9 +61,9 @@ You can set the environment by using the [environment|COMMENT] option:
 
   [./symfony webservice:generate-wsdl frontend -e=soap|INFO]
 
-You can enable debugging for the controller by using the [debug|COMMENT] option:
+You can enable debugging for the controller by using the [enabledebug|COMMENT] option:
 
-  [./symfony webservice:generate-wsdl frontend --debug=on|INFO]
+  [./symfony webservice:generate-wsdl frontend --enabledebug=on|INFO]
 
   or
 
@@ -66,8 +75,8 @@ EOF;
     $this->addArgument('name', sfCommandArgument::REQUIRED, 'The webservice name');
     $this->addArgument('url', sfCommandArgument::REQUIRED, 'The webservice url base');
 
-    $this->addOption('environment', 'e', sfCommandOption::PARAMETER_REQUIRED, 'The environment to use for webservice mode', 'soap');
-    $this->addOption('debug', 'd', sfCommandOption::PARAMETER_NONE, 'Enables debugging in generated controller');
+    $this->addOption('environment', 'e', sfCommandOption::PARAMETER_REQUIRED, 'The environment to use for webservice mode', self::DEFAULT_ENVIRONMENT);
+    $this->addOption('enabledebug', 'd', sfCommandOption::PARAMETER_NONE, 'Enables debugging in generated controller');
   }
 
   /**
@@ -75,17 +84,15 @@ EOF;
    */
   protected function execute($arguments = array(), $options = array())
   {
-    $this->registerLibDirs();
-
     $app  = $arguments['application'];
     $env  = $options['environment'];
-    $dbg  = $options['debug'];
+    $dbg  = $options['enabledebug'];
     $file = $arguments['name'];
     $url  = $arguments['url'];
 
     $this->buildControllerFile($file, $app, $env, $dbg);
 
-    $gen = new ckWsdlGenerator(new ckWsdlGeneratorContext($file, $url, null, $env == 'soap'));
+    $gen = new ckWsdlGenerator(new ckWsdlGeneratorContext($file, $url, null, $env == self::DEFAULT_ENVIRONMENT));
 
     WSMethod::setCreateMethodNameCallback(array($this, 'generateWSMethodName'));
 
@@ -163,18 +170,6 @@ EOF;
   public function generateWSMethodName(ReflectionMethod $method)
   {
     return implode('_', $this->getModuleAndAction($method));
-  }
-
-  /**
-   * Registers required class files for autoloading.
-   */
-  protected function registerLibDirs()
-  {
-    $autoload = sfSimpleAutoload::getInstance();
-    $autoload->addDirectory(sfConfig::get('sf_lib_dir'));
-    $autoload->addDirectory(sfConfig::get('sf_app_lib_dir'));
-    $autoload->addDirectory($this->getPluginDir().'/lib/vendor/ckWsdlGenerator');
-    $autoload->addDirectory($this->getPluginDir().'/lib/util');
   }
 
   /**
