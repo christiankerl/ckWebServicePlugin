@@ -3,6 +3,11 @@
 The ckWebServicePlugin allows you to build a webservice api for your symfony applications.
 It comes with a powerful and easy to use wsdl generator, which creates WS-I compliant wsdl files for a maximum of interopability with PHP, .NET and Java clients.
 
+# Requirements
+
+*   PHP >= 5.2.4
+*   php_soap extension
+
 # Installation
 
 To install the latest release, execute:
@@ -799,7 +804,7 @@ The changes to the configuration files are:
 
 *   `app.yml`:
 
-    Add the configuration of the `soap` for `soaptest` environment, e.g.:
+    Copy the configuration of the `soap` to the `soaptest` environment, e.g.:
     
         # ...
         soaptest:
@@ -834,6 +839,8 @@ It will be named `soaptest.php` and will have the following content:
     
     require_once dirname(__FILE__).'/../../config/ProjectConfiguration.class.php';
     $configuration = ProjectConfiguration::getApplicationConfiguration($app, 'soaptest', isset($debug) ? $debug : true);
+    require_once($configuration->getSymfonyLibDir().'/vendor/lime/lime.php');
+    
     sfContext::createInstance($configuration);
     
     // remove all cache
