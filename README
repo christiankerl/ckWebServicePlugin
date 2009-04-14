@@ -3,6 +3,11 @@
 The ckWebServicePlugin allows you to build a webservice api for your symfony applications.
 It comes with a powerful and easy to use wsdl generator, which creates WS-I compliant wsdl files for a maximum of interopability with PHP, .NET and Java clients.
 
+# Requirements
+
+*   PHP >= 5.2.4
+*   php_soap extension
+
 # Installation
 
 To install the latest release, execute:
@@ -799,7 +804,7 @@ The changes to the configuration files are:
 
 *   `app.yml`:
 
-    Add the configuration of the `soap` for `soaptest` environment, e.g.:
+    Copy the configuration of the `soap` to the `soaptest` environment, e.g.:
     
         # ...
         soaptest:
@@ -834,6 +839,8 @@ It will be named `soaptest.php` and will have the following content:
     
     require_once dirname(__FILE__).'/../../config/ProjectConfiguration.class.php';
     $configuration = ProjectConfiguration::getApplicationConfiguration($app, 'soaptest', isset($debug) ? $debug : true);
+    require_once($configuration->getSymfonyLibDir().'/vendor/lime/lime.php');
+    
     sfContext::createInstance($configuration);
     
     // remove all cache
@@ -912,8 +919,27 @@ The headers are cleared after each request, so do not forget to add them again i
 Similar to the evaluation methods for the result, there are three methods to evaluate the response headers. These are `isHeader()`, `isHeaderType()` and `isHeaderCount()`.
 The parameter list is the same, but the child element selector has to contain at least the header name.
 
+    [php]
+    $c->addRequestHeader('MyHeaderElement', new MyHeaderData('content'))
+      ->myMethodWithHeader()
+      ->isHeader('MyHeaderElement.myContent', 'content');
 
-- check for faults
+The `ckTestSoapClient` has also methods to check the result for SoapFaults. One method is `isFaultEmpty()` it is usefull to check that the response contains no SoapFaults, e.g.:
+
+    [php]
+    $c->myMethod()
+      ->isFaultEmpty()
+      ->is('', 1);
+
+Another method is `hasFault()` it checks if a SoapFault with the given message exists.
+
+    [php]
+    $c->myMethod()
+      ->hasFault('Internal Server Error');
+
+The method is at all quite similiar to the `throwsException()` method of `sfTestBrowser`. 
+
+So finally this section has shown you how to write functional tests for your webservices by using the `ckTestSoapClient` class.
 
 # Reference
 
