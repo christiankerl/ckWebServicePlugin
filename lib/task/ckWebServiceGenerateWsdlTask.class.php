@@ -124,8 +124,6 @@ EOF;
 
           if(!$gen->addMethod($method))
           {
-            $yml[$env][$action] = array();
-
             continue;
           }
 
@@ -142,7 +140,10 @@ EOF;
           }
         }
 
-        $this->saveModuleConfigFile($module, $yml);
+        if(!empty($yml[$env]))
+        {
+          $this->saveModuleConfigFile($module, $yml);
+        }
       }
     }
 
@@ -203,19 +204,20 @@ EOF;
   {
     $module_configfile = $this->getModuleConfigFilePath($module);
 
-    $this->getFilesystem()->mkdirs(dirname($module_configfile));
-
-    if(!file_exists($module_configfile))
-    {
-      $this->getFilesystem()->touch($module_configfile);
-    }
-
-    return sfYaml::load($module_configfile);
+    return file_exists($module_configfile) ? sfYaml::load($module_configfile) : array();
   }
 
   protected function saveModuleConfigFile($module, $config)
   {
-    file_put_contents($this->getModuleConfigFilePath($module), sfYaml::dump($config));
+    $module_configfile = $this->getModuleConfigFilePath($module);
+
+    if(!file_exists($module_configfile))
+    {
+      $this->getFilesystem()->mkdirs(dirname($module_configfile));
+      $this->getFilesystem()->touch($module_configfile);
+    }
+
+    file_put_contents($module_configfile, sfYaml::dump($config));
   }
 
   protected function buildControllerFile($controller, $application, $environment, $debug)
