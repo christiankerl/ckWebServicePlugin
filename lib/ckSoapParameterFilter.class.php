@@ -28,6 +28,8 @@ class ckSoapParameterFilter extends sfFilter
 		/** first execute of this chain **/
 		if($this->isFirstCall())
 		{
+		  $log_params = array();
+
 			/** get request class from context **/
 			$request = $this->getContext()->getRequest();
 
@@ -57,7 +59,7 @@ class ckSoapParameterFilter extends sfFilter
 					if (sfConfig::get('sf_logging_enabled'))
 					{
 						/** append params **/
-						$params[$map[$i]] = $param[$i];
+						$log_params[$map[$i]] = $param[$i];
 					}
 				}
 			}
@@ -66,7 +68,7 @@ class ckSoapParameterFilter extends sfFilter
 			if (sfConfig::get('sf_logging_enabled'))
 			{
 				/** write logmessage **/
-				$this->getContext()->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Mapped soap parameters due request %s', str_replace("\n", '', var_export($params, true))))));
+				$this->getContext()->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Mapped soap parameters due request %s', str_replace("\n", '', var_export($log_params, true))))));
 			}
 		}
 
