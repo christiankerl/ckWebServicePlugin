@@ -41,7 +41,7 @@ abstract class ckAbstractMemberResultAdapter extends ckAbstractResultAdapter
 
     if($_result instanceof Doctrine_Record)
     {
-      $_result = array($_result);
+      $result = ckDoctrineCollectionAdapter::adaptCollectionsToArray($_result);
     }
 
     if(is_array($_result) || $_result instanceof Traversable)
@@ -54,7 +54,7 @@ abstract class ckAbstractMemberResultAdapter extends ckAbstractResultAdapter
       }
     }
 
-    return $result;
+    return !is_null($result) ? $result : $_result;
   }
 
   /**

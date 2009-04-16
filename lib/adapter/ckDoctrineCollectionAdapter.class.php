@@ -18,6 +18,8 @@
  */
 class ckDoctrineCollectionAdapter extends Doctrine_Collection
 {
+  protected static $adaptedObjects = array();
+
   /**
    * Adapts all property values of a given Doctrine_Record object, which are instances of Doctrine_Collection,
    * to ckDoctrineCollectionAdapters.
@@ -28,11 +30,20 @@ class ckDoctrineCollectionAdapter extends Doctrine_Collection
    */
   public static function adaptCollectionsToArray(Doctrine_Record $object)
   {
-    foreach($object->getTable()->getRelations() as $relation)
+    if(!isset(self::$adaptedObjects[$object->getOid()]))
     {
-      if(!$relation->isOneToOne())
+      self::$adaptedObjects[$object->getOid()] = true;
+
+      foreach($object->getTable()->getRelations() as $relation)
       {
-        $object->setRelated($relation->getAlias(), ckDoctrineCollectionAdapter::fromCollection($object->get($relation->getAlias())));
+        if($relation->isOneToOne())
+        {
+          self::adaptCollectionsToArray($object->get($relation->getAlias()));
+        }
+        else
+        {
+          $object->setRelated($relation->getAlias(), ckDoctrineCollectionAdapter::fromCollection($object->get($relation->getAlias())));
+        }
       }
     }
 
