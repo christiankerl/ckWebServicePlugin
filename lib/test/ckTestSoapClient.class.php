@@ -406,18 +406,29 @@ class ckTestSoapClient extends SoapClient
     {
       $refClass = new ReflectionClass($object);
 
-      if(($property = $refClass->getProperty($index)) && $property->isPublic())
+      try
       {
-        return $property->getValue($object);
+        if(($property = $refClass->getProperty($index)) && $property->isPublic())
+        {
+          return $property->getValue($object);
+        }
       }
-      else if(($method = $refClass->getMethod('get'.ucfirst($index))) && $method->isPublic())
+      catch(ReflectionException $e)
       {
-        return $method->invoke($object);
       }
-      else
+
+      try
       {
-        return $object->$index;
+        if(($method = $refClass->getMethod('get'.ucfirst($index))) && $method->isPublic())
+        {
+          return $method->invoke($object);
+        }
       }
+      catch(ReflectionException $e)
+      {
+      }
+
+      return $object->$index;
     }
     else
     {
