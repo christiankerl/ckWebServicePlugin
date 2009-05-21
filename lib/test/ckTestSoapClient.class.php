@@ -404,7 +404,20 @@ class ckTestSoapClient extends SoapClient
     }
     else if(is_object($object))
     {
-      return $object->$index;
+      $refClass = new ReflectionClass($object);
+
+      if(($property = $refClass->getProperty($index)) && $property->isPublic())
+      {
+        return $property->getValue($object);
+      }
+      else if(($method = $refClass->getMethod('get'.ucfirst($index))) && $method->isPublic())
+      {
+        return $method->invoke($object);
+      }
+      else
+      {
+        return $object->$index;
+      }
     }
     else
     {
