@@ -129,7 +129,7 @@ EOF;
             continue;
           }
 
-          $name = $method->getAnnotation('WSMethod')->name;
+          $name = $method->getAnnotation('WSMethod')->getName();
 
           $result = isset($yml[$env][$action]['result']) ? $yml[$env][$action]['result'] : array('class' => 'ckPropertyResultAdapter', 'param' => array('property' => 'result'));
 
