@@ -21,7 +21,7 @@ sfCoreAutoload::register();
 $root_dir = dirname(__FILE__).'/../fixtures/project';
 
 require_once($root_dir.'/config/ProjectConfiguration.class.php');
-$configuration = ProjectConfiguration::getApplicationConfiguration($app, 'soaptest', isset($debug) ? $debug : true);
+$configuration = ProjectConfiguration::getApplicationConfiguration($app, isset($env) ? $env : 'soaptest', isset($debug) ? $debug : true);
 sfContext::createInstance($configuration);
 
 // remove all cache

@@ -18,6 +18,9 @@ or to install the current revision, checkout the HEAD revision into a `plugins/c
   
     > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/1.1/
 
+>**CAUTION**
+>The HEAD revision of the branch is not guaranteed to be stable all the time!
+
 Now configure the plugin how it is described in the next section and clear your cache afterwards.
 
 # Configuration
@@ -115,7 +118,7 @@ These are:
                 # the corresponding data class
                 class: MySoapHeaderDataClass
 
-    For more details about the usage of SOAP Headers read the section `Using SOAP Headers`
+    For more details about the usage of SOAP Headers read the section `Using SOAP Headers`.
 
 ### module.yml
 
@@ -186,7 +189,7 @@ The only thing we will have to do is updating the doc comment:
       /**
        * An action multiplying two numbers.
        *
-       * @ws-enable
+       * @WSMethod(webservice='MathApi')
        *
        * @param double $a Factor A
        * @param double $b Factor B
@@ -201,8 +204,8 @@ The only thing we will have to do is updating the doc comment:
 
 Changes:
 
-*   a `@ws-enable` doc tag was added to mark the action as available in webservice mode,
-*   for every parameter accessable through `sfRequest::getParameter()` a `@param` doc tag with type, name and description was added,
+*   a `@WSMethod` annotation was added to mark the action as available in the `MathApi` webservice ,
+*   for every parameter accessible through `sfRequest::getParameter()` a `@param` doc tag with type, name and description was added,
 *   a `@return` doc tag with type and description was added,
 *   the `@param` doc tag for `$request` was removed, because it is not a real parameter required by the action `multiply`.
 
@@ -216,8 +219,9 @@ Execute the task with:
 >Change `http://localhost/` to the url you are using for development!
 
 The task will generate a `MathApi.wsdl` and `MathApi.php` in your project's `web/` folder.
+Further the task will generate a `MathApiHandler.class.php` and a `BaseMathApiHandler.class.php` in the application's `lib/` folder.
 
-We have to change the `wsdl` option in the application's `app.yml` file to `MathApi.wsdl`:
+We have to change the `wsdl` option in the application's `app.yml` file to `MathApi.wsdl` and the `handler` option to `MathApiHandler`:
 
     // apps/frontend/config/app.yml
     # your environment for webservice mode
@@ -226,6 +230,8 @@ We have to change the `wsdl` option in the application's `app.yml` file to `Math
       ck_web_service_plugin:
         # the location of your wsdl file, relative to your project's `web/` folder
         wsdl: %SF_WEB_DIR%/MathApi.wsdl
+        # the class which will be registered as handler for webservice requests
+        handler: MathApiHandler
 
 and we have to clear the cache.
 
@@ -252,7 +258,7 @@ The script will be named `mathApiTest.php` and placed under the project's `test/
       ->is('', 10);            // check the result value is 10
 
 You see the name of the webservice method follows the scheme `<moduleName>_<actionName>`, because this might be not descriptive enough or an alternative scheme is desired,
- we will see how to change this. For this we have to change again the action's doc comment:
+ we will see how to change the method name. To do this we have to change again the action's doc comment:
 
     [php]
     <?php
@@ -263,8 +269,7 @@ You see the name of the webservice method follows the scheme `<moduleName>_<acti
       /**
        * An action multiplying two numbers.
        *
-       * @ws-enable
-       * @ws-method SimpleMultiply
+       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
        *
        * @param double $a Factor A
        * @param double $b Factor B
@@ -279,27 +284,13 @@ You see the name of the webservice method follows the scheme `<moduleName>_<acti
 
 Changes:
 
-*   a `@ws-method` doc tag was added, specifying the new name.
+*   the parameter `name` was added to the `@WSMethod` annotation to specify the method name.
 
 Now we have to regenerate the wsdl, execute:
 
-    > symfony webservice:generate-wsdl -h frontend MathApi http://localhost/
+    > symfony webservice:generate-wsdl frontend MathApi http://localhost/
 
->**TIP**  
->The `h` (`handler`) option was added to the command, if it is not set the `@ws-method` doc tag is ignored.
-
-The `handler` option leads to the generation of a `MathApiHandler.class.php` in the application's `lib/` folder.
-To enable this handler we have to edit the application's `app.yml` file and set the `handler` to `MathApiHandler`:
-
-    // apps/frontend/config/app.yml
-    soap:
-      # ...
-      ck_web_service_plugin:
-        # ...
-        # the class that will be registered as handler for webservice requests
-        handler: MathApiHandler
-
-Our test script has to be updated:
+Finally our test script has to be updated:
 
     [php]
     <?php
@@ -324,24 +315,26 @@ You now have a basic overview how to use the plugin, the following sections will
 
 Its general syntax is:
 
-    > symfony webservice:generate-wsdl [--environment=soap] [--debug] [--handler] app_name webservice_name webservice_base_url
+    > symfony webservice:generate-wsdl [--environment=soap] [--enabledebug] app_name webservice_name webservice_base_url
 
 It will do the following things:
 
-*   look through all modules of `'app_name'` for actions with the `@ws-enable` doc tag,
-*   add the marked actions to a wsdl definition,
+*   look through all modules of `'app_name'` for actions with the `@WSMethod` annotation,
+*   add the marked actions to the wsdl definition, if:
+    *   the `@WSMethod` annotation's `webservice` parameter equals the `'webservice_name'` argument or
+    *   the `'environment'` option has its default value `soap` and the `@WSMethod` annotation's `webservice` parameter is missing,
 *   save the wsdl definition to your project's `web/` folder as `'webservice_name'.wsdl`,
 *   create a new controller in your project's `web/` folder with name `'webservice_name'.php`,
-*   if the `handler` option is set, it will add a `'webservice_name'Handler.class.php` to the `'app_name'`'s `lib/` folder.
+*   add a `'webservice_name'Handler.class.php` and a `Base'webservice_name'Handler.class.php` to the `'app_name'`'s `lib/` folder.
 
 The arguments explained in detail:
 
 *   `app_name`:
-    *   specifies the application, which is searched for actions marked with the `@ws-enable` doc tag
+    *   specifies the application, which is searched for actions marked with the `@WSMethod` annotation
 *   `webservice_name`:
     *   specifies the name of the webservice
 *   `webservice_base_url`:
-    *   specifies the url under which the webservice will be accessable
+    *   specifies the url under which the webservice will be accessible
 
 The options explained in detail:
 
@@ -349,11 +342,8 @@ The options explained in detail:
     *   sets the environment for webservice mode
     *   defaults to `soap`
     *   if you change it, don't forget to change the configuration files accordingly
-*   `debug` (short `d`):
+*   `enabledebug` (short `d`):
     *   enables the debug mode in the generated controller
-    *   defaults to `false`
-*   `handler` (short `h`):
-    *   generates a custom SOAP handler extending the `ckSoapHandler`
     *   defaults to `false`
 
 # Understanding result adapters
@@ -404,8 +394,7 @@ Let's say we want to multiply any number of factors, not only two:
       /**
        * An action multiplying any number of factors.
        *
-       * @ws-enable
-       * @ws-method SimpleMultiply
+       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
        *
        * @param double[] $factors An array of factors
        *
@@ -444,9 +433,9 @@ Because array types are complex data types, we have to add a mapping to the appl
 >**TIP**
 >The generated array type names follow the scheme `<TypeName>Array`.
 >
->Use `ckGenericArray` as PHP mapping type, so you can use the transferred array object like a normal PHP array (iterate, index, ...).  
+>Use `ckGenericArray` as PHP mapping type for any array type you use, so you can use the transferred array object like a normal PHP array (iterate, index, ...).  
 
-The last thing to do is: regenerate the wsdl file with the `webservice:generate-wsdl` task, don't forget the `h` option, and clear the cache.
+The last thing to do is: regenerate the wsdl file with the `webservice:generate-wsdl` task and clear the cache.
 
 Our test script might look like this now:
 
@@ -521,8 +510,7 @@ Now let's modify the `mathActions` class by adding a new action, called `Complex
       /**
        * An action multiplying any number of complex factors.
        *
-       * @ws-enable
-       * @ws-method ComplexMultiply
+       * @WSMethod(name='ComplexMultiply', webservice='MathApi')
        *
        * @param ComplexNumber[] $input
        *
@@ -553,7 +541,7 @@ Again we have to update the `classmap` in the application's `app.yml` file:
             ComplexNumber:      ComplexNumber
             ComplexNumberArray: ckGenericArray
 
-Last regenerate the wsdl file once more and clear the cache.
+Finally regenerate the wsdl file once more and clear the cache.
 
 Our updated test script will look something like this:
 
@@ -623,9 +611,8 @@ First we will modify the `mathActions` class the following way:
       /**
        * An action multiplying two numbers.
        *
-       * @ws-enable
-       * @ws-method SimpleMultiply
-       * @ws-header AuthHeader: AuthData
+       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+       * @WSHeader(name='AuthHeader', type='AuthData')
        *
        * @param double $a Factor A
        * @param double $b Factor B
@@ -652,7 +639,7 @@ First we will modify the `mathActions` class the following way:
 
 Changes:
 
-*   a `@ws-header` doc tag was added, specifying the name (`AuthHeader`) of the SOAP Header and the data class (`AuthData`), which holds the data of the SOAP header,
+*   a `@WSHeader` annotation was added, specifying the name (`AuthHeader`) of the SOAP Header and the data class (`AuthData`), which holds the data of the SOAP header,
 *   an authentication check was added, so the multiplication is only done, if the user was authenticated successfully.
 
 To get this example working we have to define the `AuthData` class, so let's create a `AuthData.class.php` file in the application's `lib` folder with the following content:
@@ -789,6 +776,10 @@ The last missing thing is the updated test script:
 
 This section demonstrated the use of SOAP Headers, so now you have seen nearly all features this plugin has to offer.
 
+# Throwing SOAP Faults
+
+
+
 # Functional Testing
 
 The symfony framework promotes the paradigm of test driven development, so it is just natural that this plugin offers you 
@@ -838,7 +829,7 @@ It will be named `soaptest.php` and will have the following content:
     <?php
     
     require_once dirname(__FILE__).'/../../config/ProjectConfiguration.class.php';
-    $configuration = ProjectConfiguration::getApplicationConfiguration($app, 'soaptest', isset($debug) ? $debug : true);
+    $configuration = ProjectConfiguration::getApplicationConfiguration($app, isset($env) ? $env : 'soaptest', isset($debug) ? $debug : true);
     require_once($configuration->getSymfonyLibDir().'/vendor/lime/lime.php');
     
     sfContext::createInstance($configuration);
@@ -846,7 +837,7 @@ It will be named `soaptest.php` and will have the following content:
     // remove all cache
     sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
 
-This is the same as the default `functional.php` script except the environment parameter of `ProjectConfiguration::getApplicationConfiguration()` changed to `soaptest`.
+This is the same as the default `functional.php` script except the environment parameter of `ProjectConfiguration::getApplicationConfiguration()` can be changed with the `$env` variable and defaults to `soaptest`.
 
 >**TIP**
 >You have to run the `webservice:generate-wsdl` task always twice, once for the `soap` environment and once for the `soaptest` environment, do not forget to set the `--environment` switch to the proper value.
@@ -892,7 +883,7 @@ To get the actual result you have to call the `getResult()` method:
     $result = $c->myMethod($param1, $param2)
                 ->getResult();
 
-For evaluating the result, the `ckTestSoapClient` class offers three methods `is()` checks the value, `isType()` checks the type and `isCount()` checks the element count,
+For evaluating the result, the `ckTestSoapClient` class offers three methods: `is()` checks the value, `isType()` checks the type and `isCount()` checks the element count,
  useful when the result is an array.
 
 The first argument is always a child element selector, so you can easily access and check properties or array elements, the second argument is a value to check against.
@@ -974,7 +965,7 @@ If you want to check in an action if it is executed in webservice mode, you can 
       /**
        * Some description...
        *
-       * @ws-enable
+       * @WSMethod(webservice='MyApi')
        */
       public function executeBar($request)
       {
@@ -984,6 +975,35 @@ If you want to check in an action if it is executed in webservice mode, you can 
         }
         
         // do this always...
+      }
+    }
+
+## Create multiple webservices for one application
+
+In earlier releases there could only exist one webservice per symfony application.
+This has changed with the introduction of the `@WSMethod` annotation, you can now specify
+with the `webservice` parameter to which webservice an action belongs.
+But it is important that there has to be one environment per webservice.
+
+## Adding an action to multiple webservices
+
+It is possible to add an action to more then one webservice, because the `webservice` parameter of the
+`@WSMethod` annotation accepts also an array of values. The action shown in the following example will be
+available in the webservices `MyWebserviceA` and `MyWebserviceB`:
+
+    [php]
+    <?php
+    
+    class FooActions extends sfActions
+    {
+      /**
+       * Some description...
+       *
+       * @WSMethod(webservice={'MyWebserviceA', 'MyWebserviceB'})
+       */
+      public function executeBar($request)
+      {
+        // ...
       }
     }
 
