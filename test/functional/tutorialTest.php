@@ -71,6 +71,16 @@ $c->ComplexMultiply(array(new MyComplexNumber(1, 0), new MyComplexNumber(1, 0)))
   ->is('imaginaryPart', 0)
   ;
 
+// test executeSimpleMultiplyWithHeaderWithException
+$c->SimpleMultiplyWithHeaderWithException(5, 2)
+  ->hasFault('Unauthenticated user!')
+  ;
+
+// test executeSimpleMultiplyWithHeaderWithFault
+$c->SimpleMultiplyWithHeaderWithFault(5, 2)
+  ->hasFault('Unauthenticated user!')
+  ;
+
 // test executeSimpleMultiplyWithHeader
 $authData = new MyAuthData();
 $authData->username = 'test';

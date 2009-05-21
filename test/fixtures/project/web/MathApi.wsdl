@@ -43,6 +43,14 @@
       <wsdl:input message="tns:SimpleMultiplyWithHeaderRequest"/>
       <wsdl:output message="tns:SimpleMultiplyWithHeaderResponse"/>
     </wsdl:operation>
+    <wsdl:operation name="SimpleMultiplyWithHeaderWithException" parameterOrder="AuthHeader a b">
+      <wsdl:input message="tns:SimpleMultiplyWithHeaderWithExceptionRequest"/>
+      <wsdl:output message="tns:SimpleMultiplyWithHeaderWithExceptionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SimpleMultiplyWithHeaderWithFault" parameterOrder="AuthHeader a b">
+      <wsdl:input message="tns:SimpleMultiplyWithHeaderWithFaultRequest"/>
+      <wsdl:output message="tns:SimpleMultiplyWithHeaderWithFaultResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="ArrayMultiply" parameterOrder="factors">
       <wsdl:input message="tns:ArrayMultiplyRequest"/>
       <wsdl:output message="tns:ArrayMultiplyResponse"/>
@@ -81,6 +89,28 @@
       <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
         <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:SimpleMultiplyWithHeaderResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="SimpleMultiplyWithHeaderWithException">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/SimpleMultiplyWithHeaderWithException" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="a b" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:SimpleMultiplyWithHeaderWithExceptionRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:SimpleMultiplyWithHeaderWithExceptionResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="SimpleMultiplyWithHeaderWithFault">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/SimpleMultiplyWithHeaderWithFault" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="a b" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:SimpleMultiplyWithHeaderWithFaultRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:SimpleMultiplyWithHeaderWithFaultResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ArrayMultiply">
@@ -122,6 +152,24 @@
     <wsdl:part name="b" type="xsd:double"/>
   </wsdl:message>
   <wsdl:message name="SimpleMultiplyWithHeaderResponse">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+    <wsdl:part name="result" type="xsd:double"/>
+  </wsdl:message>
+  <wsdl:message name="SimpleMultiplyWithHeaderWithExceptionRequest">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+    <wsdl:part name="a" type="xsd:double"/>
+    <wsdl:part name="b" type="xsd:double"/>
+  </wsdl:message>
+  <wsdl:message name="SimpleMultiplyWithHeaderWithExceptionResponse">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+    <wsdl:part name="result" type="xsd:double"/>
+  </wsdl:message>
+  <wsdl:message name="SimpleMultiplyWithHeaderWithFaultRequest">
+    <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+    <wsdl:part name="a" type="xsd:double"/>
+    <wsdl:part name="b" type="xsd:double"/>
+  </wsdl:message>
+  <wsdl:message name="SimpleMultiplyWithHeaderWithFaultResponse">
     <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
     <wsdl:part name="result" type="xsd:double"/>
   </wsdl:message>

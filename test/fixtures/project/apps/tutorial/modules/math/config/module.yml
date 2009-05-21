@@ -4,3 +4,5 @@ soaptest:
   arrayMultiply: { parameter: [factors], result: { class: ckPropertyResultAdapter, param: { property: result } } }
   complexMultiply: { parameter: [input], result: { class: ckPropertyResultAdapter, param: { property: result } } }
   simpleMultiplyWithHeader: { parameter: [a, b], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  simpleMultiplyWithHeaderWithException: { parameter: [a, b], result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  simpleMultiplyWithHeaderWithFault: { parameter: [a, b], result: { class: ckPropertyResultAdapter, param: { property: result } } }

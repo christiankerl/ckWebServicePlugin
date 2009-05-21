@@ -81,6 +81,73 @@ class mathActions extends sfActions
   }
 
   /**
+   * An action multiplying two numbers.
+   *
+   * @WSMethod(name='SimpleMultiplyWithHeaderWithException', webservice='MathApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
+   *
+   * @param float $a Factor A
+   * @param float $b Factor B
+   *
+   * @return float The result
+   */
+  public function executeSimpleMultiplyWithHeaderWithException($request)
+  {
+    if(!$this->getUser()->isAuthenticated())
+    {
+      throw new sfSecurityException('Unauthenticated user!');
+    }
+
+    $factorA = $request->getParameter('a');
+    $factorB = $request->getParameter('b');
+
+    if(is_numeric($factorA) && is_numeric($factorB))
+    {
+      $this->result = $factorA * $factorB;
+
+      return sfView::SUCCESS;
+    }
+    else
+    {
+      return sfView::ERROR;
+    }
+  }
+
+  /**
+   * An action multiplying two numbers.
+   *
+   * @WSMethod(name='SimpleMultiplyWithHeaderWithFault', webservice='MathApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
+   *
+   * @param float $a Factor A
+   * @param float $b Factor B
+   *
+   * @return float The result
+   */
+  public function executeSimpleMultiplyWithHeaderWithFault($request)
+  {
+    if(!$this->getUser()->isAuthenticated())
+    {
+      $e = $this->isSoapRequest() ? new SoapFault('Server', 'Unauthenticated user!') : new sfSecurityException('Unauthenticated user!');
+      throw $e;
+    }
+
+    $factorA = $request->getParameter('a');
+    $factorB = $request->getParameter('b');
+
+    if(is_numeric($factorA) && is_numeric($factorB))
+    {
+      $this->result = $factorA * $factorB;
+
+      return sfView::SUCCESS;
+    }
+    else
+    {
+      return sfView::ERROR;
+    }
+  }
+
+  /**
    * An action multiplying any number of factors.
    *
    * @WSMethod(name='ArrayMultiply', webservice='MathApi')

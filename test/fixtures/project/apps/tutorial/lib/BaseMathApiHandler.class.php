@@ -20,6 +20,16 @@ class BaseMathApiHandler extends ckSoapHandler
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('math', 'simpleMultiplyWithHeader', array($a, $b));
   }
 
+  public function SimpleMultiplyWithHeaderWithException($a, $b)
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('math', 'simpleMultiplyWithHeaderWithException', array($a, $b));
+  }
+
+  public function SimpleMultiplyWithHeaderWithFault($a, $b)
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('math', 'simpleMultiplyWithHeaderWithFault', array($a, $b));
+  }
+
   public function ArrayMultiply($factors)
   {
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('math', 'arrayMultiply', array($factors));

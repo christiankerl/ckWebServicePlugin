@@ -778,7 +778,142 @@ This section demonstrated the use of SOAP Headers, so now you have seen nearly a
 
 # Throwing SOAP Faults
 
+The equivalent to exceptions in SOAP are so called SOAP Faults. The plugin supports a simple translation of exceptions to SOAP Faults, but also allows you to throw
+ your own SOAP Faults.
+ 
+To demonstrate the feature we will extend the authentication example from the last section.
 
+First to demonstrate what happens if an exception is thrown, we will modify the `multiply` action to throw an exception if the user is not authenticated.
+The modified `mathActions` class will look like this:
+
+    [php]
+    <?php
+    
+    // apps/frontend/modules/math/actions/actions.class.php
+    class mathActions extends sfActions
+    {
+      /**
+       * An action multiplying two numbers.
+       *
+       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+       * @WSHeader(name='AuthHeader', type='AuthData')
+       *
+       * @param double $a Factor A
+       * @param double $b Factor B
+       *
+       * @return double The result
+       */
+      public function executeMultiply($request)
+      {
+        if(!$this->getUser()->isAuthenticated())
+        {
+          throw new sfSecurityException('Unauthenticated user!');
+        }
+      
+        $factorA = $request->getParameter('a');
+        $factorB = $request->getParameter('b');
+      
+        if(is_numeric($factorA) && is_numeric($factorB))
+        {
+          $this->result = $factorA * $factorB;
+          
+          return sfView::SUCCESS;    
+        }
+        else
+        {
+          return sfView::ERROR;
+        }
+      }
+    }
+
+How the exception is translated to a SOAP Fault depends on the value of `sf_debug`. If debugging is disabled every exception will be
+translated to a standard SOAP Fault with the message `'Internal Server Error'`, otherwise if debugging is enabled the message, the type 
+and the stack trace of the exception will be send to the client.
+
+An example test script for the method with debugging enabled:
+
+    [php]
+    <?php
+    
+    // test/functional/mathApiTest.php    
+    $app   = 'frontend';
+    $debug = true;
+    
+    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+    
+    $options = array(
+      'classmap' => array(
+      ),
+    );
+    
+    $c = new ckTestSoapClient($options);
+    $c->SimpleMultiply(2, 5)
+      ->hasFault('Unauthenticated user!')
+      ;
+
+A test script for the same method but with debugging disabled:
+
+    [php]
+    <?php
+    
+    // test/functional/mathApiTest.php    
+    $app   = 'frontend';
+    $debug = false;
+    
+    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+        
+    $options = array(
+      'classmap' => array(
+      ),
+    );
+    
+    $c = new ckTestSoapClient($options);
+    $c->SimpleMultiply(2, 5)
+      ->hasFault('Internal Server Error')
+      ;
+
+The next example shows how to throw our own SOAP Fault if we are in webservice mode.
+
+    [php]
+    <?php
+    
+    // apps/frontend/modules/math/actions/actions.class.php
+    class mathActions extends sfActions
+    {
+      /**
+       * An action multiplying two numbers.
+       *
+       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+       * @WSHeader(name='AuthHeader', type='AuthData')
+       *
+       * @param double $a Factor A
+       * @param double $b Factor B
+       *
+       * @return double The result
+       */
+      public function executeMultiply($request)
+      {
+        if(!$this->getUser()->isAuthenticated())
+        {
+          $e = $this->isSoapRequest() ? new SoapFault('Server', 'Unauthenticated user!') : new sfSecurityException('Unauthenticated user!');
+          throw $e;
+        }
+      
+        $factorA = $request->getParameter('a');
+        $factorB = $request->getParameter('b');
+      
+        if(is_numeric($factorA) && is_numeric($factorB))
+        {
+          $this->result = $factorA * $factorB;
+          
+          return sfView::SUCCESS;    
+        }
+        else
+        {
+          return sfView::ERROR;
+        }
+      }
+    }
 
 # Functional Testing
 
@@ -982,8 +1117,8 @@ If you want to check in an action if it is executed in webservice mode, you can 
 
 In earlier releases there could only exist one webservice per symfony application.
 This has changed with the introduction of the `@WSMethod` annotation, you can now specify
-with the `webservice` parameter to which webservice an action belongs.
-But it is important that there has to be one environment per webservice.
+to which webservice an action belongs with the `webservice` parameter of the annotation.
+But it is important to notice that there still has to be one environment per webservice!
 
 ## Adding an action to multiple webservices
 
@@ -1015,5 +1150,8 @@ If you have any questions concerning the use of the plugin, send me an email to:
 
 If you have feature suggestions, bug reports, patches, usage examples for the documentation
  or want to become an active contributor, send me an email to: christian-kerl [at] web [dot] de
+
+In case you use the Symfony Trac ticket system for bug reports assign the ticket to `chrisk` or send me an email with a link to the ticket!
+This ensures I notice and work on the ticket in time.  
 
 Any help is welcome!
