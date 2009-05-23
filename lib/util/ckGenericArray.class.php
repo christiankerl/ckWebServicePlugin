@@ -81,11 +81,11 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
   {
     if(is_null($offset))
     {
-      $this->_item[] = value;
+      $this->_item[] = $value;
     }
     else
     {
-      $this->_item[$offset] = value;
+      $this->_item[$offset] = $value;
     }
   }
 
