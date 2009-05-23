@@ -36,25 +36,7 @@ abstract class ckAbstractMemberResultAdapter extends ckAbstractResultAdapter
    */
   public function getResult(sfAction $action)
   {
-    $result = null;
-    $_result = $this->doGetResult($action);
-
-    if($_result instanceof Doctrine_Record)
-    {
-      $result = ckDoctrineCollectionAdapter::adaptCollectionsToArray($_result);
-    }
-
-    if(is_array($_result) || $_result instanceof Traversable)
-    {
-      $result = array();
-
-      foreach($_result as $object)
-      {
-        $result[] = $object instanceof Doctrine_Record ? ckDoctrineCollectionAdapter::adaptCollectionsToArray($object) : $object;
-      }
-    }
-
-    return !is_null($result) ? $result : $_result;
+    return ckObjectWrapper::wrap($this->doGetResult($action));
   }
 
   /**

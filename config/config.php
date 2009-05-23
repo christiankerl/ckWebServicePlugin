@@ -11,4 +11,9 @@
 
 $this->dispatcher->connect('component.method_not_found', array('ckComponentEventListener', 'listenToComponentMethodNotFoundEvent'));
 
-?>
+spl_autoload_register(array(new ckGenericObjectAdapterFactory(), 'autoload'));
+
+ckObjectWrapper::addObjectWrapper(new ckDefaultObjectWrapper());
+ckObjectWrapper::addObjectWrapper(new ckGenericObjectAdapterWrapper());
+ckObjectWrapper::addObjectWrapper(new ckArrayObjectWrapper());
+ckObjectWrapper::addObjectWrapper(new ckDoctrineRecordWrapper());

@@ -17,7 +17,7 @@
  * @subpackage strategy
  * @author     Christian Kerl <christian-kerl@web.de>
  */
-class ckDoctrinePropertyStrategy extends ckBeanPropertyStrategy
+class ckDoctrinePropertyStrategy extends ckAbstractPropertyStrategy
 {
   protected static $TYPES = array(
     'string'  => array('string', 'blob', 'clob', 'timestamp', 'time', 'date', 'enum', 'gzip'),
@@ -88,5 +88,25 @@ class ckDoctrinePropertyStrategy extends ckBeanPropertyStrategy
     }
 
     return null;
+  }
+
+  public function getPropertyValue($object, $property)
+  {
+    return $object->$property;
+  }
+
+  public function setPropertyValue($object, $property, $value)
+  {
+    if(is_array($value) && $object->$property instanceof Doctrine_Collection)
+    {
+      foreach($value as $entry)
+      {
+        $object->$property->add($entry);
+      }
+    }
+    else
+    {
+      $object->$property = $value;
+    }
   }
 }

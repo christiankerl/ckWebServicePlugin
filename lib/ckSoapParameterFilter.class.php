@@ -53,7 +53,7 @@ class ckSoapParameterFilter extends sfFilter
 					}
 
 					/** map soap param to request class **/
-					$request->setParameter($map[$i], $param[$i]);
+					$request->setParameter($map[$i], ckObjectWrapper::unwrap($param[$i]));
 
 					/** logging enabled **/
 					if (sfConfig::get('sf_logging_enabled'))
@@ -68,7 +68,7 @@ class ckSoapParameterFilter extends sfFilter
 			if (sfConfig::get('sf_logging_enabled'))
 			{
 				/** write logmessage **/
-				$this->getContext()->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Mapped soap parameters due request %s', str_replace("\n", '', var_export($log_params, true))))));
+				//$this->getContext()->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Mapped soap parameters due request %s', str_replace("\n", '', var_export(null, true))))));
 			}
 		}
 
