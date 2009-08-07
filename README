@@ -26,7 +26,7 @@ Now configure the plugin how it is described in the next section and clear your 
 # Configuration
 
 The configuration can be devided into two parts. A `basic` one, which is mandatory and has to be done in order to get the plugin working.
-The second, `advanced`, part is only required under certain circumstances and when you want to leverage the full power of the plugin.
+The second, `advanced`, part is only required under certain circumstances and if you want to leverage the full power of the plugin.
 So if you are using this plugin the first time you can skip the `Advanced` section.
 
 ## Basic
@@ -145,7 +145,7 @@ The result adapters will be explained in more detail in the section `Understandi
 
 # Using the `webservice:generate-wsdl` task
 
-Now it is time to start making our actions avialable as a webservice.
+Now it is time to start making our actions available as a webservice.
 
 This is best explained with an example, we will use the following action, which will multiply two numbers and is in an application named `frontend`:
 
@@ -204,7 +204,7 @@ The only thing we will have to do is updating the doc comment:
 
 Changes:
 
-*   a `@WSMethod` annotation was added to mark the action as available in the `MathApi` webservice ,
+*   a `@WSMethod` annotation was added to mark the action as available in the `MathApi` webservice,
 *   for every parameter accessible through `sfRequest::getParameter()` a `@param` doc tag with type, name and description was added,
 *   a `@return` doc tag with type and description was added,
 *   the `@param` doc tag for `$request` was removed, because it is not a real parameter required by the action `multiply`.
@@ -579,7 +579,7 @@ Our updated test script will look something like this:
     // ...
     
     // test executeComplexMultiply    
-    $cn = new ComplexNumber(1, 0);
+    $cn = new ClientComplexNumber(1, 0);
     
     $c->ComplexMultiply(array(clone $cn, clone $cn))
       ->isFaultEmpty()
@@ -599,6 +599,9 @@ SOAP Headers provide a way to send additional information, which are not directl
 An good example for this are authentication information, so the use of a certain method can be restricted to a group of users.
 
 To demonstrate the support for SOAP Headers, we will stick to the simple multiplication example used previously.
+
+>**CAUTION**
+>The authentication mechanism used here is not secure, it is just used for demonstration purpose and to keep the example simple!
 
 First we will modify the `mathActions` class the following way:
 
@@ -709,7 +712,7 @@ The modified configuration class would look something like this:
     <?php
     
     // apps/frontend/config/frontendConfiguration.class.php
-    class frontendConfiguration
+    class frontendConfiguration extends sfApplicationConfiguration
     {
       public function configure()
       {
