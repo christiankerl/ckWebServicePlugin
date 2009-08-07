@@ -10,7 +10,8 @@
  */
 
 /**
- * ckArrayObjectWrapper
+ * ckArrayObjectWrapper is a ckObjectWrapper implementation, which can wrap arrays and Traversable objects and
+ * can unwrap ckGenericArray objects. All elements of the array will also be wrapped or unwrapped.
  *
  * @package    ckWebServicePlugin
  * @subpackage adapter
@@ -18,16 +19,25 @@
  */
 class ckArrayObjectWrapper extends ckObjectWrapper
 {
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#canWrap()
+   */
   public function canWrap($object)
   {
     return is_array($object) || $object instanceof Traversable;
   }
 
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#canUnwrap()
+   */
   public function canUnwrap($object)
   {
     return $object instanceof ckGenericArray;
   }
 
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#wrapObject()
+   */
   public function wrapObject($object)
   {
     $result = array();
@@ -40,6 +50,9 @@ class ckArrayObjectWrapper extends ckObjectWrapper
     return $result;
   }
 
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#unwrapObject()
+   */
   public function unwrapObject($object)
   {
     foreach($object as $key => $variable)

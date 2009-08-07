@@ -10,7 +10,8 @@
  */
 
 /**
- * ckGenericObjectAdapterWrapper
+ * ckGenericObjectAdapterWrapper is a ckObjectWrapper implementation, which wraps objects into ckGenericObjectAdapters and
+ * which can unwrap ckGenericObjectAdapters.
  *
  * @package    ckWebServicePlugin
  * @subpackage adapter
@@ -20,16 +21,25 @@ class ckGenericObjectAdapterWrapper extends ckObjectWrapper
 {
   protected static $cache = array();
 
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#canWrap()
+   */
   public function canWrap($object)
   {
     return is_object($object) && !($object instanceof ckGenericObjectAdapter);
   }
 
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#canUnwrap()
+   */
   public function canUnwrap($object)
   {
     return $object instanceof ckGenericObjectAdapter;
   }
 
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#wrapObject()
+   */
   public function wrapObject($object)
   {
     $hash = spl_object_hash($object);
@@ -42,6 +52,9 @@ class ckGenericObjectAdapterWrapper extends ckObjectWrapper
     return self::$cache[$hash];
   }
 
+  /* (non-PHPdoc)
+   * @see lib/adapter/object/wrapper/ckObjectWrapper#unwrapObject()
+   */
   public function unwrapObject($object)
   {
     return $object->getObject();

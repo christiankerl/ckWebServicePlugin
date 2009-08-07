@@ -10,7 +10,12 @@
  */
 
 /**
- * ckGenericObjectAdapterFactory
+ * ckGenericObjectAdapterFactory dynamicly builds and loads ckGenericObjectAdapter implementations for
+ * certain classes if the autoload() method has been registered via spl_autoload_register().
+ * A ckGenericObjectAdapter implementation is build if the class starts with 'ckGenericObjectAdapter_'
+ * followed by the class name that should be wrapped. The generated implementation will override the
+ * ckGenericObjectAdapter::initializeObject() method, so it creates a new object of the wrapped class.
+ * All dynamic implementations will be cached.
  *
  * @package    ckWebServicePlugin
  * @subpackage adapter
@@ -20,10 +25,26 @@ class ckGenericObjectAdapterFactory
 {
   protected static $CLASS = 'ckGenericObjectAdapter';
 
-  public function __construct()
+  protected $cache;
+
+  /**
+   * Constructor initializing the ckGenericObjectAdapterFactory with a given base cache directory.
+   *
+   * @param string $cache The base cache directory to use
+   */
+  public function __construct($cache)
   {
+    $this->cache = $cache;
   }
 
+  /**
+   * Loads a class identified by a given class name, if the class name starts with 'ckGenericObjectAdapter_'.
+   * If the class definition is not already cached, it will be build and stored in the cache.
+   *
+   * @param string $class The name of the class to load
+   *
+   * @return bool True, if the class was successfully loaded, false otherwise
+   */
   public function autoload($class)
   {
     if(!$this->isGenericObjectAdapter($class))
@@ -34,19 +55,40 @@ class ckGenericObjectAdapterFactory
     return $this->loadCachedClassFile($this->getAdaptedClass($class));
   }
 
+  /**
+   * Checks if the given class name identifies a ckGenericObjectAdapter implementation.
+   *
+   * @param string $class The class name to check
+   *
+   * @return bool True, if the given class name identifies a ckGenericObjectAdapter implementation, false otherwise
+   */
   protected function isGenericObjectAdapter($class)
   {
     return ckString::startsWith($class, self::$CLASS . '_');
   }
 
+  /**
+   * Gets the class name of the managed object from the name of the ckGenericObjectAdapter implementation.
+   *
+   * @param string $class The class name of the ckGenericObjectAdapter implementation
+   *
+   * @return string The class name of the managed object
+   */
   protected function getAdaptedClass($class)
   {
     return substr($class, strlen(self::$CLASS . '_'));
   }
 
+  /**
+   * Gets the path of the cached class definition for a given class name.
+   *
+   * @param string $class A class name
+   *
+   * @return string The path of the cached class definition
+   */
   protected function getCacheFile($class)
   {
-    $dir = sprintf('%s/ckWebServicePlugin/%s', sfConfig::get('sf_cache_dir'), self::$CLASS);
+    $dir = sprintf('%s/ckWebServicePlugin/%s', $this->cache, self::$CLASS);
 
     if(!file_exists($dir))
     {
@@ -56,6 +98,14 @@ class ckGenericObjectAdapterFactory
     return sprintf('%s/%s.php', $dir, $class);
   }
 
+  /**
+   * Loads a cached class definition for a given class name, if the definition
+   * does not exists, it is build.
+   *
+   * @param string $class A class name
+   *
+   * @return bool True, if the class definition was successfully loaded, false otherwise
+   */
   protected function loadCachedClassFile($class)
   {
     $cacheFile = $this->getCacheFile($class);
@@ -68,6 +118,13 @@ class ckGenericObjectAdapterFactory
     return require_once($cacheFile);
   }
 
+  /**
+   * Builds a ckGenericObjectAdapter definition for a given class.
+   *
+   * @param string $class A class name
+   *
+   * @return string The class definition
+   */
   protected function buildClassDefinition($class)
   {
     return sprintf('<?php
