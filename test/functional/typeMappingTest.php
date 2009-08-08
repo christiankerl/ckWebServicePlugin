@@ -17,11 +17,22 @@ include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 $_options = array(
   'classmap' => array(
     'TestData'         => 'TestData',
+    'TestBean'         => 'MyTestBean',
     'StringArray'      => 'ckGenericArray',
     'TestDataArray'    => 'ckGenericArray',
     'StringArrayArray' => 'ckGenericArray',
   ),
 );
+
+class MyTestBean
+{
+  public $data;
+
+  public function __construct($data)
+  {
+    $this->data = $data;
+  }
+}
 
 $c = new ckTestSoapClient($_options);
 
@@ -72,3 +83,11 @@ $c->test_arrayArray($array)
   ->isType('0', 'ckGenericArray')
   ->isCount('0', 1)
   ->is('0.0', $array[0][0]);
+
+// test beanObject
+$array = array(new MyTestBean('data_0'), new MyTestBean('data_1'), new MyTestBean('data_2'));
+
+$c->test_beanObject($array)
+  ->isFaultEmpty()
+  ->isType('', 'MyTestBean')
+  ->is('data', 'ResultBeanData');

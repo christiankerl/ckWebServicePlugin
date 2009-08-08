@@ -40,6 +40,11 @@ class BaseTestServiceApiHandler extends ckSoapHandler
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('test', 'headerMulti', array());
   }
 
+  public function test_beanObject($beans)
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('test', 'beanObject', array($beans));
+  }
+
   public function test_exception()
   {
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('test', 'exception', array());

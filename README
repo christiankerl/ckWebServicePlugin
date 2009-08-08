@@ -665,7 +665,7 @@ Here are two examples:
 
 There is one important thing you have to note:
 
-If you you want to use those classes as parameter to your methods, you have to map them in your `app.yml` to `ckGenericObjectAdapter_<classname>`.
+If you you want to use those classes as parameter for your methods, you have to map them in your `app.yml` to `ckGenericObjectAdapter_<classname>`.
 So the `app.yml` for the `Article` and `UserBean` class shown above would look like:
 
     // apps/frontend/config/app.yml

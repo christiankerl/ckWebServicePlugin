@@ -45,6 +45,18 @@
         </xsd:sequence>
       </xsd:complexType>
       <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ExtraHeaderElement" type="tns:ExtraHeader"/>
+      <xsd:complexType name="TestBean">
+        <xsd:sequence>
+          <xsd:element name="data" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="TestBeanElement" type="tns:TestBean"/>
+      <xsd:complexType name="TestBeanArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:TestBean" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="TestBeanArrayElement" type="tns:TestBeanArray"/>
     </xsd:schema>
   </wsdl:types>
   <wsdl:portType name="TestServiceApiPortType">
@@ -75,6 +87,10 @@
     <wsdl:operation name="test_headerMulti" parameterOrder="AuthHeader ExtraHeader">
       <wsdl:input message="tns:test_headerMultiRequest"/>
       <wsdl:output message="tns:test_headerMultiResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="test_beanObject" parameterOrder="beans">
+      <wsdl:input message="tns:test_beanObjectRequest"/>
+      <wsdl:output message="tns:test_beanObjectResponse"/>
     </wsdl:operation>
     <wsdl:operation name="test_exception">
       <wsdl:input message="tns:test_exceptionRequest"/>
@@ -143,25 +159,34 @@
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_headerSingle">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_headerSingle" style="rpc"/>
       <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerSingleRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
       <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerSingleResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_headerMulti">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_headerMulti" style="rpc"/>
       <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="ExtraHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
       <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiResponse" part="ExtraHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_beanObject">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_beanObject" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="beans" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_exception">
@@ -247,6 +272,12 @@
   <wsdl:message name="test_headerMultiResponse">
     <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
     <wsdl:part name="ExtraHeader" element="tns:ExtraHeaderElement"/>
+  </wsdl:message>
+  <wsdl:message name="test_beanObjectRequest">
+    <wsdl:part name="beans" type="tns:TestBeanArray"/>
+  </wsdl:message>
+  <wsdl:message name="test_beanObjectResponse">
+    <wsdl:part name="result" type="tns:TestBean"/>
   </wsdl:message>
   <wsdl:message name="test_exceptionRequest"/>
   <wsdl:message name="test_exceptionResponse"/>

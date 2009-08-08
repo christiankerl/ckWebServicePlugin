@@ -10,3 +10,4 @@ soaptest:
   soapFault: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
   methodResult: { parameter: {  }, result: { class: ckMethodResultAdapter, param: { method: getFilteredResult } } }
   renderResult: { parameter: {  }, result: { class: ckRenderResultAdapter, param: {  } } }
+  beanObject: { parameter: [beans], result: { class: ckPropertyResultAdapter, param: { property: result } } }

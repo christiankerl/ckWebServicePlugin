@@ -74,7 +74,7 @@ class testActions extends sfActions
     $in   = $request->getParameter('intArrayVal');
     $test = array(1, 2, 3, 4);
 
-    if($in instanceof ckGenericArray && $in->toArray() == $test)
+    if(is_array($in) && $in == $test)
     {
       $this->result = array('a', 'b');
     }
@@ -97,9 +97,9 @@ class testActions extends sfActions
   {
     $in = $request->getParameter('testDataArrayVal');
 
-    if($in instanceof ckGenericArray && $in[0] instanceof TestData)
+    if(is_array($in) && $in[0] instanceof TestData)
     {
-      $this->result = $in->toArray();
+      $this->result = $in;
     }
     else
     {
@@ -120,9 +120,9 @@ class testActions extends sfActions
   {
     $in = $request->getParameter('stringArrayOfArrayVal');
 
-    if($in instanceof ckGenericArray && $in[0] instanceof ckGenericArray && is_string($in[0][0]))
+    if(is_array($in) && is_array($in[0]) && is_string($in[0][0]))
     {
-      $this->result = $in->toArray();
+      $this->result = $in;
     }
     else
     {
@@ -157,6 +157,30 @@ class testActions extends sfActions
     {
       throw new sfException('HeaderHandlingException');
     }
+  }
+
+  /**
+   * Test action for objects mapped by ckBeanPropertyStrategy.
+   *
+   * @WSMethod(webservice='TestServiceApi')
+   *
+   * @param TestBean[] $beans
+   *
+   * @return TestBean
+   */
+  public function executeBeanObject($request)
+  {
+    $beans = $request->getParameter('beans');
+
+    foreach($beans as $bean)
+    {
+      if(!($bean instanceof TestBean) || strlen($bean->getData()) == 0)
+      {
+        throw new sfException('BeanObjectMappingException');
+      }
+    }
+
+    $this->result = new TestBean('ResultBeanData');
   }
 
   /**
