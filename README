@@ -591,6 +591,115 @@ Our updated test script will look something like this:
 
 As you see, we have added a lightweight definition of the `ComplexNumber` class called `ClientComplexNumber`, because it is likely that you don't have the same class definition at client and server, only the names and types of the properties will match.
 
+Often the objects you want to return or pass in as parameter are not as simple as the shown `ComplexNumber`, e.g. Doctrine or Propel objects or objects which have a JavaBean-style class, so the properties are only accessible through getter and setter methods.
+
+The plugin also offers a solution for this problem. Therefor it introduces so called property strategies, they have two purposes, the first is to determine which properties a class has when the wsdl is generated, the second purpose is to access those properties
+at runtime.
+
+There are already four property strategy implementations:
+
+*   ckDefaultPropertyStrategy:
+    *   provides access to all public properties
+    *   each property needs to have a proper doc comment so its type can be determined
+    *   it is used if there is no other property strategy specified (so it was already used in the background in the `ComplexNumber` example)
+*   ckBeanPropertyStrategy:
+    *   provides access to JavaBean-like properties with getter and setter methods
+    *   each getter method needs to have proper doc comment so the property type can be determined
+*   ckDoctrinePropertyStrategy:
+    *   provides access to all properties you defined in your `schema.yml` for Doctrine objects
+*   ckPropelPropertyStrategy:
+    *   provides access to all properties you defined in your `schema.yml` for Propel objects
+
+You can implement your own property strategy by extending `ckAbstractPropertyStrategy`.
+
+To apply a property strategy to a class you have to add a `@PropertyStrategy` annotation to the class with the class name of the property strategy as parameter.
+
+Here are two examples:
+
+*   JavaBean-like class:
+
+        [php]
+        <?php 
+        
+        // apps/frontend/lib/UserBean.class.php
+        /**
+         * @PropertyStrategy('ckBeanPropertyStrategy')
+         */
+        class UserBean
+        {
+          private $_name;
+          
+          /**
+           * Gets the user name.
+           *
+           * @return string The user name
+           */
+          public function getName()
+          {
+            return $this->_name;
+          }
+          
+          /**
+           * Sets the user name to a given value.
+           *
+           * @param string $name A name
+           */
+          public function setName($name)
+          {
+            $this->_name = $name;
+          }
+        }
+
+*   Doctrine class:
+
+        [php]
+        <?php
+        
+        // lib/model/doctrine/Article.class.php
+        /**
+         * @PropertyStrategy('ckDoctrinePropertyStrategy')
+         */
+        class Article extends BaseArticle
+        {
+        }
+
+There is one important thing you have to note:
+
+If you you want to use those classes as parameter to your methods, you have to map them in your `app.yml` to `ckGenericObjectAdapter_<classname>`.
+So the `app.yml` for the `Article` and `UserBean` class shown above would look like:
+
+    // apps/frontend/config/app.yml
+    soap:
+      # ...
+      ck_web_service_plugin:
+        # ...
+        soap_options:
+          classmap:
+            # mapping of wsdl types to PHP types
+            UserBean: ckGenericObjectAdapter_UserBean
+            Article:  ckGenericObjectAdapter_Article
+
+Collections in Doctrine and Propel objects are represented as arrays in the wsdl, so suppose the `Article` class has many `Comment` objects and `Comment` is also a Doctrine class annotated with `@PropertyStrategy('ckDoctrinePropertyStrategy')`.
+The `app.yml` would be:
+
+    // apps/frontend/config/app.yml
+    soap:
+      # ...
+      ck_web_service_plugin:
+        # ...
+        soap_options:
+          classmap:
+            # mapping of wsdl types to PHP types
+            UserBean:     ckGenericObjectAdapter_UserBean
+            Article:      ckGenericObjectAdapter_Article
+            Comment:      ckGenericObjectAdapter_Comment
+            CommentArray: ckGenericArray
+
+This is everything you have to do to use such complex classes!
+
+>**TIP**
+>Do not forget to validate objects you get as a parameter!
+
 In this section you have learned how to work with arrays and classes, the next section covers the usage of SOAP Headers.
 
 # Using SOAP Headers
@@ -601,7 +710,7 @@ An good example for this are authentication information, so the use of a certain
 To demonstrate the support for SOAP Headers, we will stick to the simple multiplication example used previously.
 
 >**CAUTION**
->The authentication mechanism used here is not secure, it is just used for demonstration purpose and to keep the example simple!
+>The authentication mechanism used here is not secure unless you use https, it is just used for demonstration purpose and to keep the example simple!
 
 First we will modify the `mathActions` class the following way:
 
@@ -1121,7 +1230,7 @@ If you want to check in an action if it is executed in webservice mode, you can 
 In earlier releases there could only exist one webservice per symfony application.
 This has changed with the introduction of the `@WSMethod` annotation, you can now specify
 to which webservice an action belongs with the `webservice` parameter of the annotation.
-But it is important to notice that there still has to be one environment per webservice!
+But it is important to notice that there has to be one environment per webservice!
 
 ## Adding an action to multiple webservices
 
