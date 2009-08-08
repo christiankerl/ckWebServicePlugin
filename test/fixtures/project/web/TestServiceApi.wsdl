@@ -48,6 +48,10 @@
     </xsd:schema>
   </wsdl:types>
   <wsdl:portType name="TestServiceApiPortType">
+    <wsdl:operation name="test_noArg">
+      <wsdl:input message="tns:test_noArgRequest"/>
+      <wsdl:output message="tns:test_noArgResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="test_simple" parameterOrder="boolVal intVal stringVal floatVal">
       <wsdl:input message="tns:test_simpleRequest"/>
       <wsdl:output message="tns:test_simpleResponse"/>
@@ -95,6 +99,15 @@
   </wsdl:portType>
   <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApiBinding" type="tns:TestServiceApiPortType">
     <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_noArg">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_noArg" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_simple">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_simple" style="rpc"/>
       <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
@@ -154,7 +167,7 @@
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_headerMulti">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_headerMulti" style="rpc"/>
       <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="ExtraHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
@@ -201,6 +214,10 @@
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
+  <wsdl:message name="test_noArgRequest"/>
+  <wsdl:message name="test_noArgResponse">
+    <wsdl:part name="result" type="xsd:boolean"/>
+  </wsdl:message>
   <wsdl:message name="test_simpleRequest">
     <wsdl:part name="boolVal" type="xsd:boolean"/>
     <wsdl:part name="intVal" type="xsd:int"/>

@@ -1,11 +1,14 @@
 # default values
 #all:
-soaptest:
+all:
+  enable_soap_parameter: off
+  ck_web_service_plugin:
+    persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>  
+soapTestServiceApi:
   enable_soap_parameter: on
   ck_web_service_plugin:
     wsdl: %SF_WEB_DIR%/TestServiceApi.wsdl
     handler: TestServiceApiHandler
-    persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>
     soap_options:
       classmap:
         TestData:         TestData

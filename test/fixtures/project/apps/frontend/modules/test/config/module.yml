@@ -1,4 +1,4 @@
-soaptest:
+soapTestServiceApi:
   simple: { parameter: [boolVal, intVal, stringVal, floatVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
   complex: { parameter: [testDataVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
   arraySimple: { parameter: [intArrayVal], result: { class: ckPropertyResultAdapter, param: { property: result } } }
@@ -10,3 +10,4 @@ soaptest:
   soapFault: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
   methodResult: { parameter: {  }, result: { class: ckMethodResultAdapter, param: { method: getFilteredResult } } }
   renderResult: { parameter: {  }, result: { class: ckRenderResultAdapter, param: {  } } }
+  noArg: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }

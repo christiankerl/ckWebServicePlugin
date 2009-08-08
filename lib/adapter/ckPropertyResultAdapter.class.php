@@ -16,7 +16,7 @@
  * @subpackage adapter
  * @author     Christian Kerl <christian-kerl@web.de>
  */
-class ckPropertyResultAdapter extends ckAbstractResultAdapter
+class ckPropertyResultAdapter extends ckAbstractMemberResultAdapter
 {
   /**
    * The name of the property used as result by default.
@@ -53,9 +53,9 @@ class ckPropertyResultAdapter extends ckAbstractResultAdapter
   }
 
   /**
-   * @see ckAbstractResultAdapter::getResult()
+   * @see ckAbstractResultAdapter::doGetResult()
    */
-  public function getResult(sfAction $action)
+  protected function doGetResult(sfAction $action)
   {
     $result = null;
     $vars   = $action->getVarHolder()->getAll();

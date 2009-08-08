@@ -25,6 +25,23 @@ class ckSoapHandler
    */
   public function __construct()
   {
+    $this->initializeErrorHandling();
+  }
+
+  /**
+   * Unserialization callback.
+   */
+  public function __wakeup()
+  {
+    $this->initializeErrorHandling();
+  }
+
+  /**
+   * Enables SOAP Error handling, if sf_debug is true, disables it otherwise.
+   */
+  protected function initializeErrorHandling()
+  {
+    use_soap_error_handler(sfConfig::get('sf_debug'));
   }
 
   /**

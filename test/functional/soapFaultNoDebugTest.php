@@ -10,6 +10,7 @@
  */
 
 $app = 'frontend';
+$env = 'soapTestServiceApi';
 $debug = false;
 
 include_once(dirname(__FILE__).'/../bootstrap/functional.php');

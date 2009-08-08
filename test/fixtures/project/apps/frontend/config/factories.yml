@@ -24,7 +24,7 @@ test:
     param:
       session_path: %SF_TEST_CACHE_DIR%/sessions
 
-soaptest:
+soapTestServiceApi:
   response:
     class: sfWebResponse
     param:

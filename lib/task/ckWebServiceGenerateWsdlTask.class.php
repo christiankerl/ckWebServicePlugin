@@ -84,6 +84,13 @@ EOF;
    */
   protected function execute($arguments = array(), $options = array())
   {
+    $databaseManager = new sfDatabaseManager($this->configuration);
+
+    if($this->isPropelPluginActive())
+    {
+      //$this->loadPropelPeerClasses();
+    }
+
     $app  = $arguments['application'];
     $env  = $options['environment'];
     $dbg  = $options['enabledebug'];
@@ -127,7 +134,7 @@ EOF;
             continue;
           }
 
-          $name = $method->getAnnotation('WSMethod')->name;
+          $name = $method->getAnnotation('WSMethod')->getName();
 
           $result = isset($yml[$env][$action]['result']) ? $yml[$env][$action]['result'] : array('class' => 'ckPropertyResultAdapter', 'param' => array('property' => 'result'));
 
@@ -326,5 +333,39 @@ EOF;
     }
 
     return $result;
+  }
+
+  protected function isPropelPluginActive()
+  {
+    return $this->isPluginActive('sfPropelPlugin');
+  }
+
+  protected function loadPropelPeerClasses()
+  {
+    foreach($this->configuration->getModelDirs() as $model_dir)
+    {
+      foreach(glob($model_dir.DIRECTORY_SEPARATOR.'*Peer.php') as $peer_class_file)
+      {
+        require_once($peer_class_file);
+      }
+    }
+  }
+
+  protected function isDoctrinePluginActive()
+  {
+    return $this->isPluginActive('sfDoctrinePlugin');
+  }
+
+  protected function isPluginActive($plugin)
+  {
+    foreach($this->configuration->getPluginPaths() as $plugin_path)
+    {
+      if(ckString::endsWith($plugin_path, $plugin))
+      {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

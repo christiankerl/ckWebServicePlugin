@@ -10,6 +10,7 @@
  */
 
 $app = 'frontend';
+$env = 'soapTestServiceApi';
 $debug = true;
 
 include_once(dirname(__FILE__).'/../bootstrap/functional.php');
@@ -24,6 +25,12 @@ $_options = array(
 );
 
 $c = new ckTestSoapClient($_options);
+
+// test executeNoArg
+$c->test_noArg()
+  ->isFaultEmpty()
+  ->isType('', 'boolean')
+  ->is('', true);
 
 // test executeSimple
 $c->test_simple(true, 5, 'a string', 1.5)

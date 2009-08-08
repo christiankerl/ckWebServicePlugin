@@ -5,6 +5,11 @@
  */
 class BaseTestServiceApiHandler extends ckSoapHandler
 {
+  public function test_noArg()
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('test', 'noArg', array());
+  }
+
   public function test_simple($boolVal, $intVal, $stringVal, $floatVal)
   {
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('test', 'simple', array($boolVal, $intVal, $stringVal, $floatVal));

@@ -16,7 +16,7 @@
  * @subpackage adapter
  * @author     Christian Kerl <christian-kerl@web.de>
  */
-class ckMethodResultAdapter extends ckAbstractResultAdapter
+class ckMethodResultAdapter extends ckAbstractMemberResultAdapter
 {
   /**
    * The name of the method, which's return value is used as result.
@@ -53,9 +53,9 @@ class ckMethodResultAdapter extends ckAbstractResultAdapter
   }
 
   /**
-   * @see ckAbstractResultAdapter::getResult()
+   * @see ckAbstractResultAdapter::doGetResult()
    */
-  public function getResult(sfAction $action)
+  protected function doGetResult(sfAction $action)
   {
     return call_user_func_array(array($action, $this->getResultMethod()), array());
   }
