@@ -15,10 +15,10 @@
 		<email>christian-kerl@web.de</email>
 		<active>yes</active>
 	</lead>
-	<date>2009-01-16</date>
+	<date>2009-08-08</date>
 	<version>
-		<release>2.2.2</release>
-		<api>2.2.2</api>
+		<release>2.3.0</release>
+		<api>2.3.0</api>
 	</version>
 	<stability>
 		<release>stable</release>
@@ -35,19 +35,36 @@
 			</dir>
 			<dir name="lib">
 				<dir name="adapter">
+					<file role="data" name="ckAbstractMemberResultAdapter.class.php" />
 					<file role="data" name="ckAbstractResultAdapter.class.php" />
 					<file role="data" name="ckMethodResultAdapter.class.php" />
 					<file role="data" name="ckPropertyResultAdapter.class.php" />
 					<file role="data" name="ckRenderResultAdapter.class.php" />
+					<dir name="object">
+						<file role="data" name="ckGenericObjectAdapter.class.php" />
+						<file role="data" name="ckGenericObjectAdapterFactory.class.php" />
+						<dir name="wrapper">
+							<file role="data" name="ckArrayObjectWrapper.class.php" />
+							<file role="data" name="ckDefaultObjectWrapper.class.php" />
+							<file role="data" name="ckDoctrineRecordWrapper.class.php" />
+							<file role="data" name="ckGenericObjectAdapterWrapper.class.php" />
+							<file role="data" name="ckObjectWrapper.class.php" />
+						</dir>
+					</dir>
 				</dir>
 				<file role="data" name="ckSoapHandler.class.php" />
 				<file role="data" name="ckSoapParameterFilter.class.php" />
 				<dir name="controller">
 					<file role="data" name="ckWebServiceController.class.php" />
 				</dir>
+				<dir name="strategy">
+					<file role="data" name="ckDoctrinePropertyStrategy.class.php" />
+					<file role="data" name="ckPropelPropertyStrategy.class.php" />
+				</dir>
 				<dir name="task">
 					<file role="data" name="ckWebServiceGenerateWsdlTask.class.php" />
 					<dir name="skeleton">
+						<file role="data" name="BaseSoapHandler.class.php" />
 						<file role="data" name="SoapHandler.class.php" />
 					</dir>
 				</dir>
@@ -62,12 +79,16 @@
 					<dir name="ckWsdlGenerator">
 						<dir name="annotation">
 							<file role="data" name="PropertyStrategy.class.php" />
+							<file role="data" name="WSHeader.class.php" />
+							<file role="data" name="WSMethod.class.php" />
 						</dir>
 						<file role="data" name="ckDocBlockParser.class.php" />
 						<file role="data" name="ckDOMSerializable.class.php" />
 						<file role="data" name="ckWsdlGenerator.class.php" />
+						<file role="data" name="ckWsdlGeneratorContext.class.php" />
 						<dir name="strategy">
 							<file role="data" name="ckAbstractPropertyStrategy.class.php" />
+							<file role="data" name="ckBeanPropertyStrategy.class.php" />
 							<file role="data" name="ckDefaultPropertyStrategy.class.php" />
 						</dir>
 						<dir name="util">
@@ -80,6 +101,7 @@
 									<file role="data" name="doc_comment.php" />
 									<dir name="tests">
 										<file role="data" name="acceptance_test.php" />
+										<file role="data" name="addendum_test.php" />
 										<file role="data" name="all_tests.php" />
 										<file role="data" name="annotation_parser_test.php" />
 										<file role="data" name="annotation_test.php" />
@@ -117,140 +139,6 @@
 			</dir>
 			<file role="data" name="LICENSE" />
 			<file role="data" name="README" />
-			<dir name="test">
-				<dir name="bin">
-					<file role="data" name="prove.php" />
-				</dir>
-				<dir name="bootstrap">
-					<file role="data" name="functional.php" />
-				</dir>
-				<dir name="fixtures">
-					<dir name="project">
-						<dir name="apps">
-							<dir name="frontend">
-								<dir name="config">
-									<file role="data" name="app.yml" />
-									<file role="data" name="autoload.yml" />
-									<file role="data" name="cache.yml" />
-									<file role="data" name="factories.yml" />
-									<file role="data" name="filters.yml" />
-									<file role="data" name="frontendConfiguration.class.php" />
-									<file role="data" name="routing.yml" />
-									<file role="data" name="security.yml" />
-									<file role="data" name="settings.yml" />
-									<file role="data" name="view.yml" />
-								</dir>
-								<dir name="i18n" />
-								<dir name="lib">
-									<file role="data" name="AuthData.class.php" />
-									<file role="data" name="ExtraHeaderData.class.php" />
-									<file role="data" name="myUser.class.php" />
-									<file role="data" name="SoapHeaderListener.class.php" />
-									<file role="data" name="TestData.class.php" />
-								</dir>
-								<dir name="modules">
-									<dir name="test">
-										<dir name="actions">
-											<file role="data" name="actions.class.php" />
-										</dir>
-										<dir name="config">
-											<file role="data" name="module.yml" />
-										</dir>
-										<dir name="templates">
-											<file role="data" name="renderResultSuccess.soap.php" />
-										</dir>
-									</dir>
-								</dir>
-								<dir name="templates">
-									<file role="data" name="layout.php" />
-								</dir>
-							</dir>
-							<dir name="tutorial">
-								<dir name="config">
-									<file role="data" name="app.yml" />
-									<file role="data" name="autoload.yml" />
-									<file role="data" name="cache.yml" />
-									<file role="data" name="factories.yml" />
-									<file role="data" name="filters.yml" />
-									<file role="data" name="routing.yml" />
-									<file role="data" name="security.yml" />
-									<file role="data" name="settings.yml" />
-									<file role="data" name="tutorialConfiguration.class.php" />
-									<file role="data" name="view.yml" />
-								</dir>
-								<dir name="i18n" />
-								<dir name="lib">
-									<file role="data" name="AuthData.class.php" />
-									<file role="data" name="AuthHeaderListener.class.php" />
-									<file role="data" name="ComplexNumber.class.php" />
-									<file role="data" name="MathApiHandler.class.php" />
-									<file role="data" name="myUser.class.php" />
-								</dir>
-								<dir name="modules">
-									<dir name="math">
-										<dir name="actions">
-											<file role="data" name="actions.class.php" />
-										</dir>
-										<dir name="config">
-											<file role="data" name="module.yml" />
-										</dir>
-										<dir name="templates" />
-									</dir>
-								</dir>
-								<dir name="templates">
-									<file role="data" name="layout.php" />
-								</dir>
-							</dir>
-						</dir>
-						<dir name="config">
-							<file role="data" name="databases.yml" />
-							<file role="data" name="ProjectConfiguration.class.php" />
-							<file role="data" name="propel.ini" />
-							<file role="data" name="properties.ini" />
-							<file role="data" name="rsync_exclude.txt" />
-							<file role="data" name="schema.yml" />
-						</dir>
-						<dir name="data" />
-						<dir name="doc" />
-						<dir name="lib" />
-						<dir name="log" />
-						<dir name="plugins" />
-						<file role="data" name="symfony" />
-						<dir name="test">
-							<dir name="bootstrap">
-								<file role="data" name="functional.php" />
-								<file role="data" name="unit.php" />
-							</dir>
-							<dir name="functional" />
-							<dir name="unit" />
-						</dir>
-						<dir name="web">
-							<dir name="css">
-								<file role="data" name="main.css" />
-							</dir>
-							<dir name="images" />
-							<dir name="js" />
-							<file role="data" name="MathApi.php" />
-							<file role="data" name="MathApi.wsdl" />
-							<file role="data" name="robots.txt" />
-							<file role="data" name="TestServiceApi.php" />
-							<file role="data" name="TestServiceApi.wsdl" />
-							<dir name="uploads">
-								<dir name="assets" />
-							</dir>
-						</dir>
-					</dir>
-				</dir>
-				<dir name="functional">
-					<file role="data" name="resultAdapterTest.php" />
-					<file role="data" name="soapFaultNoDebugTest.php" />
-					<file role="data" name="soapFaultTest.php" />
-					<file role="data" name="soapHeaderTest.php" />
-					<file role="data" name="tutorialTest.php" />
-					<file role="data" name="typeMappingTest.php" />
-				</dir>
-				<dir name="unit" />
-			</dir>
 		</dir>
 	</contents>
 	<dependencies>

@@ -35,6 +35,13 @@ class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
     return $this->tableMap;
   }
 
+  /**
+   * Gets the TableMap for the given table name.
+   *
+   * @param string $refTable A table name
+   *
+   * @return TableMap The TableMap for the given table name
+   */
   protected function getReferenceTableMap($refTable)
   {
     return $this->getTableMap()->getDatabaseMap()->getTable($refTable);
@@ -94,6 +101,11 @@ class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
     }
   }
 
+  /**
+   * Gets an array with property definitions for all simple properties, this means they are stored in a column.
+   *
+   * @return array An array with property definitions
+   */
   protected function getSimpleProperties()
   {
     $properties = array();
@@ -109,6 +121,11 @@ class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
     return $properties;
   }
 
+  /**
+   * Gets an array with property definitions for all ends of *-to-one relations.
+   *
+   * @return array An array with property definitions
+   */
   protected function getToOneProperties()
   {
     $properties = array();
@@ -126,6 +143,11 @@ class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
     return $properties;
   }
 
+  /**
+   * Gets an array with property definitions for all ends of *-to-many relations.
+   *
+   * @return array An array with property definitions
+   */
   protected function getToManyProperties()
   {
     $properties = array();
@@ -146,6 +168,13 @@ class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
     return $properties;
   }
 
+  /**
+   * Checks if the given property name identifies an end of a *-to-many relation.
+   *
+   * @param string $property A property name
+   *
+   * @return boolean True, if the check is successful, false otherwise
+   */
   protected function isToManyProperty($property)
   {
     $class = $this->getClass();
