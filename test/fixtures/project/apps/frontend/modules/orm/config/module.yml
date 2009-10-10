@@ -1,0 +1,3 @@
+soapORMTestApi:
+  getObjectDoctrine: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  setObjectDoctrine: { parameter: [article], result: { class: ckPropertyResultAdapter, param: { property: result } } }

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ORMTestApi" targetNamespace="http://localhost/" xmlns:tns="http://localhost/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+  <wsdl:types xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://localhost/">
+      <xsd:complexType name="DoctrineArticle">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="title" type="xsd:string"/>
+          <xsd:element name="content" type="xsd:string"/>
+          <xsd:element name="Authors" type="tns:DoctrineAuthorArray"/>
+          <xsd:element name="Comments" type="tns:DoctrineCommentArray"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoctrineArticleElement" type="tns:DoctrineArticle"/>
+      <xsd:complexType name="DoctrineAuthor">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="Articles" type="tns:DoctrineArticleArray"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoctrineAuthorElement" type="tns:DoctrineAuthor"/>
+      <xsd:complexType name="DoctrineArticleArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:DoctrineArticle" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoctrineArticleArrayElement" type="tns:DoctrineArticleArray"/>
+      <xsd:complexType name="DoctrineAuthorArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:DoctrineAuthor" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoctrineAuthorArrayElement" type="tns:DoctrineAuthorArray"/>
+      <xsd:complexType name="DoctrineComment">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="author" type="xsd:string"/>
+          <xsd:element name="content" type="xsd:string"/>
+          <xsd:element name="Article" type="tns:DoctrineArticle"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoctrineCommentElement" type="tns:DoctrineComment"/>
+      <xsd:complexType name="DoctrineCommentArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:DoctrineComment" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoctrineCommentArrayElement" type="tns:DoctrineCommentArray"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:portType name="ORMTestApiPortType">
+    <wsdl:operation name="orm_getObjectDoctrine">
+      <wsdl:input message="tns:orm_getObjectDoctrineRequest"/>
+      <wsdl:output message="tns:orm_getObjectDoctrineResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="orm_setObjectDoctrine" parameterOrder="article">
+      <wsdl:input message="tns:orm_setObjectDoctrineRequest"/>
+      <wsdl:output message="tns:orm_setObjectDoctrineResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ORMTestApiBinding" type="tns:ORMTestApiPortType">
+    <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="orm_getObjectDoctrine">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/orm_getObjectDoctrine" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="orm_setObjectDoctrine">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/orm_setObjectDoctrine" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="article" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:message name="orm_getObjectDoctrineRequest"/>
+  <wsdl:message name="orm_getObjectDoctrineResponse">
+    <wsdl:part name="result" type="tns:DoctrineArticle"/>
+  </wsdl:message>
+  <wsdl:message name="orm_setObjectDoctrineRequest">
+    <wsdl:part name="article" type="tns:DoctrineArticle"/>
+  </wsdl:message>
+  <wsdl:message name="orm_setObjectDoctrineResponse"/>
+  <wsdl:service xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ORMTestApiService">
+    <wsdl:port xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ORMTestApiPort" binding="tns:ORMTestApiBinding">
+      <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" location="http://localhost/ORMTestApi.php"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

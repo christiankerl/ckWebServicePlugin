@@ -13,7 +13,7 @@ class ProjectConfiguration extends sfProjectConfiguration
 
   public function setup()
   {
-    $this->setPlugins(array(self::PLUGIN_NAME));
+    $this->setPlugins(array(self::PLUGIN_NAME, 'sfDoctrinePlugin', 'sfPropelPlugin'));
     $this->setPluginPath(self::PLUGIN_NAME, dirname(__FILE__).'/../../../..');
   }
 }

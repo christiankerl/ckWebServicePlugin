@@ -1,5 +1,9 @@
-#all:
-#  propel:
-#    class:          sfPropelDatabase
-#    param:
-#      dsn:          mysql://root@localhost/dbname
+all:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+      dsn: sqlite:/<?php echo dirname(__FILE__); ?>/test.db
+  propel:
+    class: sfPropelDatabase
+    param:
+      dsn: sqlite:/<?php echo dirname(__FILE__); ?>/test.db
