@@ -18,6 +18,32 @@
  */
 class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
 {
+  protected static $propelToPhpMap = array(
+    PropelColumnTypes::CHAR          => "string",
+    PropelColumnTypes::VARCHAR       => "string",
+    PropelColumnTypes::LONGVARCHAR   => "string",
+    PropelColumnTypes::CLOB          => "string",
+    PropelColumnTypes::NUMERIC       => "int",
+    PropelColumnTypes::DECIMAL       => "int",
+    PropelColumnTypes::TINYINT       => "int",
+    PropelColumnTypes::SMALLINT      => "int",
+    PropelColumnTypes::INTEGER       => "int",
+    PropelColumnTypes::BIGINT        => "int",
+    PropelColumnTypes::REAL          => "double",
+    PropelColumnTypes::FLOAT         => "double",
+    PropelColumnTypes::DOUBLE        => "double",
+    PropelColumnTypes::BINARY        => "string",
+    PropelColumnTypes::VARBINARY     => "string",
+    PropelColumnTypes::LONGVARBINARY => "string",
+    PropelColumnTypes::BLOB          => "string",
+    PropelColumnTypes::DATE          => "string",
+    PropelColumnTypes::TIME          => "string",
+    PropelColumnTypes::TIMESTAMP     => "string",
+    PropelColumnTypes::BU_DATE       => "string",
+    PropelColumnTypes::BU_TIMESTAMP  => "string",
+    PropelColumnTypes::BOOLEAN       => "boolean",
+  );
+
   protected $tableMap = null;
 
   /**
@@ -114,7 +140,7 @@ class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
     {
       if(!$column->isForeignKey())
       {
-        $properties[] = array('name' => ckString::lcfirst($column->getPhpName()), 'type' => $column->getType());
+        $properties[] = array('name' => ckString::lcfirst($column->getPhpName()), 'type' => $this->getPhpTypeForPropelType($column->getType()));
       }
     }
 
@@ -180,5 +206,10 @@ class ckPropelPropertyStrategy extends ckBeanPropertyStrategy
     $class = $this->getClass();
 
     return $class->hasMethod('init'.$property.'s') && $class->hasMethod('add'.$property) && $class->hasMethod('count'.$property.'s');
+  }
+
+  protected function getPhpTypeForPropelType($type)
+  {
+    return self::$propelToPhpMap[$type];
   }
 }

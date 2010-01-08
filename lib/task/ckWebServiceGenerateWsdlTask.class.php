@@ -88,7 +88,7 @@ EOF;
 
     if($this->isPropelPluginActive())
     {
-      //$this->loadPropelPeerClasses();
+      $this->loadPropelPeerClasses();
     }
 
     $app  = $arguments['application'];
