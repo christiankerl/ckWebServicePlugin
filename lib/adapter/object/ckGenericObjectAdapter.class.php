@@ -11,7 +11,7 @@
 
 /**
  * ckGenericObjectAdapter adapts an object so all its properties determined by the associated
- * ckAbstratcPropertyStrategy are accessible like public properties.
+ * ckAbstractPropertyStrategy are accessible like public properties.
  *
  * @package    ckWebServicePlugin
  * @subpackage adapter

@@ -11,7 +11,7 @@
 
 /**
  * ckObjectWrapper provides methods to wrap objects, so they can be included in a SOAP response,
- * and proivdes methods to unwrap objects, if they are loaded from a SOAP request.
+ * and provides methods to unwrap objects, if they are loaded from a SOAP request.
  *
  * @package    ckWebServicePlugin
  * @subpackage adapter
