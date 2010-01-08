@@ -73,4 +73,64 @@ class ormActions extends sfActions
       throw new sfException('TypeMappingException');
     }
   }
+
+
+  /**
+   * @WSMethod(webservice='ORMTestApi')
+   *
+   * @return PropelArticle
+   */
+  public function executeGetObjectPropel(sfWebRequest $request)
+  {
+    $author = new PropelAuthor();
+    $author->setId(1);
+    $author->setName('Joe');
+
+    $comment = new PropelComment();
+    $comment->setId(1);
+    $comment->setContent('MyComment');
+
+    $article = new PropelArticle();
+    $article->setId(1);
+    $article->setTitle('MyTitle');
+    $article->setContent('MyContent');
+    $article->addPropelComment($comment);
+
+    $assoc = new PropelArticleAuthor();
+
+    $article->addPropelArticleAuthor($assoc);
+    //$assoc->setPropelAuthor($author);
+
+    $this->result = $article;
+  }
+
+  /**
+   * @WSMethod(webservice='ORMTestApi')
+   *
+   * @param PropelArticle $article
+   */
+  public function executeSetObjectPropel(sfWebRequest $request)
+  {
+    $article = $request->getParameter('article');
+
+    $success = $article instanceof PropelArticle;
+
+    if($success)
+    {
+      foreach($article->getPropelComments() as $comment)
+      {
+        $success = $comment instanceof PropelComment && $comment->getPropelArticle() == $article;
+
+        if(!$success)
+        {
+          break;
+        }
+      }
+    }
+
+    if(!$success)
+    {
+      throw new sfException('TypeMappingException');
+    }
+  }
 }

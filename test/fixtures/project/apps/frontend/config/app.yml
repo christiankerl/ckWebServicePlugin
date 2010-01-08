@@ -18,6 +18,13 @@ soapORMTestApi:
         DoctrineComment:         ckGenericObjectAdapter_DoctrineComment
         DoctrineAuthorArray:     ckGenericArray
         DoctrineAuthor:          ckGenericObjectAdapter_DoctrineAuthor    
+        
+        PropelArticle:           ckGenericObjectAdapter_PropelArticle
+        PropelAuthor:            ckGenericObjectAdapter_PropelAuthor
+        PropelComment:           ckGenericObjectAdapter_PropelComment
+        PropelArticleAuthor:     ckGenericObjectAdapter_PropelArticleAuthor
+        PropelCommentArray:       ckGenericArray
+        PropelArticleAuthorArray: ckGenericArray
 
 soapTestServiceApi:
   enable_soap_parameter: on

@@ -110,7 +110,7 @@ $c->orm_setObjectDoctrine($article)
 
 //$c->orm_setObjectDoctrine(null)
 //  ->hasFault('TypeMappingException');
-/*
+
 $c->orm_getObjectPropel()
   ->isFaultEmpty()
   ->isType('', 'CPArticle')
@@ -132,6 +132,6 @@ $article->PropelComments[] = $comment2;
 
 $c->orm_setObjectPropel($article)
   ->isFaultEmpty();
-*/
+
 //$c->orm_setObjectPropel(null)
 //  ->hasFault('TypeMappingException');

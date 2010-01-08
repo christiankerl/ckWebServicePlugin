@@ -14,4 +14,14 @@ class BaseORMTestApiHandler extends ckSoapHandler
   {
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('orm', 'setObjectDoctrine', array($article));
   }
+
+  public function orm_getObjectPropel()
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('orm', 'getObjectPropel', array());
+  }
+
+  public function orm_setObjectPropel($article)
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('orm', 'setObjectPropel', array($article));
+  }
 }

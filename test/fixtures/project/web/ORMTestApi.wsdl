@@ -47,6 +47,52 @@
         </xsd:sequence>
       </xsd:complexType>
       <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoctrineCommentArrayElement" type="tns:DoctrineCommentArray"/>
+      <xsd:complexType name="PropelArticle">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="title" type="xsd:string"/>
+          <xsd:element name="content" type="xsd:string"/>
+          <xsd:element name="PropelComments" type="tns:PropelCommentArray"/>
+          <xsd:element name="PropelArticleAuthors" type="tns:PropelArticleAuthorArray"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PropelArticleElement" type="tns:PropelArticle"/>
+      <xsd:complexType name="PropelComment">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="author" type="xsd:string"/>
+          <xsd:element name="content" type="xsd:string"/>
+          <xsd:element name="PropelArticle" type="tns:PropelArticle"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PropelCommentElement" type="tns:PropelComment"/>
+      <xsd:complexType name="PropelCommentArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:PropelComment" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PropelCommentArrayElement" type="tns:PropelCommentArray"/>
+      <xsd:complexType name="PropelArticleAuthor">
+        <xsd:sequence>
+          <xsd:element name="PropelArticle" type="tns:PropelArticle"/>
+          <xsd:element name="PropelAuthor" type="tns:PropelAuthor"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PropelArticleAuthorElement" type="tns:PropelArticleAuthor"/>
+      <xsd:complexType name="PropelAuthor">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="PropelArticleAuthors" type="tns:PropelArticleAuthorArray"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PropelAuthorElement" type="tns:PropelAuthor"/>
+      <xsd:complexType name="PropelArticleAuthorArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:PropelArticleAuthor" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PropelArticleAuthorArrayElement" type="tns:PropelArticleAuthorArray"/>
     </xsd:schema>
   </wsdl:types>
   <wsdl:portType name="ORMTestApiPortType">
@@ -57,6 +103,14 @@
     <wsdl:operation name="orm_setObjectDoctrine" parameterOrder="article">
       <wsdl:input message="tns:orm_setObjectDoctrineRequest"/>
       <wsdl:output message="tns:orm_setObjectDoctrineResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="orm_getObjectPropel">
+      <wsdl:input message="tns:orm_getObjectPropelRequest"/>
+      <wsdl:output message="tns:orm_getObjectPropelResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="orm_setObjectPropel" parameterOrder="article">
+      <wsdl:input message="tns:orm_setObjectPropelRequest"/>
+      <wsdl:output message="tns:orm_setObjectPropelResponse"/>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ORMTestApiBinding" type="tns:ORMTestApiPortType">
@@ -79,6 +133,24 @@
         <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="orm_getObjectPropel">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/orm_getObjectPropel" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="orm_setObjectPropel">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/orm_setObjectPropel" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="article" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:message name="orm_getObjectDoctrineRequest"/>
   <wsdl:message name="orm_getObjectDoctrineResponse">
@@ -88,6 +160,14 @@
     <wsdl:part name="article" type="tns:DoctrineArticle"/>
   </wsdl:message>
   <wsdl:message name="orm_setObjectDoctrineResponse"/>
+  <wsdl:message name="orm_getObjectPropelRequest"/>
+  <wsdl:message name="orm_getObjectPropelResponse">
+    <wsdl:part name="result" type="tns:PropelArticle"/>
+  </wsdl:message>
+  <wsdl:message name="orm_setObjectPropelRequest">
+    <wsdl:part name="article" type="tns:PropelArticle"/>
+  </wsdl:message>
+  <wsdl:message name="orm_setObjectPropelResponse"/>
   <wsdl:service xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ORMTestApiService">
     <wsdl:port xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ORMTestApiPort" binding="tns:ORMTestApiBinding">
       <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" location="http://localhost/ORMTestApi.php"/>
