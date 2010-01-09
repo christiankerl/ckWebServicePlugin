@@ -158,13 +158,13 @@ class ckWebServiceController extends sfWebController
     $request = $this->context->getRequest();
 
     $request->setRequestFormat('soap');
-    $request->setParameter('ck_web_service_plugin.param', $parameters);
+    $request->setParameter(ckSoapParameterFilter::PARAMETER_KEY, $parameters);
 
     try
     {
       if (sfConfig::get('sf_logging_enabled'))
       {
-         $this->context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Forwarding to "%s/%s".', $moduleName, $actionName))));
+         $this->dispatcher->notify(new sfEvent($this, 'application.log', array(sprintf('Forwarding to "%s/%s".', $moduleName, $actionName))));
       }
 
       try

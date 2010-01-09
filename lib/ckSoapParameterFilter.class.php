@@ -18,61 +18,46 @@
  */
 class ckSoapParameterFilter extends sfFilter
 {
-	/**
+  const PARAMETER_KEY = 'ck_web_service_plugin.param';
+
+  /**
    * Executes this filter.
    *
    * @param sfFilterChain $filterChain A sfFilterChain instance
    */
-	public function execute($filterChain)
-	{
-		/** first execute of this chain **/
-		if($this->isFirstCall())
-		{
-		  $log_params = array();
+  public function execute($filterChain)
+  {
+    if($this->isFirstCall())
+    {
+      $context = $this->getContext();
+      $request = $context->getRequest();
 
-			/** get request class from context **/
-			$request = $this->getContext()->getRequest();
+      // get parameters from request
+      $param = $request->getParameter(self::PARAMETER_KEY, null);
 
-			/** get params from request **/
-			$param = $request->getParameter('ck_web_service_plugin.param', null);
+      // get parameter map from module config
+      $map = sfConfig::get(sprintf('mod_%s_%s_parameter', strtolower($context->getModuleName()), $context->getActionName()));
 
-			/** get mapped params from mod config **/
-			$map = sfConfig::get(sprintf('mod_%s_%s_parameter', strtolower($this->getContext()->getModuleName()), $this->getContext()->getActionName()));
+      if(is_array($param) && is_array($map))
+      {
+        // map parameters to the names stored in the map
+        for ($i = 0, $count = count($map); $i < $count; $i++)
+        {
+          if ($param[$i] === '')
+          {
+            $param[$i] = null;
+          }
 
-			/** params and map is array **/
-			if(is_array($param) && is_array($map))
-			{
-				/** pass mapped params **/
-				for ($i = 0; $i < count($map); $i++)
-				{
-					/** empty param **/
-					if ($param[$i] === '')
-					{
-						/** set to null **/
-						$param[$i] = null;
-					}
+          $request->setParameter($map[$i], ckObjectWrapper::unwrap($param[$i]));
+        }
+      }
 
-					/** map soap param to request class **/
-					$request->setParameter($map[$i], ckObjectWrapper::unwrap($param[$i]));
+      if (sfConfig::get('sf_logging_enabled'))
+      {
+        $context->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array('Mapped soap parameters to request parameters.')));
+      }
+    }
 
-					/** logging enabled **/
-					if (sfConfig::get('sf_logging_enabled'))
-					{
-						/** append params **/
-						$log_params[$map[$i]] = $param[$i];
-					}
-				}
-			}
-
-			/** logging enabled **/
-			if (sfConfig::get('sf_logging_enabled'))
-			{
-				/** write logmessage **/
-				//$this->getContext()->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array(sprintf('Mapped soap parameters due request %s', str_replace("\n", '', var_export(null, true))))));
-			}
-		}
-
-		/** execute next filter **/
-		$filterChain->execute();
-	}
+    $filterChain->execute();
+  }
 }
