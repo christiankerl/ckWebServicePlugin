@@ -4,7 +4,7 @@
  *
  * @package   ckWebServicePlugin
  * @author    Christian Kerl <christian-kerl@web.de>
- * @copyright Copyright (c) 2008, Christian Kerl
+ * @copyright Copyright (c) 2010, Christian Kerl
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  * @version   SVN: $Id$
  */
@@ -13,14 +13,18 @@ if (!isset($_SERVER['SYMFONY']))
 {
   throw new RuntimeException('Could not find symfony core libraries.');
 }
-require_once($_SERVER['SYMFONY'].'/vendor/lime/lime.php');
 
-$testDir = dirname(__FILE__).'/..';
+require_once($_SERVER['SYMFONY'].'/vendor/lime/lime.php');
+require_once($_SERVER['SYMFONY'].'/util/sfFinder.class.php');
 
 $h = new lime_harness(new lime_output_color());
-$h->base_dir = $testDir;
+$h->base_dir = realpath(dirname(__FILE__).'/..');
 
-$h->register($testDir.'/unit');
-$h->register($testDir.'/functional');
+$h->register(sfFinder::type('file')->prune('fixtures')->name('*Test.php')->in(array(
+  // unit tests
+  $h->base_dir.'/unit',
+  // functional tests
+  $h->base_dir.'/functional'
+)));
 
-$h->run();
+exit($h->run() ? 0 : 1);
