@@ -15,10 +15,8 @@ if (!isset($_SERVER['SYMFONY']))
 }
 require_once($_SERVER['SYMFONY'].'/vendor/lime/lime.php');
 
-require_once($_SERVER['SYMFONY'].'/autoload/sfCoreAutoload.class.php');
-sfCoreAutoload::register();
-
-$root_dir = dirname(__FILE__).'/../fixtures/project';
+$project  = isset($project) ? $project : 'project';
+$root_dir = dirname(__FILE__).'/../fixtures/'.$project;
 
 require_once($root_dir.'/config/ProjectConfiguration.class.php');
 $configuration = ProjectConfiguration::getApplicationConfiguration($app, isset($env) ? $env : 'soaptest', isset($debug) ? $debug : true);

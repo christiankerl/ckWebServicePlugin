@@ -117,12 +117,14 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
   {
     if($property == 'item' && !$this->initialized)
     {
-      if(!is_array($value))
+      $_value = $value;
+
+      if(!is_array($_value))
       {
-        $value = array($value);
+        $_value = array($_value);
       }
 
-      $this->_item = $value;
+      $this->_item = $_value;
       $this->initialized = true;
     }
   }
