@@ -8,5 +8,6 @@ soap_parameter:
     condition: %APP_ENABLE_SOAP_PARAMETER%
 
 cache:     ~
-common:    ~
+common:
+  class: sfCommonFilter
 execution: ~

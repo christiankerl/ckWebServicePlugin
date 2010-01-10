@@ -1,0 +1,15 @@
+all:
+  enable_soap_parameter: off
+
+soap:
+  enable_soap_parameter: on
+  ck_web_service_plugin:
+    wsdl: %SF_WEB_DIR%/MainApi.wsdl 
+    handler: MainApiHandler
+    classmap:
+      Article:            ckGenericObjectAdapter_Article
+      ArticleArray:       ckGenericArray
+      Author:             ckGenericObjectAdapter_Author
+      AuthorArray:        ckGenericArray
+      Comment:            ckGenericObjectAdapter_Comment
+      CommentArray:       ckGenericArray

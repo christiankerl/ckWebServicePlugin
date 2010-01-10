@@ -1,0 +1,47 @@
+Article:
+  columns:
+    title:
+      type:    string(255)
+    content:
+      type:    clob
+  relations:
+    Authors:
+      class:    Author
+      local:    author_id
+      foreign:  article_id
+      refClass: ArticleAuthor
+Comment:
+  columns:
+    article_id:
+      type:    integer
+    author:
+      type:    string(255)
+    content:
+      type:    clob
+  relations:
+    Article:
+      foreignAlias: Comments
+      class:        Article
+      local:        article_id
+      foreign:      id
+      type:         one
+      foreignType:  many
+Author:
+  columns:
+    name:
+      type:    string(255)
+  relations:
+    Articles:
+      class:    Article
+      local:    article_id
+      foreign:  author_id
+      refClass: ArticleAuthor
+ArticleAuthor:
+  columns:
+    article_id:
+      type: integer
+      primary: true
+    author_id:
+      type: integer
+      primary: true
+      

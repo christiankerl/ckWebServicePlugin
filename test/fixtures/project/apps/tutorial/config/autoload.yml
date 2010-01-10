@@ -2,4 +2,4 @@ autoload:
   ckWebServicePluginLib:
     name: ckWebServicePluginLib
     path: %SF_ROOT_DIR%/../../../lib
-    recursive: on
+    recursive: true

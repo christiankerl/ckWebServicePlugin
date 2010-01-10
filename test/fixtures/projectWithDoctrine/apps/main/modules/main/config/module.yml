@@ -1,0 +1,2 @@
+soap:
+  getFixtureModel: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }

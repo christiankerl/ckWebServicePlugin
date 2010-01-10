@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MainApi" targetNamespace="http://localhost/" xmlns:tns="http://localhost/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+  <wsdl:types xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://localhost/">
+      <xsd:complexType name="Article">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="title" type="xsd:string"/>
+          <xsd:element name="content" type="xsd:string"/>
+          <xsd:element name="Authors" type="tns:AuthorArray"/>
+          <xsd:element name="Comments" type="tns:CommentArray"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ArticleElement" type="tns:Article"/>
+      <xsd:complexType name="Author">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="Articles" type="tns:ArticleArray"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AuthorElement" type="tns:Author"/>
+      <xsd:complexType name="ArticleArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:Article" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ArticleArrayElement" type="tns:ArticleArray"/>
+      <xsd:complexType name="AuthorArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:Author" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AuthorArrayElement" type="tns:AuthorArray"/>
+      <xsd:complexType name="Comment">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:int"/>
+          <xsd:element name="author" type="xsd:string"/>
+          <xsd:element name="content" type="xsd:string"/>
+          <xsd:element name="Article" type="tns:Article"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="CommentElement" type="tns:Comment"/>
+      <xsd:complexType name="CommentArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:Comment" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="CommentArrayElement" type="tns:CommentArray"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:portType name="MainApiPortType">
+    <wsdl:operation name="getFixtureModel">
+      <wsdl:input message="tns:getFixtureModelRequest"/>
+      <wsdl:output message="tns:getFixtureModelResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MainApiBinding" type="tns:MainApiPortType">
+    <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="getFixtureModel">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/getFixtureModel" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:message name="getFixtureModelRequest"/>
+  <wsdl:message name="getFixtureModelResponse">
+    <wsdl:part name="result" type="tns:ArticleArray"/>
+  </wsdl:message>
+  <wsdl:service xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MainApiService">
+    <wsdl:port xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MainApiPort" binding="tns:MainApiBinding">
+      <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" location="http://localhost/MainApi.php"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

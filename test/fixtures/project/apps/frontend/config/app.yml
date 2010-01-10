@@ -1,33 +1,12 @@
 # default values
 #all:
 all:
-  enable_soap_parameter: off
+  enable_soap_parameter: false
   ck_web_service_plugin:
     persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>  
 
-soapORMTestApi:
-  enable_soap_parameter: on
-  ck_web_service_plugin:
-    wsdl: %SF_WEB_DIR%/ORMTestApi.wsdl
-    handler: ORMTestApiHandler
-    soap_options:
-      classmap:
-        DoctrineArticleArray:    ckGenericArray
-        DoctrineArticle:         ckGenericObjectAdapter_DoctrineArticle
-        DoctrineCommentArray:    ckGenericArray
-        DoctrineComment:         ckGenericObjectAdapter_DoctrineComment
-        DoctrineAuthorArray:     ckGenericArray
-        DoctrineAuthor:          ckGenericObjectAdapter_DoctrineAuthor    
-        
-        PropelArticle:           ckGenericObjectAdapter_PropelArticle
-        PropelAuthor:            ckGenericObjectAdapter_PropelAuthor
-        PropelComment:           ckGenericObjectAdapter_PropelComment
-        PropelArticleAuthor:     ckGenericObjectAdapter_PropelArticleAuthor
-        PropelCommentArray:       ckGenericArray
-        PropelArticleAuthorArray: ckGenericArray
-
 soapTestServiceApi:
-  enable_soap_parameter: on
+  enable_soap_parameter: true
   ck_web_service_plugin:
     wsdl: %SF_WEB_DIR%/TestServiceApi.wsdl
     handler: TestServiceApiHandler

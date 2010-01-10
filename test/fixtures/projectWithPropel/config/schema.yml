@@ -1,0 +1,17 @@
+propel:
+  article:
+    id:           ~
+    title:         { type: varchar(255), required: true }
+    content:       { type: longvarchar }
+ 
+  article_comment:
+    id:           ~
+    article_id:   { type: integer, foreignTable: article, foreignReference: id, required: true }
+    author:       { type: varchar(255), required: true }
+    content:      { type: longvarchar }
+  author:
+    id:           ~
+    name:         { type: varchar(255), required: true }
+  article_author:
+    article_id:  { type: integer, foreignTable: article, foreignReference: id, required: true, primaryKey: true }
+    author_id:   { type: integer, foreignTable: author, foreignReference: id, required: true, primaryKey: true }

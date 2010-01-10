@@ -1,0 +1,25 @@
+Article:
+  symfony_webservice:
+    title:   Howto Build Webservices in Symfony
+    content: Some Content.
+    Authors: [christiankerl]
+  symfony_test:
+    title:   Howto Write Tests In Symfony
+    content: Some Content.
+    Authors: [christiankerl]
+Author:
+  christiankerl:
+    name: Christian Kerl
+Comment:
+  comment01:
+    author:  Isaac Newton
+    content: Physics is great!
+    Article: symfony_webservice
+  comment02:
+    author:  Henry Ford
+    content: I like cars!
+    Article: symfony_webservice
+  comment03:
+    author:  Albert Einstein
+    content: Alles ist relativ!
+    Article: symfony_test

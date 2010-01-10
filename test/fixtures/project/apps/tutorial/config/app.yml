@@ -1,7 +1,7 @@
 # default values
 #all:
 soaptest:
-  enable_soap_parameter: on
+  enable_soap_parameter: true
   ck_web_service_plugin:
     wsdl: %SF_WEB_DIR%/MathApi.wsdl
     handler: MathApiHandler
