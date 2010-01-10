@@ -27,7 +27,7 @@ $complex = new ckGenericArray(array(
 ));
 $phpSoapExtMock = new NonInitializingMock();
 
-$t = new lime_test(26);
+$t = new lime_test(28);
 
 $t->comment('Countable::count()');
 $t->is(count($empty), 0);
@@ -80,6 +80,11 @@ $t->isa_ok($converted, 'array');
 $t->isa_ok($converted[0], 'array');
 $t->isa_ok($converted[1], 'array');
 $t->is_deeply($converted, array(array(), array(1, 2, 3, 4), 1, 2, 3, 4));
+
+$t->comment('ckGenericArray::__get()');
+
+$t->is_deeply($array->item, array(1, 2, 3, 4));
+$t->is($array->unknownProperty, null);
 
 $t->comment('ckGenericArray::__set()');
 

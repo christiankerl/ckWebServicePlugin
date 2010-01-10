@@ -129,6 +129,16 @@ class ckGenericArray implements IteratorAggregate, ArrayAccess, Countable
     }
   }
 
+  public function __get($property)
+  {
+    if($property == 'item')
+    {
+      return $this->_item;
+    }
+
+    return null;
+  }
+
   /**
    * If a given value is a ckGenericArray object its toArray() method is called, otherwise the given value is returned.
    *
