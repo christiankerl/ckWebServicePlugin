@@ -46,6 +46,28 @@ class myAuthor
     $Articles;
 }
 
+function checkFixtureModel(ckTestSoapClient $c)
+{
+  $c->isFaultEmpty()
+    ->isCount('', 2)
+    ->isType('', 'ckGenericArray')
+    ->isType('0', 'myArticle')
+    ->isType('0.Authors', 'ckGenericArray')
+    ->isCount('0.Authors', 1)
+    ->isType('0.Authors.0', 'myAuthor')
+    ->isType('0.Comments', 'ckGenericArray')
+    ->isCount('0.Comments', 2)
+    ->isType('0.Comments.0', 'myComment')
+  ;
+
+  $result = $c->getResult();
+
+  $t = $c->test();
+  $t->cmp_ok($result[0]->Authors[0], '===', $result[1]->Authors[0]);
+  $t->cmp_ok($result[0]->Comments[0]->Article, '===', $result[0]->Comments[1]->Article);
+  $t->cmp_ok($result[0], '===', $result[0]->Comments[0]->Article);
+}
+
 $_options = array(
   'classmap' => array(
     'Article'      => 'myArticle',
@@ -58,22 +80,6 @@ $_options = array(
 );
 
 $c = new ckTestSoapClient($_options);
-$c->getFixtureModel()
-  ->isFaultEmpty()
-  ->isCount('', 2)
-  ->isType('', 'ckGenericArray')
-  ->isType('0', 'myArticle')
-  ->isType('0.Authors', 'ckGenericArray')
-  ->isCount('0.Authors', 1)
-  ->isType('0.Authors.0', 'myAuthor')
-  ->isType('0.Comments', 'ckGenericArray')
-  ->isCount('0.Comments', 2)
-  ->isType('0.Comments.0', 'myComment')
-  ;
 
-$result = $c->getResult();
-
-$t = $c->test();
-$t->cmp_ok($result[0]->Authors[0], '===', $result[1]->Authors[0]);
-$t->cmp_ok($result[0]->Comments[0]->Article, '===', $result[0]->Comments[1]->Article);
-$t->cmp_ok($result[0], '===', $result[0]->Comments[0]->Article);
+checkFixtureModel($c->getFixtureModel());
+checkFixtureModel($c->passFixtureModel($c->getResult()));
