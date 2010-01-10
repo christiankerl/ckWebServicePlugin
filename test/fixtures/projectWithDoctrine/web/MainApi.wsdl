@@ -54,6 +54,10 @@
       <wsdl:input message="tns:getFixtureModelRequest"/>
       <wsdl:output message="tns:getFixtureModelResponse"/>
     </wsdl:operation>
+    <wsdl:operation name="passFixtureModel" parameterOrder="articles">
+      <wsdl:input message="tns:passFixtureModelRequest"/>
+      <wsdl:output message="tns:passFixtureModelResponse"/>
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MainApiBinding" type="tns:MainApiPortType">
     <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -66,9 +70,24 @@
         <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="passFixtureModel">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/passFixtureModel" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="articles" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:message name="getFixtureModelRequest"/>
   <wsdl:message name="getFixtureModelResponse">
+    <wsdl:part name="result" type="tns:ArticleArray"/>
+  </wsdl:message>
+  <wsdl:message name="passFixtureModelRequest">
+    <wsdl:part name="articles" type="tns:ArticleArray"/>
+  </wsdl:message>
+  <wsdl:message name="passFixtureModelResponse">
     <wsdl:part name="result" type="tns:ArticleArray"/>
   </wsdl:message>
   <wsdl:service xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MainApiService">

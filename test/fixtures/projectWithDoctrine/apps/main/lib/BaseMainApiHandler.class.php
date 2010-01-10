@@ -9,4 +9,9 @@ class BaseMainApiHandler extends ckSoapHandler
   {
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('main', 'getFixtureModel', array());
   }
+
+  public function passFixtureModel($articles)
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('main', 'passFixtureModel', array($articles));
+  }
 }

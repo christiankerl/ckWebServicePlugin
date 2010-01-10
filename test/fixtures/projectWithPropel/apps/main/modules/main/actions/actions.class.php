@@ -21,4 +21,18 @@ class mainActions extends sfActions
 
     return sfView::SUCCESS;
   }
+
+ /**
+  * @WSMethod(name='passFixtureModel')
+  *
+  *	@param Article[] $articles
+  *
+  * @return Article[]
+  */
+  public function executePassFixtureModel(sfWebRequest $request)
+  {
+    $this->result = $request->getParameter('articles');
+
+    return sfView::SUCCESS;
+  }
 }

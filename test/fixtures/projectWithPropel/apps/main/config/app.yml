@@ -6,12 +6,13 @@ soap:
   ck_web_service_plugin:
     wsdl: %SF_WEB_DIR%/MainApi.wsdl 
     handler: MainApiHandler
-    classmap:
-      Article:             ckGenericObjectAdapter_Article
-      ArticleArray:        ckGenericArray
-      ArticleAuthor:       ckGenericObjectAdapter_ArticleAuthor
-      ArticleAuthorArray:  ckGenericArray
-      Author:              ckGenericObjectAdapter_Author
-      AuthorArray:         ckGenericArray
-      ArticleComment:      ckGenericObjectAdapter_ArticleComment
-      ArticleCommentArray: ckGenericArray
+    soap_options:
+      classmap:
+        Article:             ckGenericObjectAdapter_Article
+        ArticleArray:        ckGenericArray
+        ArticleAuthor:       ckGenericObjectAdapter_ArticleAuthor
+        ArticleAuthorArray:  ckGenericArray
+        Author:              ckGenericObjectAdapter_Author
+        AuthorArray:         ckGenericArray
+        ArticleComment:      ckGenericObjectAdapter_ArticleComment
+        ArticleCommentArray: ckGenericArray

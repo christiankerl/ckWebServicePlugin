@@ -1,2 +1,3 @@
 soap:
   getFixtureModel: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  passFixtureModel: { parameter: [articles], result: { class: ckPropertyResultAdapter, param: { property: result } } }
