@@ -167,7 +167,7 @@
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_headerMulti">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_headerMulti" style="rpc"/>
       <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
         <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:test_headerMultiRequest" part="ExtraHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:input>
