@@ -264,6 +264,7 @@ EOF;
     {
       $this->getFilesystem()->remove($pathname);
     }
+
     $this->getFilesystem()->copy($template, $pathname);
     $this->getFilesystem()->replaceTokens($pathname, '##', '##', array(
       'HND_NAME'   => $handler_name,
@@ -281,13 +282,13 @@ EOF;
   protected function buildHandlerMethods($methods)
   {
     $result = array();
-    $append_dollar = create_function('&$in', '$in = "$".$in;');
+    $prepend_dollar = create_function('&$in', '$in = "$".$in;');
 
     foreach($methods as $name => $params)
     {
-      array_walk($params['parameter'], $append_dollar);
+      array_walk($params['parameter'], $prepend_dollar);
 
-      $result[] = $this->replaceTokens($this->getHandlerMethodTemplate(), array(
+      $result[] = $this->replaceTokensInString($this->getHandlerMethodTemplate(), array(
       	'NAME'   => $name,
       	'MODULE' => $params['module'],
       	'ACTION' => $params['action'],
@@ -323,7 +324,7 @@ EOF;
    *
    * @return string The string with the tokens replaced
    */
-  protected function replaceTokens($str, $tokens, $start_delimiter, $end_delimiter)
+  protected function replaceTokensInString($str, $tokens, $start_delimiter, $end_delimiter)
   {
     $result = $str;
 
