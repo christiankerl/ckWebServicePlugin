@@ -1,4 +1,4 @@
-# ckWebServicePlugin (for symfony 1.2)
+# ckWebServicePlugin (for symfony 1.3)
 
 The ckWebServicePlugin allows you to build a webservice api for your symfony applications.
 It comes with a powerful and easy to use wsdl generator, which creates WS-I compliant wsdl files for a maximum of interopability with PHP, .NET and Java clients.
@@ -13,13 +13,17 @@ It comes with a powerful and easy to use wsdl generator, which creates WS-I comp
 To install the latest release, execute:
 
     > symfony plugin:install ckWebServicePlugin
+
+To install the latest release from SVN, checkout the release tag into a `plugins/ckWebServicePlugin` folder:
   
-or to install the current revision, checkout the HEAD revision into a `plugins/ckWebServicePlugin` folder:
+    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/tags/4.0.0/
+
+To install the latest development revision from SVN, checkout the HEAD revision of the development branch into a `plugins/ckWebServicePlugin` folder:
   
-    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/1.2/
+    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/1.3/
 
 >**CAUTION**
->The HEAD revision of the branch is not guaranteed to be stable all the time!
+>The HEAD revision of the development branch is not guaranteed to be stable all the time!
 
 Now configure the plugin how it is described in the next section and clear your cache afterwards.
 
@@ -591,6 +595,9 @@ Our updated test script will look something like this:
 
 As you see, we have added a lightweight definition of the `ComplexNumber` class called `ClientComplexNumber`, because it is likely that you don't have the same class definition at client and server, only the names and types of the properties will match.
 
+>**TIP**
+>Do not forget to validate objects you get as a parameter!
+
 Often the objects you want to return or pass in as parameter are not as simple as the shown `ComplexNumber`, e.g. Doctrine or Propel objects or objects which have a JavaBean-style class, so the properties are only accessible through getter and setter methods.
 
 The plugin also offers a solution for this problem. Therefor it introduces so called property strategies, they have two purposes, the first is to determine which properties a class has when the wsdl is generated, the second purpose is to access those properties
@@ -697,8 +704,8 @@ The `app.yml` would be:
 
 This is everything you have to do to use such complex classes!
 
->**TIP**
->Do not forget to validate objects you get as a parameter!
+>**CAUTION**
+>Passing Doctrine and Propel object graphs with cyclic references as parameters to your methods is currently not supported!
 
 In this section you have learned how to work with arrays and classes, the next section covers the usage of SOAP Headers.
 
