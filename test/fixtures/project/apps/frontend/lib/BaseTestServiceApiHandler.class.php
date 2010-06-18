@@ -5,6 +5,11 @@
  */
 class BaseTestServiceApiHandler extends ckSoapHandler
 {
+  public function nonLC_name_getResult()
+  {
+    return sfContext::getInstance()->getController()->invokeSoapEnabledAction('nonLC_name', 'getResult', array());
+  }
+
   public function test_noArg()
   {
     return sfContext::getInstance()->getController()->invokeSoapEnabledAction('test', 'noArg', array());

@@ -24,6 +24,13 @@ $c->test_configuredProperty()
   ->is('', 'MyCustomResult')
   ;
 
+// test executeGetResult (Ticket #8474)
+$c->nonLC_name_getResult()
+  ->isFaultEmpty()
+  ->isType('', 'string')
+  ->is('', 'MyCustomResult')
+  ;
+
 // test executeMethodResult
 $c->test_methodResult()
   ->isFaultEmpty()

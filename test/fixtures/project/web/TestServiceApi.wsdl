@@ -48,6 +48,10 @@
     </xsd:schema>
   </wsdl:types>
   <wsdl:portType name="TestServiceApiPortType">
+    <wsdl:operation name="nonLC_name_getResult">
+      <wsdl:input message="tns:nonLC_name_getResultRequest"/>
+      <wsdl:output message="tns:nonLC_name_getResultResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="test_noArg">
       <wsdl:input message="tns:test_noArgRequest"/>
       <wsdl:output message="tns:test_noArgResponse"/>
@@ -103,6 +107,15 @@
   </wsdl:portType>
   <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApiBinding" type="tns:TestServiceApiPortType">
     <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="nonLC_name_getResult">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/nonLC_name_getResult" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_noArg">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_noArg" style="rpc"/>
       <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
@@ -227,6 +240,10 @@
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
+  <wsdl:message name="nonLC_name_getResultRequest"/>
+  <wsdl:message name="nonLC_name_getResultResponse">
+    <wsdl:part name="result" type="xsd:string"/>
+  </wsdl:message>
   <wsdl:message name="test_noArgRequest"/>
   <wsdl:message name="test_noArgResponse">
     <wsdl:part name="result" type="xsd:boolean"/>

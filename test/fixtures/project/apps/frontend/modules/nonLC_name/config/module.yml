@@ -1,0 +1,2 @@
+soapTestServiceApi:
+  getResult: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: myCustomResult } } }
