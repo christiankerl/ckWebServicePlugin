@@ -196,6 +196,20 @@ class testActions extends sfActions
   }
 
   /**
+   * Test action for the ckPropertyResultAdapter configured with a different property name.
+   *
+   * @WSMethod(webservice='TestServiceApi')
+   *
+   * @return string
+   */
+  public function executeConfiguredProperty($request)
+  {
+    $this->anotherCustomProperty = 'Fail!';
+
+    $this->myCustomResult = 'MyCustomResult';
+  }
+
+  /**
    * Test action for the ckMethodResultAdapter.
    *
    * @WSMethod(webservice='TestServiceApi')

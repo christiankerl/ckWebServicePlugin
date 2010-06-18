@@ -11,3 +11,4 @@ soapTestServiceApi:
   methodResult: { parameter: {  }, result: { class: ckMethodResultAdapter, param: { method: getFilteredResult } } }
   renderResult: { parameter: {  }, result: { class: ckRenderResultAdapter, param: {  } } }
   noArg: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: result } } }
+  configuredProperty: { parameter: {  }, result: { class: ckPropertyResultAdapter, param: { property: myCustomResult } } }

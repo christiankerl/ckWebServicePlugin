@@ -17,6 +17,13 @@ include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
 $c = new ckTestSoapClient();
 
+// test executeConfiguredProperty (Ticket #8769)
+$c->test_configuredProperty()
+  ->isFaultEmpty()
+  ->isType('', 'string')
+  ->is('', 'MyCustomResult')
+  ;
+
 // test executeMethodResult
 $c->test_methodResult()
   ->isFaultEmpty()

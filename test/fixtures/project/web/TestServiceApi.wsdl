@@ -88,6 +88,10 @@
       <wsdl:input message="tns:test_soapFaultRequest"/>
       <wsdl:output message="tns:test_soapFaultResponse"/>
     </wsdl:operation>
+    <wsdl:operation name="test_configuredProperty">
+      <wsdl:input message="tns:test_configuredPropertyRequest"/>
+      <wsdl:output message="tns:test_configuredPropertyResponse"/>
+    </wsdl:operation>
     <wsdl:operation name="test_methodResult">
       <wsdl:input message="tns:test_methodResultRequest"/>
       <wsdl:output message="tns:test_methodResultResponse"/>
@@ -195,6 +199,15 @@
         <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_configuredProperty">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_configuredProperty" style="rpc"/>
+      <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:input>
+      <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="test_methodResult">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/test_methodResult" style="rpc"/>
       <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
@@ -269,6 +282,10 @@
   <wsdl:message name="test_exceptionResponse"/>
   <wsdl:message name="test_soapFaultRequest"/>
   <wsdl:message name="test_soapFaultResponse"/>
+  <wsdl:message name="test_configuredPropertyRequest"/>
+  <wsdl:message name="test_configuredPropertyResponse">
+    <wsdl:part name="result" type="xsd:string"/>
+  </wsdl:message>
   <wsdl:message name="test_methodResultRequest"/>
   <wsdl:message name="test_methodResultResponse">
     <wsdl:part name="result" type="xsd:string"/>
