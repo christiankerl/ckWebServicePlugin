@@ -51,7 +51,7 @@ class ckWebServiceController extends sfWebController
   {
     if(is_null($this->resultAdapter))
     {
-      $result = sfConfig::get(sprintf('mod_%s_%s_result', $this->context->getModuleName(), $this->context->getActionName()), array());
+      $result = sfConfig::get(sprintf('mod_%s_%s_result', strtolower($this->context->getModuleName()), $this->context->getActionName()), array());
       $class  = isset($result['class']) ? $result['class'] : 'ckPropertyResultAdapter';
       $param  = isset($result['param']) ? $result['param'] : array();
 
