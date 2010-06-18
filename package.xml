@@ -15,7 +15,7 @@
 		<email>christian-kerl@web.de</email>
 		<active>yes</active>
 	</lead>
-	<date>2010-02-20</date>
+	<date>2010-06-18</date>
 	<version>
 		<release>4.0.0</release>
 		<api>4.0.0</api>
@@ -29,413 +29,422 @@
 	</license>
 	<notes>-</notes>
 	<contents>
-	<dir name="/">
-	  <dir name="config">
-	    <file role="data" name="ckWebServicePluginConfiguration.class.php"/>
-	  </dir>
-	  <dir name="lib">
-	    <dir name="adapter">
-	      <file role="data" name="ckAbstractMemberResultAdapter.class.php"/>
-	      <file role="data" name="ckAbstractResultAdapter.class.php"/>
-	      <file role="data" name="ckMethodResultAdapter.class.php"/>
-	      <file role="data" name="ckPropertyResultAdapter.class.php"/>
-	      <file role="data" name="ckRenderResultAdapter.class.php"/>
-	      <dir name="object">
-	        <file role="data" name="ckGenericObjectAdapter.class.php"/>
-	        <file role="data" name="ckGenericObjectAdapterFactory.class.php"/>
-	        <dir name="wrapper">
-	          <file role="data" name="ckArrayObjectWrapper.class.php"/>
-	          <file role="data" name="ckDefaultObjectWrapper.class.php"/>
-	          <file role="data" name="ckDoctrineRecordWrapper.class.php"/>
-	          <file role="data" name="ckGenericObjectAdapterWrapper.class.php"/>
-	          <file role="data" name="ckObjectWrapper.class.php"/>
-	        </dir>
-	      </dir>
-	    </dir>
-	    <file role="data" name="ckSoapHandler.class.php"/>
-	    <file role="data" name="ckSoapParameterFilter.class.php"/>
-	    <dir name="controller">
-	      <file role="data" name="ckWebServiceController.class.php"/>
-	    </dir>
-	    <dir name="strategy">
-	      <file role="data" name="ckDoctrinePropertyStrategy.class.php"/>
-	      <file role="data" name="ckPropelPropertyStrategy.class.php"/>
-	    </dir>
-	    <dir name="task">
-	      <file role="data" name="ckWebServiceGenerateWsdlTask.class.php"/>
-	      <dir name="skeleton">
-	        <file role="data" name="BaseSoapHandler.class.php"/>
-	        <file role="data" name="SoapHandler.class.php"/>
-	      </dir>
-	    </dir>
-	    <dir name="test">
-	      <file role="data" name="ckTestSoapClient.class.php"/>
-	    </dir>
-	    <dir name="util">
-	      <file role="data" name="ckComponentEventListener.class.php"/>
-	      <file role="data" name="ckGenericArray.class.php"/>
-	    </dir>
-	    <dir name="vendor">
-	      <dir name="ckWsdlGenerator">
-	        <dir name="annotation">
-	          <file role="data" name="PropertyStrategy.class.php"/>
-	          <file role="data" name="WSHeader.class.php"/>
-	          <file role="data" name="WSMethod.class.php"/>
-	        </dir>
-	        <file role="data" name="ckDocBlockParser.class.php"/>
-	        <file role="data" name="ckDOMSerializable.class.php"/>
-	        <file role="data" name="ckWsdlGenerator.class.php"/>
-	        <file role="data" name="ckWsdlGeneratorContext.class.php"/>
-	        <dir name="strategy">
-	          <file role="data" name="ckAbstractPropertyStrategy.class.php"/>
-	          <file role="data" name="ckBeanPropertyStrategy.class.php"/>
-	          <file role="data" name="ckDefaultPropertyStrategy.class.php"/>
-	        </dir>
-	        <dir name="util">
-	          <file role="data" name="ckString.class.php"/>
-	        </dir>
-	        <dir name="vendor">
-	          <dir name="addendum">
-	            <dir name="annotations">
-	              <file role="data" name="annotation_parser.php"/>
-	              <file role="data" name="doc_comment.php"/>
-	              <dir name="tests">
-	                <file role="data" name="acceptance_test.php"/>
-	                <file role="data" name="addendum_test.php"/>
-	                <file role="data" name="all_tests.php"/>
-	                <file role="data" name="annotation_parser_test.php"/>
-	                <file role="data" name="annotation_test.php"/>
-	                <file role="data" name="constrained_annotation_test.php"/>
-	                <file role="data" name="doc_comment_test.php"/>
-	              </dir>
-	            </dir>
-	            <file role="data" name="annotations.php"/>
-	            <file role="data" name="LICENSE"/>
-	          </dir>
-	        </dir>
-	        <dir name="wsdl">
-	          <file role="data" name="ckWsdlBindingDecorator.class.php"/>
-	          <file role="data" name="ckWsdlDefinitions.class.php"/>
-	          <file role="data" name="ckWsdlHttpBindingDecorator.class.php"/>
-	          <file role="data" name="ckWsdlMessage.class.php"/>
-	          <file role="data" name="ckWsdlOperation.class.php"/>
-	          <file role="data" name="ckWsdlPart.class.php"/>
-	          <file role="data" name="ckWsdlPortDecorator.class.php"/>
-	          <file role="data" name="ckWsdlPortType.class.php"/>
-	          <file role="data" name="ckWsdlService.class.php"/>
-	          <file role="data" name="ckWsdlSoapBindingDecorator.class.php"/>
-	          <file role="data" name="ckWsdlSoapPortDecorator.class.php"/>
-	        </dir>
-	        <dir name="xsd">
-	          <file role="data" name="ckXsdArrayType.class.php"/>
-	          <file role="data" name="ckXsdComplexType.class.php"/>
-	          <file role="data" name="ckXsdComplexTypeElement.class.php"/>
-	          <file role="data" name="ckXsdNamespace.class.php"/>
-	          <file role="data" name="ckXsdSimpleType.class.php"/>
-	          <file role="data" name="ckXsdType.class.php"/>
-	        </dir>
-	      </dir>
-	    </dir>
-	  </dir>
-	  <file role="data" name="LICENSE"/>
-	  <file role="data" name="README"/>
-	  <dir name="test">
-	    <dir name="bin">
-	      <file role="data" name="coverage.php"/>
-	      <file role="data" name="prove.php"/>
-	    </dir>
-	    <dir name="bootstrap">
-	      <file role="data" name="functional.php"/>
-	      <file role="data" name="unit.php"/>
-	    </dir>
-	    <dir name="fixtures">
-	      <dir name="project">
-	        <dir name="apps">
-	          <dir name="frontend">
-	            <dir name="config">
-	              <file role="data" name="app.yml"/>
-	              <file role="data" name="cache.yml"/>
-	              <file role="data" name="factories.yml"/>
-	              <file role="data" name="filters.yml"/>
-	              <file role="data" name="frontendConfiguration.class.php"/>
-	              <file role="data" name="routing.yml"/>
-	              <file role="data" name="security.yml"/>
-	              <file role="data" name="settings.yml"/>
-	              <file role="data" name="view.yml"/>
-	            </dir>
-	            <dir name="i18n"/>
-	            <dir name="lib">
-	              <file role="data" name="AuthData.class.php"/>
-	              <file role="data" name="BaseTestServiceApiHandler.class.php"/>
-	              <file role="data" name="ExtraHeaderData.class.php"/>
-	              <file role="data" name="myUser.class.php"/>
-	              <file role="data" name="SoapHeaderListener.class.php"/>
-	              <file role="data" name="TestData.class.php"/>
-	              <file role="data" name="TestServiceApiHandler.class.php"/>
-	            </dir>
-	            <dir name="modules">
-	              <dir name="orm"/>
-	              <dir name="test">
-	                <dir name="actions">
-	                  <file role="data" name="actions.class.php"/>
-	                </dir>
-	                <dir name="config">
-	                  <file role="data" name="module.yml"/>
-	                </dir>
-	                <dir name="templates">
-	                  <file role="data" name="renderResultSuccess.soap.php"/>
-	                </dir>
-	              </dir>
-	            </dir>
-	            <dir name="templates"/>
-	          </dir>
-	          <dir name="tutorial">
-	            <dir name="config">
-	              <file role="data" name="app.yml"/>
-	              <file role="data" name="autoload.yml"/>
-	              <file role="data" name="cache.yml"/>
-	              <file role="data" name="factories.yml"/>
-	              <file role="data" name="filters.yml"/>
-	              <file role="data" name="routing.yml"/>
-	              <file role="data" name="security.yml"/>
-	              <file role="data" name="settings.yml"/>
-	              <file role="data" name="tutorialConfiguration.class.php"/>
-	              <file role="data" name="view.yml"/>
-	            </dir>
-	            <dir name="i18n"/>
-	            <dir name="lib">
-	              <file role="data" name="AuthData.class.php"/>
-	              <file role="data" name="AuthHeaderListener.class.php"/>
-	              <file role="data" name="BaseMathApiHandler.class.php"/>
-	              <file role="data" name="ComplexNumber.class.php"/>
-	              <file role="data" name="MathApiHandler.class.php"/>
-	              <file role="data" name="myUser.class.php"/>
-	            </dir>
-	            <dir name="modules">
-	              <dir name="math">
-	                <dir name="actions">
-	                  <file role="data" name="actions.class.php"/>
-	                </dir>
-	                <dir name="config">
-	                  <file role="data" name="module.yml"/>
-	                </dir>
-	                <dir name="templates"/>
-	              </dir>
-	            </dir>
-	            <dir name="templates">
-	              <file role="data" name="layout.php"/>
-	            </dir>
-	          </dir>
-	        </dir>
-	        <dir name="config">
-	          <file role="data" name="databases.yml"/>
-	          <file role="data" name="ProjectConfiguration.class.php"/>
-	          <file role="data" name="properties.ini"/>
-	        </dir>
-	        <dir name="data"/>
-	        <dir name="lib">
-	          <dir name="form">
-	            <file role="data" name="BaseForm.class.php"/>
-	          </dir>
-	          <dir name="model"/>
-	        </dir>
-	        <dir name="log"/>
-	        <dir name="plugins"/>
-	        <file role="data" name="symfony"/>
-	        <dir name="test"/>
-	        <dir name="web">
-	          <file role="data" name="MathApi.php"/>
-	          <file role="data" name="MathApi.wsdl"/>
-	          <file role="data" name="TestServiceApi.php"/>
-	          <file role="data" name="TestServiceApi.wsdl"/>
-	          <dir name="uploads"/>
-	        </dir>
-	      </dir>
-	      <dir name="projectWithDoctrine">
-	        <dir name="apps">
-	          <dir name="main">
-	            <dir name="config">
-	              <file role="data" name="app.yml"/>
-	              <file role="data" name="cache.yml"/>
-	              <file role="data" name="factories.yml"/>
-	              <file role="data" name="filters.yml"/>
-	              <file role="data" name="mainConfiguration.class.php"/>
-	              <file role="data" name="routing.yml"/>
-	              <file role="data" name="security.yml"/>
-	              <file role="data" name="settings.yml"/>
-	              <file role="data" name="view.yml"/>
-	            </dir>
-	            <dir name="i18n"/>
-	            <dir name="lib">
-	              <file role="data" name="BaseMainApiHandler.class.php"/>
-	              <file role="data" name="MainApiHandler.class.php"/>
-	              <file role="data" name="myUser.class.php"/>
-	            </dir>
-	            <dir name="modules">
-	              <dir name="main">
-	                <dir name="actions">
-	                  <file role="data" name="actions.class.php"/>
-	                </dir>
-	                <dir name="config">
-	                  <file role="data" name="module.yml"/>
-	                </dir>
-	                <dir name="templates"/>
-	              </dir>
-	            </dir>
-	            <dir name="templates"/>
-	          </dir>
-	        </dir>
-	        <dir name="config">
-	          <file role="data" name="databases.yml"/>
-	          <dir name="doctrine">
-	            <file role="data" name="schema.yml"/>
-	          </dir>
-	          <file role="data" name="ProjectConfiguration.class.php"/>
-	          <file role="data" name="properties.ini"/>
-	        </dir>
-	        <dir name="data">
-	          <dir name="fixtures">
-	            <file role="data" name="model.yml"/>
-	          </dir>
-	        </dir>
-	        <dir name="lib">
-	          <dir name="form">
-	            <file role="data" name="BaseForm.class.php"/>
-	          </dir>
-	          <dir name="model">
-	            <dir name="doctrine">
-	              <file role="data" name="Article.class.php"/>
-	              <file role="data" name="ArticleAuthor.class.php"/>
-	              <file role="data" name="ArticleAuthorTable.class.php"/>
-	              <file role="data" name="ArticleTable.class.php"/>
-	              <file role="data" name="Author.class.php"/>
-	              <file role="data" name="AuthorTable.class.php"/>
-	              <dir name="base">
-	                <file role="data" name="BaseArticle.class.php"/>
-	                <file role="data" name="BaseArticleAuthor.class.php"/>
-	                <file role="data" name="BaseAuthor.class.php"/>
-	                <file role="data" name="BaseComment.class.php"/>
-	              </dir>
-	              <file role="data" name="Comment.class.php"/>
-	              <file role="data" name="CommentTable.class.php"/>
-	            </dir>
-	          </dir>
-	        </dir>
-	        <dir name="log"/>
-	        <dir name="plugins"/>
-	        <file role="data" name="symfony"/>
-	        <dir name="web">
-	          <file role="data" name="MainApi.php"/>
-	          <file role="data" name="MainApi.wsdl"/>
-	        </dir>
-	      </dir>
-	      <dir name="projectWithPropel">
-	        <dir name="apps">
-	          <dir name="main">
-	            <dir name="config">
-	              <file role="data" name="app.yml"/>
-	              <file role="data" name="cache.yml"/>
-	              <file role="data" name="factories.yml"/>
-	              <file role="data" name="filters.yml"/>
-	              <file role="data" name="mainConfiguration.class.php"/>
-	              <file role="data" name="routing.yml"/>
-	              <file role="data" name="security.yml"/>
-	              <file role="data" name="settings.yml"/>
-	              <file role="data" name="view.yml"/>
-	            </dir>
-	            <dir name="i18n"/>
-	            <dir name="lib">
-	              <file role="data" name="BaseMainApiHandler.class.php"/>
-	              <file role="data" name="MainApiHandler.class.php"/>
-	              <file role="data" name="myUser.class.php"/>
-	            </dir>
-	            <dir name="modules">
-	              <dir name="main">
-	                <dir name="actions">
-	                  <file role="data" name="actions.class.php"/>
-	                </dir>
-	                <dir name="config">
-	                  <file role="data" name="module.yml"/>
-	                </dir>
-	                <dir name="templates"/>
-	              </dir>
-	            </dir>
-	            <dir name="templates"/>
-	          </dir>
-	        </dir>
-	        <dir name="config">
-	          <file role="data" name="databases.yml"/>
-	          <file role="data" name="ProjectConfiguration.class.php"/>
-	          <file role="data" name="propel.ini"/>
-	          <file role="data" name="properties.ini"/>
-	          <file role="data" name="schema.yml"/>
-	        </dir>
-	        <dir name="data">
-	          <dir name="fixtures">
-	            <file role="data" name="model.yml"/>
-	          </dir>
-	          <dir name="sql">
-	            <file role="data" name="lib.model.schema.sql"/>
-	            <file role="data" name="sqldb.map"/>
-	          </dir>
-	        </dir>
-	        <dir name="lib">
-	          <dir name="form">
-	            <file role="data" name="BaseForm.class.php"/>
-	          </dir>
-	          <dir name="model">
-	            <file role="data" name="Article.php"/>
-	            <file role="data" name="ArticleAuthor.php"/>
-	            <file role="data" name="ArticleAuthorPeer.php"/>
-	            <file role="data" name="ArticleComment.php"/>
-	            <file role="data" name="ArticleCommentPeer.php"/>
-	            <file role="data" name="ArticlePeer.php"/>
-	            <file role="data" name="Author.php"/>
-	            <file role="data" name="AuthorPeer.php"/>
-	            <dir name="map">
-	              <file role="data" name="ArticleAuthorTableMap.php"/>
-	              <file role="data" name="ArticleCommentTableMap.php"/>
-	              <file role="data" name="ArticleTableMap.php"/>
-	              <file role="data" name="AuthorTableMap.php"/>
-	            </dir>
-	            <dir name="om">
-	              <file role="data" name="BaseArticle.php"/>
-	              <file role="data" name="BaseArticleAuthor.php"/>
-	              <file role="data" name="BaseArticleAuthorPeer.php"/>
-	              <file role="data" name="BaseArticleComment.php"/>
-	              <file role="data" name="BaseArticleCommentPeer.php"/>
-	              <file role="data" name="BaseArticlePeer.php"/>
-	              <file role="data" name="BaseAuthor.php"/>
-	              <file role="data" name="BaseAuthorPeer.php"/>
-	            </dir>
-	          </dir>
-	        </dir>
-	        <dir name="log"/>
-	        <dir name="plugins"/>
-	        <file role="data" name="symfony"/>
-	        <dir name="web">
-	          <file role="data" name="MainApi.php"/>
-	          <file role="data" name="MainApi.wsdl"/>
-	        </dir>
-	      </dir>
-	    </dir>
-	    <dir name="functional">
-	      <file role="data" name="genericObjectAdapterFactoryTest.php"/>
-	      <file role="data" name="objectWrapperTest.php"/>
-	      <file role="data" name="resultAdapterTest.php"/>
-	      <file role="data" name="soapFaultNoDebugTest.php"/>
-	      <file role="data" name="soapFaultTest.php"/>
-	      <file role="data" name="soapHeaderTest.php"/>
-	      <file role="data" name="tutorialTest.php"/>
-	      <file role="data" name="typeMappingDoctrineTest.php"/>
-	      <file role="data" name="typeMappingPropelTest.php"/>
-	      <file role="data" name="typeMappingTest.php"/>
-	    </dir>
-	    <dir name="unit">
-	      <file role="data" name="ckGenericArrayTest.php"/>
-	    </dir>
-	  </dir>
-	</dir>
+		<dir name="/">
+			<dir name="config">
+				<file role="data" name="ckWebServicePluginConfiguration.class.php" />
+			</dir>
+			<dir name="lib">
+				<dir name="adapter">
+					<file role="data" name="ckAbstractMemberResultAdapter.class.php" />
+					<file role="data" name="ckAbstractResultAdapter.class.php" />
+					<file role="data" name="ckMethodResultAdapter.class.php" />
+					<file role="data" name="ckPropertyResultAdapter.class.php" />
+					<file role="data" name="ckRenderResultAdapter.class.php" />
+					<dir name="object">
+						<file role="data" name="ckGenericObjectAdapter.class.php" />
+						<file role="data" name="ckGenericObjectAdapterFactory.class.php" />
+						<dir name="wrapper">
+							<file role="data" name="ckArrayObjectWrapper.class.php" />
+							<file role="data" name="ckDefaultObjectWrapper.class.php" />
+							<file role="data" name="ckDoctrineRecordWrapper.class.php" />
+							<file role="data" name="ckGenericObjectAdapterWrapper.class.php" />
+							<file role="data" name="ckObjectWrapper.class.php" />
+						</dir>
+					</dir>
+				</dir>
+				<file role="data" name="ckSoapHandler.class.php" />
+				<file role="data" name="ckSoapParameterFilter.class.php" />
+				<dir name="controller">
+					<file role="data" name="ckWebServiceController.class.php" />
+				</dir>
+				<dir name="strategy">
+					<file role="data" name="ckDoctrinePropertyStrategy.class.php" />
+					<file role="data" name="ckPropelPropertyStrategy.class.php" />
+				</dir>
+				<dir name="task">
+					<file role="data" name="ckWebServiceGenerateWsdlTask.class.php" />
+					<dir name="skeleton">
+						<file role="data" name="BaseSoapHandler.class.php" />
+						<file role="data" name="SoapHandler.class.php" />
+					</dir>
+				</dir>
+				<dir name="test">
+					<file role="data" name="ckTestSoapClient.class.php" />
+				</dir>
+				<dir name="util">
+					<file role="data" name="ckComponentEventListener.class.php" />
+					<file role="data" name="ckGenericArray.class.php" />
+				</dir>
+				<dir name="vendor">
+					<dir name="ckWsdlGenerator">
+						<dir name="annotation">
+							<file role="data" name="PropertyStrategy.class.php" />
+							<file role="data" name="WSHeader.class.php" />
+							<file role="data" name="WSMethod.class.php" />
+						</dir>
+						<file role="data" name="ckDocBlockParser.class.php" />
+						<file role="data" name="ckDOMSerializable.class.php" />
+						<file role="data" name="ckWsdlGenerator.class.php" />
+						<file role="data" name="ckWsdlGeneratorContext.class.php" />
+						<dir name="strategy">
+							<file role="data" name="ckAbstractPropertyStrategy.class.php" />
+							<file role="data" name="ckBeanPropertyStrategy.class.php" />
+							<file role="data" name="ckDefaultPropertyStrategy.class.php" />
+						</dir>
+						<dir name="util">
+							<file role="data" name="ckString.class.php" />
+						</dir>
+						<dir name="vendor">
+							<dir name="addendum">
+								<dir name="annotations">
+									<file role="data" name="annotation_parser.php" />
+									<file role="data" name="doc_comment.php" />
+									<dir name="tests">
+										<file role="data" name="acceptance_test.php" />
+										<file role="data" name="addendum_test.php" />
+										<file role="data" name="all_tests.php" />
+										<file role="data" name="annotation_parser_test.php" />
+										<file role="data" name="annotation_test.php" />
+										<file role="data" name="constrained_annotation_test.php" />
+										<file role="data" name="doc_comment_test.php" />
+									</dir>
+								</dir>
+								<file role="data" name="annotations.php" />
+								<file role="data" name="LICENSE" />
+							</dir>
+						</dir>
+						<dir name="wsdl">
+							<file role="data" name="ckWsdlBindingDecorator.class.php" />
+							<file role="data" name="ckWsdlDefinitions.class.php" />
+							<file role="data" name="ckWsdlHttpBindingDecorator.class.php" />
+							<file role="data" name="ckWsdlMessage.class.php" />
+							<file role="data" name="ckWsdlOperation.class.php" />
+							<file role="data" name="ckWsdlPart.class.php" />
+							<file role="data" name="ckWsdlPortDecorator.class.php" />
+							<file role="data" name="ckWsdlPortType.class.php" />
+							<file role="data" name="ckWsdlService.class.php" />
+							<file role="data" name="ckWsdlSoapBindingDecorator.class.php" />
+							<file role="data" name="ckWsdlSoapPortDecorator.class.php" />
+						</dir>
+						<dir name="xsd">
+							<file role="data" name="ckXsdArrayType.class.php" />
+							<file role="data" name="ckXsdComplexType.class.php" />
+							<file role="data" name="ckXsdComplexTypeElement.class.php" />
+							<file role="data" name="ckXsdNamespace.class.php" />
+							<file role="data" name="ckXsdSimpleType.class.php" />
+							<file role="data" name="ckXsdType.class.php" />
+						</dir>
+					</dir>
+				</dir>
+			</dir>
+			<file role="data" name="LICENSE" />
+			<file role="data" name="README" />
+			<dir name="test">
+				<dir name="bin">
+					<file role="data" name="coverage.php" />
+					<file role="data" name="prove.php" />
+				</dir>
+				<dir name="bootstrap">
+					<file role="data" name="functional.php" />
+					<file role="data" name="unit.php" />
+				</dir>
+				<dir name="fixtures">
+					<dir name="project">
+						<dir name="apps">
+							<dir name="frontend">
+								<dir name="config">
+									<file role="data" name="app.yml" />
+									<file role="data" name="cache.yml" />
+									<file role="data" name="factories.yml" />
+									<file role="data" name="filters.yml" />
+									<file role="data" name="frontendConfiguration.class.php" />
+									<file role="data" name="routing.yml" />
+									<file role="data" name="security.yml" />
+									<file role="data" name="settings.yml" />
+									<file role="data" name="view.yml" />
+								</dir>
+								<dir name="i18n" />
+								<dir name="lib">
+									<file role="data" name="AuthData.class.php" />
+									<file role="data" name="BaseTestServiceApiHandler.class.php" />
+									<file role="data" name="ExtraHeaderData.class.php" />
+									<file role="data" name="myUser.class.php" />
+									<file role="data" name="SoapHeaderListener.class.php" />
+									<file role="data" name="TestData.class.php" />
+									<file role="data" name="TestServiceApiHandler.class.php" />
+								</dir>
+								<dir name="modules">
+									<dir name="nonLC_name">
+										<dir name="actions">
+											<file role="data" name="actions.class.php" />
+										</dir>
+										<dir name="config">
+											<file role="data" name="module.yml" />
+										</dir>
+										<dir name="templates" />
+									</dir>
+									<dir name="orm" />
+									<dir name="test">
+										<dir name="actions">
+											<file role="data" name="actions.class.php" />
+										</dir>
+										<dir name="config">
+											<file role="data" name="module.yml" />
+										</dir>
+										<dir name="templates">
+											<file role="data" name="renderResultSuccess.soap.php" />
+										</dir>
+									</dir>
+								</dir>
+								<dir name="templates" />
+							</dir>
+							<dir name="tutorial">
+								<dir name="config">
+									<file role="data" name="app.yml" />
+									<file role="data" name="autoload.yml" />
+									<file role="data" name="cache.yml" />
+									<file role="data" name="factories.yml" />
+									<file role="data" name="filters.yml" />
+									<file role="data" name="routing.yml" />
+									<file role="data" name="security.yml" />
+									<file role="data" name="settings.yml" />
+									<file role="data" name="tutorialConfiguration.class.php" />
+									<file role="data" name="view.yml" />
+								</dir>
+								<dir name="i18n" />
+								<dir name="lib">
+									<file role="data" name="AuthData.class.php" />
+									<file role="data" name="AuthHeaderListener.class.php" />
+									<file role="data" name="BaseMathApiHandler.class.php" />
+									<file role="data" name="ComplexNumber.class.php" />
+									<file role="data" name="MathApiHandler.class.php" />
+									<file role="data" name="myUser.class.php" />
+								</dir>
+								<dir name="modules">
+									<dir name="math">
+										<dir name="actions">
+											<file role="data" name="actions.class.php" />
+										</dir>
+										<dir name="config">
+											<file role="data" name="module.yml" />
+										</dir>
+										<dir name="templates" />
+									</dir>
+								</dir>
+								<dir name="templates">
+									<file role="data" name="layout.php" />
+								</dir>
+							</dir>
+						</dir>
+						<dir name="config">
+							<file role="data" name="databases.yml" />
+							<file role="data" name="ProjectConfiguration.class.php" />
+							<file role="data" name="properties.ini" />
+						</dir>
+						<dir name="data" />
+						<dir name="lib">
+							<dir name="form">
+								<file role="data" name="BaseForm.class.php" />
+							</dir>
+							<dir name="model" />
+						</dir>
+						<dir name="log" />
+						<dir name="plugins" />
+						<file role="data" name="symfony" />
+						<dir name="test" />
+						<dir name="web">
+							<file role="data" name="MathApi.php" />
+							<file role="data" name="MathApi.wsdl" />
+							<file role="data" name="TestServiceApi.php" />
+							<file role="data" name="TestServiceApi.wsdl" />
+							<dir name="uploads" />
+						</dir>
+					</dir>
+					<dir name="projectWithDoctrine">
+						<dir name="apps">
+							<dir name="main">
+								<dir name="config">
+									<file role="data" name="app.yml" />
+									<file role="data" name="cache.yml" />
+									<file role="data" name="factories.yml" />
+									<file role="data" name="filters.yml" />
+									<file role="data" name="mainConfiguration.class.php" />
+									<file role="data" name="routing.yml" />
+									<file role="data" name="security.yml" />
+									<file role="data" name="settings.yml" />
+									<file role="data" name="view.yml" />
+								</dir>
+								<dir name="i18n" />
+								<dir name="lib">
+									<file role="data" name="BaseMainApiHandler.class.php" />
+									<file role="data" name="MainApiHandler.class.php" />
+									<file role="data" name="myUser.class.php" />
+								</dir>
+								<dir name="modules">
+									<dir name="main">
+										<dir name="actions">
+											<file role="data" name="actions.class.php" />
+										</dir>
+										<dir name="config">
+											<file role="data" name="module.yml" />
+										</dir>
+										<dir name="templates" />
+									</dir>
+								</dir>
+								<dir name="templates" />
+							</dir>
+						</dir>
+						<dir name="config">
+							<file role="data" name="databases.yml" />
+							<dir name="doctrine">
+								<file role="data" name="schema.yml" />
+							</dir>
+							<file role="data" name="ProjectConfiguration.class.php" />
+							<file role="data" name="properties.ini" />
+						</dir>
+						<dir name="data">
+							<dir name="fixtures">
+								<file role="data" name="model.yml" />
+							</dir>
+						</dir>
+						<dir name="lib">
+							<dir name="form">
+								<file role="data" name="BaseForm.class.php" />
+							</dir>
+							<dir name="model">
+								<dir name="doctrine">
+									<file role="data" name="Article.class.php" />
+									<file role="data" name="ArticleAuthor.class.php" />
+									<file role="data" name="ArticleAuthorTable.class.php" />
+									<file role="data" name="ArticleTable.class.php" />
+									<file role="data" name="Author.class.php" />
+									<file role="data" name="AuthorTable.class.php" />
+									<dir name="base">
+										<file role="data" name="BaseArticle.class.php" />
+										<file role="data" name="BaseArticleAuthor.class.php" />
+										<file role="data" name="BaseAuthor.class.php" />
+										<file role="data" name="BaseComment.class.php" />
+									</dir>
+									<file role="data" name="Comment.class.php" />
+									<file role="data" name="CommentTable.class.php" />
+								</dir>
+							</dir>
+						</dir>
+						<dir name="log" />
+						<dir name="plugins" />
+						<file role="data" name="symfony" />
+						<dir name="web">
+							<file role="data" name="MainApi.php" />
+							<file role="data" name="MainApi.wsdl" />
+						</dir>
+					</dir>
+					<dir name="projectWithPropel">
+						<dir name="apps">
+							<dir name="main">
+								<dir name="config">
+									<file role="data" name="app.yml" />
+									<file role="data" name="cache.yml" />
+									<file role="data" name="factories.yml" />
+									<file role="data" name="filters.yml" />
+									<file role="data" name="mainConfiguration.class.php" />
+									<file role="data" name="routing.yml" />
+									<file role="data" name="security.yml" />
+									<file role="data" name="settings.yml" />
+									<file role="data" name="view.yml" />
+								</dir>
+								<dir name="i18n" />
+								<dir name="lib">
+									<file role="data" name="BaseMainApiHandler.class.php" />
+									<file role="data" name="MainApiHandler.class.php" />
+									<file role="data" name="myUser.class.php" />
+								</dir>
+								<dir name="modules">
+									<dir name="main">
+										<dir name="actions">
+											<file role="data" name="actions.class.php" />
+										</dir>
+										<dir name="config">
+											<file role="data" name="module.yml" />
+										</dir>
+										<dir name="templates" />
+									</dir>
+								</dir>
+								<dir name="templates" />
+							</dir>
+						</dir>
+						<dir name="config">
+							<file role="data" name="databases.yml" />
+							<file role="data" name="ProjectConfiguration.class.php" />
+							<file role="data" name="propel.ini" />
+							<file role="data" name="properties.ini" />
+							<file role="data" name="schema.yml" />
+						</dir>
+						<dir name="data">
+							<dir name="fixtures">
+								<file role="data" name="model.yml" />
+							</dir>
+							<dir name="sql">
+								<file role="data" name="lib.model.schema.sql" />
+								<file role="data" name="sqldb.map" />
+							</dir>
+						</dir>
+						<dir name="lib">
+							<dir name="form">
+								<file role="data" name="BaseForm.class.php" />
+							</dir>
+							<dir name="model">
+								<file role="data" name="Article.php" />
+								<file role="data" name="ArticleAuthor.php" />
+								<file role="data" name="ArticleAuthorPeer.php" />
+								<file role="data" name="ArticleComment.php" />
+								<file role="data" name="ArticleCommentPeer.php" />
+								<file role="data" name="ArticlePeer.php" />
+								<file role="data" name="Author.php" />
+								<file role="data" name="AuthorPeer.php" />
+								<dir name="map">
+									<file role="data" name="ArticleAuthorTableMap.php" />
+									<file role="data" name="ArticleCommentTableMap.php" />
+									<file role="data" name="ArticleTableMap.php" />
+									<file role="data" name="AuthorTableMap.php" />
+								</dir>
+								<dir name="om">
+									<file role="data" name="BaseArticle.php" />
+									<file role="data" name="BaseArticleAuthor.php" />
+									<file role="data" name="BaseArticleAuthorPeer.php" />
+									<file role="data" name="BaseArticleComment.php" />
+									<file role="data" name="BaseArticleCommentPeer.php" />
+									<file role="data" name="BaseArticlePeer.php" />
+									<file role="data" name="BaseAuthor.php" />
+									<file role="data" name="BaseAuthorPeer.php" />
+								</dir>
+							</dir>
+						</dir>
+						<dir name="log" />
+						<dir name="plugins" />
+						<file role="data" name="symfony" />
+						<dir name="web">
+							<file role="data" name="MainApi.php" />
+							<file role="data" name="MainApi.wsdl" />
+						</dir>
+					</dir>
+				</dir>
+				<dir name="functional">
+					<file role="data" name="genericObjectAdapterFactoryTest.php" />
+					<file role="data" name="objectWrapperTest.php" />
+					<file role="data" name="resultAdapterTest.php" />
+					<file role="data" name="soapFaultNoDebugTest.php" />
+					<file role="data" name="soapFaultTest.php" />
+					<file role="data" name="soapHeaderTest.php" />
+					<file role="data" name="tutorialTest.php" />
+					<file role="data" name="typeMappingDoctrineTest.php" />
+					<file role="data" name="typeMappingPropelTest.php" />
+					<file role="data" name="typeMappingTest.php" />
+				</dir>
+				<dir name="unit">
+					<file role="data" name="ckGenericArrayTest.php" />
+				</dir>
+			</dir>
+		</dir>
 	</contents>
 	<dependencies>
 		<required>
