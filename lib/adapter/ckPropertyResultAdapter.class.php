@@ -49,7 +49,7 @@ class ckPropertyResultAdapter extends ckAbstractMemberResultAdapter
    */
   public function __construct($parameters = array())
   {
-    $this->resultProperty = isset($parameter['property']) ? $parameter['property'] : self::DEFAULT_RESULT_PROPERTY;
+    $this->resultProperty = isset($parameters['property']) ? $parameters['property'] : self::DEFAULT_RESULT_PROPERTY;
   }
 
   /**
