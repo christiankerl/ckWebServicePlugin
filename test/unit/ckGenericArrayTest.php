@@ -45,9 +45,11 @@ $t->is($array[1], 2);
 $t->comment('ArrayAccess::offsetSet()');
 
 $empty[0] = 1;
+$empty[] = 2;
 $empty['test'] = 1;
 
 $t->is($empty[0], 1);
+$t->is($empty[1], 2);
 $t->is($empty['test'], 1);
 
 $t->comment('ArrayAccess::offsetUnset()');
