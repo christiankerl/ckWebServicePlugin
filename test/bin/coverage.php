@@ -24,9 +24,12 @@ $h->base_dir = realpath(dirname(__FILE__).'/..');
 // functional tests
 $h->register_glob($h->base_dir.'/functional/*Test.php');
 
+// unit tests
+$h->register_glob($h->base_dir.'/unit/*Test.php');
+
 $c = new lime_coverage($h);
 $c->extension = '.class.php';
-$c->verbose = false;
+$c->verbose = true;
 $c->base_dir = realpath(dirname(__FILE__).'/../../lib');
 
 $finder = sfFinder::type('file')->name('*.php')->prune('vendor')->prune('test')->prune('data')->prune('skeleton');
