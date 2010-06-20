@@ -6,7 +6,7 @@
  * @author    Christian Kerl <christian-kerl@web.de>
  * @copyright Copyright (c) 2010, Christian Kerl
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
- * @version   SVN: $Id: functional.php 20950 2009-08-08 20:45:00Z chrisk $
+ * @version   SVN: $Id$
  */
 
 /**
