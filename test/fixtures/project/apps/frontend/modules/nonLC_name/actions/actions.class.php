@@ -6,7 +6,7 @@
  * @package    project
  * @subpackage nonLC_name
  * @author     Christian Kerl <christian-kerl@web.de>
- * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
+ * @version    SVN: $Id$
  */
 class nonLC_nameActions extends sfActions
 {
