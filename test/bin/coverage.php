@@ -16,7 +16,9 @@ if (!isset($_SERVER['SYMFONY']))
 require_once($_SERVER['SYMFONY'].'/vendor/lime/lime.php');
 require_once($_SERVER['SYMFONY'].'/util/sfFinder.class.php');
 
-$h = new lime_harness(new lime_output_color());
+$h = new lime_harness(array(
+  'force_colors' => true
+));
 $h->base_dir = realpath(dirname(__FILE__).'/..');
 
 // functional tests

@@ -9,8 +9,6 @@ class BeanObject
 
 }
 
-$test = new lime_test(null, new lime_output_color());
-
 $beanAdapter = new ckGenericObjectAdapter_BeanObject();
 
 $test->ok(file_exists(sfConfig::get('sf_cache_dir').'/ckWebServicePlugin/ckGenericObjectAdapter/BeanObject.php'));

@@ -15,7 +15,7 @@ $debug = true;
 
 include_once(dirname(__FILE__).'/../bootstrap/functional.php');
 
-$c = new ckTestSoapClient();
+$c = new ckTestSoapClient(array(), $test);
 
 // test executeConfiguredProperty (Ticket #8769)
 $c->test_configuredProperty()

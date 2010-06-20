@@ -24,7 +24,7 @@ $_options = array(
   ),
 );
 
-$c = new ckTestSoapClient($_options);
+$c = new ckTestSoapClient($_options, $test);
 
 // test executeNoArg
 $c->test_noArg()

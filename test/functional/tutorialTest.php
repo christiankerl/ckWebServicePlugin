@@ -40,7 +40,7 @@ $_options = array(
   ),
 );
 
-$c = new ckTestSoapClient($_options);
+$c = new ckTestSoapClient($_options, $test);
 
 // test executeMultiply
 $c->math_multiply(2, 5)

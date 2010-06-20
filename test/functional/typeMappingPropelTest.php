@@ -123,7 +123,7 @@ $_options = array(
   )
 );
 
-$c = new ckTestSoapClient($_options);
+$c = new ckTestSoapClient($_options, $test);
 
 checkFixtureModel($c->getFixtureModel(), true);
 
