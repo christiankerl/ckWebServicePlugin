@@ -50,7 +50,7 @@ Configure general plugin settings in your application's `app.yml` file.
       enable_soap_parameter: on
       ck_web_service_plugin:
         # the location of your wsdl file
-        wsdl: %SF_WEB_DIR%/myWebService.wsdl 
+        wsdl: %SF_DATA_DIR%/wsdl/myWebService.wsdl 
         # the class that will be registered as handler for webservice requests
         handler: ckSoapHandler
 
@@ -69,11 +69,20 @@ Enable the ``ckWebServiceController`` in your application's `factories.yml` file
 
 Enable the `ckSoapParameterFilter` in your application's `filters.yml` file.
 
+    rendering: ~
+    security:  ~
+    
+    # insert your own filters here
     soap_parameter:
       class: ckSoapParameterFilter
       param:
         # `app_enable_soap_parameter` has to be set to `on` so the filter is only enabled in soap mode
         condition: %APP_ENABLE_SOAP_PARAMETER%
+    
+    cache:     ~
+    common:
+      class: sfCommonFilter
+    execution: ~
 
 ## Advanced
 
@@ -218,11 +227,8 @@ Now we are ready to execute the `webservice:generate-wsdl` task. It is explained
 Execute the task with:
 
     > symfony webservice:generate-wsdl frontend MathApi http://localhost/
-    
->**TIP**
->Change `http://localhost/` to the url you are using for development!
 
-The task will generate a `MathApi.wsdl` and `MathApi.php` in your project's `web/` folder.
+The task will generate a `MathApi.wsdl` file in your project's `data/wsdl/` folder and `MathApi.php` in your project's `web/` folder.
 Further the task will generate a `MathApiHandler.class.php` and a `BaseMathApiHandler.class.php` in the application's `lib/` folder.
 
 We have to change the `wsdl` option in the application's `app.yml` file to `MathApi.wsdl` and the `handler` option to `MathApiHandler`:
@@ -233,7 +239,7 @@ We have to change the `wsdl` option in the application's `app.yml` file to `Math
       # ...
       ck_web_service_plugin:
         # the location of your wsdl file, relative to your project's `web/` folder
-        wsdl: %SF_WEB_DIR%/MathApi.wsdl
+        wsdl: %SF_DATA_DIR%/wsdl/MathApi.wsdl
         # the class which will be registered as handler for webservice requests
         handler: MathApiHandler
 
@@ -319,7 +325,7 @@ You now have a basic overview how to use the plugin, the following sections will
 
 Its general syntax is:
 
-    > symfony webservice:generate-wsdl [--environment=soap] [--enabledebug] app_name webservice_name webservice_base_url
+    > symfony webservice:generate-wsdl [--environment=soap] [--enabledebug] app_name webservice_name webservice_namespace_url
 
 It will do the following things:
 
@@ -327,7 +333,7 @@ It will do the following things:
 *   add the marked actions to the wsdl definition, if:
     *   the `@WSMethod` annotation's `webservice` parameter equals the `'webservice_name'` argument or
     *   the `'environment'` option has its default value `soap` and the `@WSMethod` annotation's `webservice` parameter is missing,
-*   save the wsdl definition to your project's `web/` folder as `'webservice_name'.wsdl`,
+*   save the wsdl definition to your project's `data/wsdl/` folder as `'webservice_name'.wsdl`,
 *   create a new controller in your project's `web/` folder with name `'webservice_name'.php`,
 *   add a `'webservice_name'Handler.class.php` and a `Base'webservice_name'Handler.class.php` to the `'app_name'`'s `lib/` folder.
 
@@ -337,8 +343,8 @@ The arguments explained in detail:
     *   specifies the application, which is searched for actions marked with the `@WSMethod` annotation
 *   `webservice_name`:
     *   specifies the name of the webservice
-*   `webservice_base_url`:
-    *   specifies the url under which the webservice will be accessible
+*   `webservice_namespace_url`:
+    *   specifies the targetnamespace url of the xml schema in th wsdl file
 
 The options explained in detail:
 
@@ -349,6 +355,51 @@ The options explained in detail:
 *   `enabledebug` (short `d`):
     *   enables the debug mode in the generated controller
     *   defaults to `false`
+
+# Binding a wsdl file to an endpoint location
+
+Every wsdl definition contains the url of the controller, which will handle the SOAP messages. The controller is called webservice endpoint and its url is the endpoint location.
+The `webservice:generate-wsdl` generates the controller and sets the endpoint location to `'webservice_namespace_url'/'webservice_name'.php`. The problem is that the endpoint location
+varies between different development environments and deployment locations. Therefore the plugin offers to ways to change the endpoint location in a generated wsdl file.
+
+The first method is called static binding. It is implemented as a task (`webservice:bind-wsdl`).
+
+Its syntax is:
+
+    > symfony webservice:bind-wsdl webservice_name webservice_endpoint_url
+
+It loads the wsdl file identified by the `webservice_name` parameter, which is located in the `data/wsdl/` folder. 
+Afterwards it sets the endpoint location to the value of the `webservice_endpoint_url` parameter and saves the updated wsdl file
+to the `web/` folder.
+
+The second method is called dynamic binding. It is far more flexible, but requires a web server. 
+
+To use it you have to enable the `ckWsdl` module in your `settings.yml`:
+
+    all:
+      .settings:
+        enabled_modules: [..., ckWsdl]
+    
+Then the plugin will register the following route:
+
+   ck_wsdl_bind:
+     url: /:service.wsdl
+     params: { module: ckWsdl, action: bind }
+
+Afterwards the wsdl is available at `http://myhost.com/MyApi.wsdl`. Replace `myhost.com` with your real host address and `MyApi` with the webservice name.
+The endpoint location will be set to `http://myhost.com/MyApi.php`. The bound wsdl will be automatically cached, if you enabled the symfony view cache.
+
+You can disable automatic route registration with the `routes_register` parameter in your application's `app.yml`:
+
+    // apps/frontend/config/app.yml
+    all:
+      ck_web_service_plugin:
+        routes_register: false
+
+This allows you to define a custom route e.g. with a different url pattern. It is important that the route contains a `:service` parameter!
+
+The `ckWsdl::bind` action will redirect to the 404 module, if the wsdl file for the given service name doesn't exist in the `data/wsdl/` folder
+or the controller file doesn't exist in the `web/` folder!
 
 # Understanding result adapters
 
@@ -1055,7 +1106,7 @@ The changes to the configuration files are:
         soaptest:
           enable_soap_parameter: on
           ck_web_service_plugin:
-            wsdl: %SF_WEB_DIR%/myWebService.wsdl
+            wsdl: %SF_DATA_DIR%/wsdl/myWebService.wsdl
             handler: ckSoapHandler
     
 *   `factories.yml`:

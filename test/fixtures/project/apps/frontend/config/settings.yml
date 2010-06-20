@@ -21,6 +21,9 @@ test:
 
 all:
   .settings:
+    enabled_modules:   [default, ckWsdl]  
+    cache:             true
+  
     # Form security secret (CSRF protection)
     csrf_secret:       false     # Unique secret to enable CSRF protection or false to disable
 

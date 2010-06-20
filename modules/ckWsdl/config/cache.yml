@@ -1,0 +1,3 @@
+bind:
+  enabled:     true
+  with_layout: false

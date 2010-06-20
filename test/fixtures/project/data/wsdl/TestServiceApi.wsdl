@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://localhost/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" name="TestServiceApi" targetNamespace="http://localhost/">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApi" targetNamespace="http://localhost/" xmlns:tns="http://localhost/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
   <wsdl:types xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://localhost/">
       <xsd:complexType name="TestData">
@@ -313,7 +313,7 @@
   </wsdl:message>
   <wsdl:service xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApiService">
     <wsdl:port xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TestServiceApiPort" binding="tns:TestServiceApiBinding">
-      <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" location="http://myfancywebservice.com/TestServiceApi.php"/>
+      <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" location="http://localhost/TestServiceApi.php"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

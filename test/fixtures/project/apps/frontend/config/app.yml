@@ -8,7 +8,7 @@ all:
 soapTestServiceApi:
   enable_soap_parameter: true
   ck_web_service_plugin:
-    wsdl: %SF_WEB_DIR%/TestServiceApi.wsdl
+    wsdl: %SF_DATA_DIR%/wsdl/TestServiceApi.wsdl
     handler: TestServiceApiHandler
     soap_options:
       classmap:
