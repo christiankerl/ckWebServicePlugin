@@ -32,7 +32,7 @@ class ckRenderResultAdapter extends ckAbstractResultAdapter
    */
   public function __construct($parameters = array())
   {
-
+    parent::__construct($parameters);
   }
 
   /**

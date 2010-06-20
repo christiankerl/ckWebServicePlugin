@@ -50,6 +50,8 @@ class ckMethodResultAdapter extends ckAbstractMemberResultAdapter
     }
 
     $this->resultMethod = $parameters['method'];
+
+    parent::__construct($parameters);
   }
 
   /**
