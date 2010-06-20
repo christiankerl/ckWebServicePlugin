@@ -86,11 +86,16 @@ class ckTestSoapClient extends SoapClient
    *
    * @param array $options An array of soap options
    */
-  public function __construct($options = array())
+  public function __construct($options = array(), lime_test $test = null)
   {
     $wsdl = sfConfig::get('app_ck_web_service_plugin_wsdl');
     $this->browser = new sfBrowser();
     $this->namespace = $this->getNamespaceFromWsdl($wsdl);
+
+    if(is_null(self::$test))
+    {
+      self::$test = !is_null($test) ? $test : new lime_test();
+    }
 
     parent::__construct($wsdl, $this->getOptions($options));
   }
@@ -130,11 +135,6 @@ class ckTestSoapClient extends SoapClient
    */
   public function test()
   {
-    if(is_null(self::$test))
-    {
-      self::$test = new lime_test(null, new lime_output_color());
-    }
-
     return self::$test;
   }
 
