@@ -710,52 +710,52 @@ Here are two examples:
 
 *   JavaBean-like class:
 
-    ```php
-    <?php 
-    
-    // apps/frontend/lib/UserBean.class.php
-    /**
-     * @PropertyStrategy('ckBeanPropertyStrategy')
-     */
-    class UserBean
-    {
-      private $_name;
-      
-      /**
-       * Gets the user name.
-       *
-       * @return string The user name
-       */
-      public function getName()
-      {
-        return $this->_name;
-      }
-      
-      /**
-       * Sets the user name to a given value.
-       *
-       * @param string $name A name
-       */
-      public function setName($name)
-      {
-        $this->_name = $name;
-      }
-    }
-    ```
+```php
+<?php 
+
+// apps/frontend/lib/UserBean.class.php
+/**
+ * @PropertyStrategy('ckBeanPropertyStrategy')
+ */
+class UserBean
+{
+  private $_name;
+  
+  /**
+   * Gets the user name.
+   *
+   * @return string The user name
+   */
+  public function getName()
+  {
+    return $this->_name;
+  }
+  
+  /**
+   * Sets the user name to a given value.
+   *
+   * @param string $name A name
+   */
+  public function setName($name)
+  {
+    $this->_name = $name;
+  }
+}
+```
 
 *   Doctrine class:
 
-    ```php
-    <?php
-    
-    // lib/model/doctrine/Article.class.php
-    /**
-     * @PropertyStrategy('ckDoctrinePropertyStrategy')
-     */
-    class Article extends BaseArticle
-    {
-    }
-    ```
+```php
+<?php
+
+// lib/model/doctrine/Article.class.php
+/**
+ * @PropertyStrategy('ckDoctrinePropertyStrategy')
+ */
+class Article extends BaseArticle
+{
+}
+```
 
 There is one important thing you have to note:
 
