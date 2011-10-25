@@ -39,20 +39,22 @@ So if you are using this plugin the first time you can skip the `Advanced` secti
 
 Configure general plugin settings in your application's `app.yml` file.
 
-    all:
-      # because by default every filter condition is true, we have to set this var
-      # to off in all other environments
-      enable_soap_parameter: off
+```yaml
+all:
+  # because by default every filter condition is true, we have to set this var
+  # to off in all other environments
+  enable_soap_parameter: off
 
-    # your environment for webservice mode
-    soap:
-      # enable the `ckSoapParameterFilter`
-      enable_soap_parameter: on
-      ck_web_service_plugin:
-        # the location of your wsdl file
-        wsdl: %SF_DATA_DIR%/wsdl/myWebService.wsdl 
-        # the class that will be registered as handler for webservice requests
-        handler: ckSoapHandler
+# your environment for webservice mode
+soap:
+  # enable the `ckSoapParameterFilter`
+  enable_soap_parameter: on
+  ck_web_service_plugin:
+    # the location of your wsdl file
+    wsdl: %SF_DATA_DIR%/wsdl/myWebService.wsdl 
+    # the class that will be registered as handler for webservice requests
+    handler: ckSoapHandler
+```
 
 You will propably have to change the `wsdl` and `handler` option after you have run the `webservice:generate-wsdl` task.
 
@@ -60,29 +62,33 @@ You will propably have to change the `wsdl` and `handler` option after you have 
 
 Enable the ``ckWebServiceController`` in your application's `factories.yml` file.
 
-    # your environment for webservice mode
-    soap:
-      controller:
-        class: ckWebServiceController
+```yaml
+# your environment for webservice mode
+soap:
+  controller:
+    class: ckWebServiceController
+```
 
 ### filters.yml
 
 Enable the `ckSoapParameterFilter` in your application's `filters.yml` file.
 
-    rendering: ~
-    security:  ~
-    
-    # insert your own filters here
-    soap_parameter:
-      class: ckSoapParameterFilter
-      param:
-        # `app_enable_soap_parameter` has to be set to `on` so the filter is only enabled in soap mode
-        condition: %APP_ENABLE_SOAP_PARAMETER%
-    
-    cache:     ~
-    common:
-      class: sfCommonFilter
-    execution: ~
+```yaml
+rendering: ~
+security:  ~
+
+# insert your own filters here
+soap_parameter:
+  class: ckSoapParameterFilter
+  param:
+    # `app_enable_soap_parameter` has to be set to `on` so the filter is only enabled in soap mode
+    condition: %APP_ENABLE_SOAP_PARAMETER%
+
+cache:     ~
+common:
+  class: sfCommonFilter
+execution: ~
+```
 
 ## Advanced
 
@@ -94,43 +100,47 @@ These are:
 
 *   setting the persistence mode:
         
-        [php]
-        # your environment for webservice mode
-        soap:
-          # ...
-          ck_web_service_plugin:
-            # ...
-            persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>
-
+    ```php
+    # your environment for webservice mode
+    soap:
+      # ...
+      ck_web_service_plugin:
+        # ...
+        persist: <?php echoln(SOAP_PERSISTENCE_SESSION) ?>
+    ```
+    
     For further information see documentation on `SoapServer::setPersistence()`.
     
 *   setting the `$options` array used by `SoapServer::__construct()`:
         
-        [php]
-        # your environment for webservice mode
-        soap:
-          # ...
-          ck_web_service_plugin:
-            # ...
-            soap_options:
-              encoding: utf-8
-              soap_version: <?php echoln(SOAP_1_2) ?>
-
+    ```php
+    # your environment for webservice mode
+    soap:
+      # ...
+      ck_web_service_plugin:
+        # ...
+        soap_options:
+          encoding: utf-8
+          soap_version: <?php echoln(SOAP_1_2) ?>
+    ```
+    
     For further information see documentation on `SoapServer::__construct()`.
 
 *   configuring SOAP Headers:
 
-        # your environment for webservice mode
-        soap:
-          # ...
-          ck_web_service_plugin:
-            # ...
-            soap_headers:
-              # the name of the soap header
-              MySoapHeader: 
-                # the corresponding data class
-                class: MySoapHeaderDataClass
-
+    ```yaml
+    # your environment for webservice mode
+    soap:
+      # ...
+      ck_web_service_plugin:
+        # ...
+        soap_headers:
+          # the name of the soap header
+          MySoapHeader: 
+            # the corresponding data class
+            class: MySoapHeaderDataClass
+    ```
+    
     For more details about the usage of SOAP Headers read the section `Using SOAP Headers`.
 
 ### module.yml
@@ -140,19 +150,21 @@ This configuration is automaticly done by the `webservice:generate-wsdl` task, i
 
 An example `module.yml` file:
 
-    # your environment for webservice mode
-    soap:
-      # the action name
-      action_name:
-        # ordered list of the parameters
-        parameter: [first_param, second_param]
-        # the result adapter
-        result:
-          # the result adapter class, extending `ckAbstractResultAdapter`
-          class: ckPropertyResultAdapter
-          # result adapter specific parameters array
-          param:
-            property: result
+```yaml
+# your environment for webservice mode
+soap:
+  # the action name
+  action_name:
+    # ordered list of the parameters
+    parameter: [first_param, second_param]
+    # the result adapter
+    result:
+      # the result adapter class, extending `ckAbstractResultAdapter`
+      class: ckPropertyResultAdapter
+      # result adapter specific parameters array
+      param:
+        property: result
+```
 
 The result adapters will be explained in more detail in the section `Understanding result adapters`.
 
@@ -162,58 +174,60 @@ Now it is time to start making our actions available as a webservice.
 
 This is best explained with an example, we will use the following action, which will multiply two numbers and is in an application named `frontend`:
 
-    [php]
-    <?php
-    
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
+```php
+<?php
+
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  /**
+   * An action multiplying two numbers.
+   *
+   * @param sfRequest $request A sfRequest instance
+   */
+  public function executeMultiply($request)
+  {
+    $factorA = $request->getParameter('a');
+    $factorB = $request->getParameter('b');
+  
+    if(is_numeric($factorA) && is_numeric($factorB))
     {
-      /**
-       * An action multiplying two numbers.
-       *
-       * @param sfRequest $request A sfRequest instance
-       */
-      public function executeMultiply($request)
-      {
-        $factorA = $request->getParameter('a');
-        $factorB = $request->getParameter('b');
+      $this->result = $factorA * $factorB;
       
-        if(is_numeric($factorA) && is_numeric($factorB))
-        {
-          $this->result = $factorA * $factorB;
-          
-          return sfView::SUCCESS;    
-        }
-        else
-        {
-          return sfView::ERROR;
-        }        
-      }
+      return sfView::SUCCESS;    
     }
+    else
+    {
+      return sfView::ERROR;
+    }        
+  }
+}
+```
 
 The only thing we will have to do is updating the doc comment:
 
-    [php]
-    <?php
-    
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
-    {
-      /**
-       * An action multiplying two numbers.
-       *
-       * @WSMethod(webservice='MathApi')
-       *
-       * @param double $a Factor A
-       * @param double $b Factor B
-       *
-       * @return double The result
-       */
-      public function executeMultiply($request)
-      {
-        // nothing changed here...        
-      }
-    }
+```php
+<?php
+
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  /**
+   * An action multiplying two numbers.
+   *
+   * @WSMethod(webservice='MathApi')
+   *
+   * @param double $a Factor A
+   * @param double $b Factor B
+   *
+   * @return double The result
+   */
+  public function executeMultiply($request)
+  {
+    // nothing changed here...        
+  }
+}
+```
 
 Changes:
 
@@ -233,15 +247,17 @@ Further the task will generate a `MathApiHandler.class.php` and a `BaseMathApiHa
 
 We have to change the `wsdl` option in the application's `app.yml` file to `MathApi.wsdl` and the `handler` option to `MathApiHandler`:
 
-    // apps/frontend/config/app.yml
-    # your environment for webservice mode
-    soap:
-      # ...
-      ck_web_service_plugin:
-        # the location of your wsdl file, relative to your project's `web/` folder
-        wsdl: %SF_DATA_DIR%/wsdl/MathApi.wsdl
-        # the class which will be registered as handler for webservice requests
-        handler: MathApiHandler
+```yaml
+// apps/frontend/config/app.yml
+# your environment for webservice mode
+soap:
+  # ...
+  ck_web_service_plugin:
+    # the location of your wsdl file, relative to your project's `web/` folder
+    wsdl: %SF_DATA_DIR%/wsdl/MathApi.wsdl
+    # the class which will be registered as handler for webservice requests
+    handler: MathApiHandler
+```
 
 and we have to clear the cache.
 
@@ -250,47 +266,49 @@ Now it is time to create a test script to ensure everything is working properly.
 
 The script will be named `mathApiTest.php` and placed under the project's `test/functional/` folder. It should look the following way:
 
-    [php]
-    <?php
-    
-    // test/functional/mathApiTest.php    
-    $app   = 'frontend';
-    $debug = true;
+```php
+<?php
 
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+// test/functional/mathApiTest.php    
+$app   = 'frontend';
+$debug = true;
 
-    $c = new ckTestSoapClient();
-    
-    // test executeMultiply
-    $c->math_multiply(5, 2)    // call the action
-      ->isFaultEmpty()         // check there are no errors
-      ->isType('', 'double')   // check the result type is double
-      ->is('', 10);            // check the result value is 10
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+
+$c = new ckTestSoapClient();
+
+// test executeMultiply
+$c->math_multiply(5, 2)    // call the action
+  ->isFaultEmpty()         // check there are no errors
+  ->isType('', 'double')   // check the result type is double
+  ->is('', 10);            // check the result value is 10
+```
 
 You see the name of the webservice method follows the scheme `<moduleName>_<actionName>`, because this might be not descriptive enough or an alternative scheme is desired,
  we will see how to change the method name. To do this we have to change again the action's doc comment:
 
-    [php]
-    <?php
-    
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
-    {
-      /**
-       * An action multiplying two numbers.
-       *
-       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
-       *
-       * @param double $a Factor A
-       * @param double $b Factor B
-       *
-       * @return double The result
-       */
-      public function executeMultiply($request)
-      {
-        // nothing changed here...        
-      }
-    }
+```php
+<?php
+
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  /**
+   * An action multiplying two numbers.
+   *
+   * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+   *
+   * @param double $a Factor A
+   * @param double $b Factor B
+   *
+   * @return double The result
+   */
+  public function executeMultiply($request)
+  {
+    // nothing changed here...        
+  }
+}
+```
 
 Changes:
 
@@ -302,22 +320,23 @@ Now we have to regenerate the wsdl, execute:
 
 Finally our test script has to be updated:
 
-    [php]
-    <?php
-    
-    // test/functional/mathApiTest.php    
-    $app   = 'frontend';
-    $debug = true;
+```php
+<?php
 
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+// test/functional/mathApiTest.php    
+$app   = 'frontend';
+$debug = true;
 
-    $c = new ckTestSoapClient();
-    
-    // test executeMultiply
-    $c->SimpleMultiply(5, 2)
-      ->isFaultEmpty()
-      ->isType('', 'double')
-      ->is('', 10);
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+
+$c = new ckTestSoapClient();
+
+// test executeMultiply
+$c->SimpleMultiply(5, 2)
+  ->isFaultEmpty()
+  ->isType('', 'double')
+  ->is('', 10);
+```
 
 You now have a basic overview how to use the plugin, the following sections will explain more advanced features.
 
@@ -376,25 +395,31 @@ The second method is called dynamic binding. It is far more flexible, but requir
 
 To use it you have to enable the `ckWsdl` module in your `settings.yml`:
 
-    all:
-      .settings:
-        enabled_modules: [..., ckWsdl]
-    
+```yaml
+all:
+  .settings:
+    enabled_modules: [..., ckWsdl]
+```
+
 Then the plugin will register the following route:
 
-   ck_wsdl_bind:
-     url: /:service.wsdl
-     params: { module: ckWsdl, action: bind }
+```yaml
+ck_wsdl_bind:
+  url: /:service.wsdl
+  params: { module: ckWsdl, action: bind }
+```
 
 Afterwards the wsdl is available at `http://myhost.com/MyApi.wsdl`. Replace `myhost.com` with your real host address and `MyApi` with the webservice name.
 The endpoint location will be set to `http://myhost.com/MyApi.php`. The bound wsdl will be automatically cached, if you enabled the symfony view cache.
 
 You can disable automatic route registration with the `routes_register` parameter in your application's `app.yml`:
 
-    // apps/frontend/config/app.yml
-    all:
-      ck_web_service_plugin:
-        routes_register: false
+```yml
+// apps/frontend/config/app.yml
+all:
+  ck_web_service_plugin:
+    routes_register: false
+```
 
 This allows you to define a custom route e.g. with a different url pattern. It is important that the route contains a `:service` parameter!
 
@@ -440,31 +465,32 @@ To illustrate these features we will stick to the example used earlier.
 
 Let's say we want to multiply any number of factors, not only two:
 
-    [php]
-    <?php
+```php
+<?php
+
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  /**
+   * An action multiplying any number of factors.
+   *
+   * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+   *
+   * @param double[] $factors An array of factors
+   *
+   * @return double The result
+   */
+  public function executeMultiply($request)
+  {
+    $this->result = 1;
     
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
+    foreach($request->getParameter('factors') as $factor)
     {
-      /**
-       * An action multiplying any number of factors.
-       *
-       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
-       *
-       * @param double[] $factors An array of factors
-       *
-       * @return double The result
-       */
-      public function executeMultiply($request)
-      {
-        $this->result = 1;
-        
-        foreach($request->getParameter('factors') as $factor)
-        {
-          $this->result *= $factor;
-        }
-      }
+      $this->result *= $factor;
     }
+  }
+}
+```
 
 Changes:
 
@@ -475,15 +501,17 @@ As you can see the array type is indicated by the `[]`, you can add the square b
 
 Because array types are complex data types, we have to add a mapping to the application's `app.yml` file:
 
-    // apps/frontend/config/app.yml
-    soap:
-      # ...
-      ck_web_service_plugin:
-        # ...
-        soap_options:
-          classmap:
-            # mapping of wsdl types to PHP types
-            DoubleArray: ckGenericArray
+```yaml
+// apps/frontend/config/app.yml
+soap:
+  # ...
+  ck_web_service_plugin:
+    # ...
+    soap_options:
+      classmap:
+        # mapping of wsdl types to PHP types
+        DoubleArray: ckGenericArray
+```
 
 >**TIP**
 >The generated array type names follow the scheme `<TypeName>Array`.
@@ -494,155 +522,161 @@ The last thing to do is: regenerate the wsdl file with the `webservice:generate-
 
 Our test script might look like this now:
 
-    [php]
-    <?php
-    
-    // test/functional/mathApiTest.php    
-    $app   = 'frontend';
-    $debug = true;
+```php
+<?php
 
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+// test/functional/mathApiTest.php    
+$app   = 'frontend';
+$debug = true;
 
-    $c = new ckTestSoapClient();
-    
-    // test executeMultiply
-    $c->SimpleMultiply(array(1, 2, 3, 4))
-      ->isFaultEmpty()
-      ->isType('', 'double')
-      ->is('', 24);
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+
+$c = new ckTestSoapClient();
+
+// test executeMultiply
+$c->SimpleMultiply(array(1, 2, 3, 4))
+  ->isFaultEmpty()
+  ->isType('', 'double')
+  ->is('', 24);
+```
 
 As example for the use of classes, we will implement the multiplication example for complex numbers.
 
 Because complex numbers aren't nativly supported in PHP, we have to create our own `ComplexNumber.class.php` in the applications `lib/` folder with the following content:
 
-    [php]
-    <?php
-    
-    // apps/frontend/lib/ComplexNumber.class.php
-    class ComplexNumber
-    {
-      /**
-       * @var double
-       */
-      public $realPart;
-      
-      /**
-       * @var double
-       */
-      public $imaginaryPart;
-      
-      public function __construct($realPart, $imaginaryPart)
-      {
-        $this->realPart      = $realPart;
-        $this->imaginaryPart = $imaginaryPart;
-      }
-      
-      public function __toString()
-      {
-        return sprintf('%.2f + %.2fi', $this->realPart, $this->imaginaryPart);
-      }
-      
-      public function multiply($c)
-      {
-        $real      = $this->realPart * $c->realPart - $this->imaginaryPart * $c->imaginaryPart;
-        $imaginary = $this->realPart * $c->imaginaryPart - $this->imaginaryPart * $c->realPart;
-        return new ComplexNumber($real, $imaginary);
-      }
-    }
-    
+```php
+<?php
+
+// apps/frontend/lib/ComplexNumber.class.php
+class ComplexNumber
+{
+  /**
+   * @var double
+   */
+  public $realPart;
+  
+  /**
+   * @var double
+   */
+  public $imaginaryPart;
+  
+  public function __construct($realPart, $imaginaryPart)
+  {
+    $this->realPart      = $realPart;
+    $this->imaginaryPart = $imaginaryPart;
+  }
+  
+  public function __toString()
+  {
+    return sprintf('%.2f + %.2fi', $this->realPart, $this->imaginaryPart);
+  }
+  
+  public function multiply($c)
+  {
+    $real      = $this->realPart * $c->realPart - $this->imaginaryPart * $c->imaginaryPart;
+    $imaginary = $this->realPart * $c->imaginaryPart - $this->imaginaryPart * $c->realPart;
+    return new ComplexNumber($real, $imaginary);
+  }
+}
+```
+
 It is important to add the `@var` doc tag with the type and an optional desciption to the properties of the class, so they will appear in the wsdl file.
 
 Now let's modify the `mathActions` class by adding a new action, called `ComplexMultiply`:
 
-    [php]
-    <?php
-    
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
-    {
-      // nothing changed here...
-      
-      /**
-       * An action multiplying any number of complex factors.
-       *
-       * @WSMethod(name='ComplexMultiply', webservice='MathApi')
-       *
-       * @param ComplexNumber[] $input
-       *
-       * @return ComplexNumber
-       */
-      public function executeComplexMultiply($request)
-      {
-        $this->result = new ComplexNumber(1, 0);
+```php
+<?php
 
-        foreach($request->getParameter('input') as $c)
-        {
-          $this->result = $this->result->multiply($c);
-        }
-      }
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  // nothing changed here...
+  
+  /**
+   * An action multiplying any number of complex factors.
+   *
+   * @WSMethod(name='ComplexMultiply', webservice='MathApi')
+   *
+   * @param ComplexNumber[] $input
+   *
+   * @return ComplexNumber
+   */
+  public function executeComplexMultiply($request)
+  {
+    $this->result = new ComplexNumber(1, 0);
+
+    foreach($request->getParameter('input') as $c)
+    {
+      $this->result = $this->result->multiply($c);
     }
+  }
+}
+```
 
 Again we have to update the `classmap` in the application's `app.yml` file:
 
-    // apps/frontend/config/app.yml
-    soap:
-      # ...
-      ck_web_service_plugin:
-        # ...
-        soap_options:
-          classmap:
-            # mapping of wsdl types to PHP types
-            DoubleArray:        ckGenericArray
-            ComplexNumber:      ComplexNumber
-            ComplexNumberArray: ckGenericArray
+```yaml
+// apps/frontend/config/app.yml
+soap:
+  # ...
+  ck_web_service_plugin:
+    # ...
+    soap_options:
+      classmap:
+        # mapping of wsdl types to PHP types
+        DoubleArray:        ckGenericArray
+        ComplexNumber:      ComplexNumber
+        ComplexNumberArray: ckGenericArray
+```
 
 Finally regenerate the wsdl file once more and clear the cache.
 
 Our updated test script will look something like this:
 
-    [php]
-    <?php
-    
-    // test/functional/mathApiTest.php    
-    $app   = 'frontend';
-    $debug = true;
+```php
+<?php
 
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+// test/functional/mathApiTest.php    
+$app   = 'frontend';
+$debug = true;
 
-    class ClientComplexNumber
-    {
-      public $realPart;
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
 
-      public $imaginaryPart;
-      
-      public function __construct($realPart, $imaginaryPart)
-      {
-        $this->realPart      = $realPart;
-        $this->imaginaryPart = $imaginaryPart;
-      }
-    }
-    
-    $options = array(
-      'classmap' => array(
-        'ComplexNumber' => 'ClientComplexNumber',
-      ),
-    );
-    
-    $c = new ckTestSoapClient($options);
-    
-    // test executeMultiply
-    // ...
-    
-    // test executeComplexMultiply    
-    $cn = new ClientComplexNumber(1, 0);
-    
-    $c->ComplexMultiply(array(clone $cn, clone $cn))
-      ->isFaultEmpty()
-      ->isType('', 'ClientComplexNumber')
-      ->isType('realPart', 'double')
-      ->is('realPart', 1)
-      ->isType('imaginaryPart', 'double')
-      ->is('imaginaryPart', 0);
+class ClientComplexNumber
+{
+  public $realPart;
+
+  public $imaginaryPart;
+  
+  public function __construct($realPart, $imaginaryPart)
+  {
+    $this->realPart      = $realPart;
+    $this->imaginaryPart = $imaginaryPart;
+  }
+}
+
+$options = array(
+  'classmap' => array(
+    'ComplexNumber' => 'ClientComplexNumber',
+  ),
+);
+
+$c = new ckTestSoapClient($options);
+
+// test executeMultiply
+// ...
+
+// test executeComplexMultiply    
+$cn = new ClientComplexNumber(1, 0);
+
+$c->ComplexMultiply(array(clone $cn, clone $cn))
+  ->isFaultEmpty()
+  ->isType('', 'ClientComplexNumber')
+  ->isType('realPart', 'double')
+  ->is('realPart', 1)
+  ->isType('imaginaryPart', 'double')
+  ->is('imaginaryPart', 0);
+```
 
 As you see, we have added a lightweight definition of the `ComplexNumber` class called `ClientComplexNumber`, because it is likely that you don't have the same class definition at client and server, only the names and types of the properties will match.
 
@@ -676,82 +710,88 @@ Here are two examples:
 
 *   JavaBean-like class:
 
-        [php]
-        <?php 
-        
-        // apps/frontend/lib/UserBean.class.php
-        /**
-         * @PropertyStrategy('ckBeanPropertyStrategy')
-         */
-        class UserBean
-        {
-          private $_name;
-          
-          /**
-           * Gets the user name.
-           *
-           * @return string The user name
-           */
-          public function getName()
-          {
-            return $this->_name;
-          }
-          
-          /**
-           * Sets the user name to a given value.
-           *
-           * @param string $name A name
-           */
-          public function setName($name)
-          {
-            $this->_name = $name;
-          }
-        }
+    ```php
+    <?php 
+    
+    // apps/frontend/lib/UserBean.class.php
+    /**
+     * @PropertyStrategy('ckBeanPropertyStrategy')
+     */
+    class UserBean
+    {
+      private $_name;
+      
+      /**
+       * Gets the user name.
+       *
+       * @return string The user name
+       */
+      public function getName()
+      {
+        return $this->_name;
+      }
+      
+      /**
+       * Sets the user name to a given value.
+       *
+       * @param string $name A name
+       */
+      public function setName($name)
+      {
+        $this->_name = $name;
+      }
+    }
+    ```
 
 *   Doctrine class:
 
-        [php]
-        <?php
-        
-        // lib/model/doctrine/Article.class.php
-        /**
-         * @PropertyStrategy('ckDoctrinePropertyStrategy')
-         */
-        class Article extends BaseArticle
-        {
-        }
+    ```php
+    <?php
+    
+    // lib/model/doctrine/Article.class.php
+    /**
+     * @PropertyStrategy('ckDoctrinePropertyStrategy')
+     */
+    class Article extends BaseArticle
+    {
+    }
+    ```
 
 There is one important thing you have to note:
 
 If you you want to use those classes as parameter for your methods, you have to map them in your `app.yml` to `ckGenericObjectAdapter_<classname>`.
 So the `app.yml` for the `Article` and `UserBean` class shown above would look like:
 
-    // apps/frontend/config/app.yml
-    soap:
-      # ...
-      ck_web_service_plugin:
-        # ...
-        soap_options:
-          classmap:
-            # mapping of wsdl types to PHP types
-            UserBean: ckGenericObjectAdapter_UserBean
-            Article:  ckGenericObjectAdapter_Article
+```yaml
+// apps/frontend/config/app.yml
+soap:
+  # ...
+  ck_web_service_plugin:
+    # ...
+    soap_options:
+      classmap:
+        # mapping of wsdl types to PHP types
+        UserBean: ckGenericObjectAdapter_UserBean
+        Article:  ckGenericObjectAdapter_Article
+```
 
 Collections in Doctrine and Propel objects are represented as arrays in the wsdl, so suppose the `Article` class has many `Comment` objects and `Comment` is also a Doctrine class annotated with `@PropertyStrategy('ckDoctrinePropertyStrategy')`.
 The `app.yml` would be:
 
-    // apps/frontend/config/app.yml
-    soap:
-      # ...
-      ck_web_service_plugin:
-        # ...
-        soap_options:
-          classmap:
-            # mapping of wsdl types to PHP types
-            UserBean:     ckGenericObjectAdapter_UserBean
-            Article:      ckGenericObjectAdapter_Article
-            Comment:      ckGenericObjectAdapter_Comment
-            CommentArray: ckGenericArray
+```yaml
+// apps/frontend/config/app.yml
+soap:
+  # ...
+  ck_web_service_plugin:
+    # ...
+    soap_options:
+      classmap:
+        # mapping of wsdl types to PHP types
+        UserBean:     ckGenericObjectAdapter_UserBean
+        Article:      ckGenericObjectAdapter_Article
+        Comment:      ckGenericObjectAdapter_Comment
+        CommentArray: ckGenericArray
+```
 
 This is everything you have to do to use such complex classes!
 
@@ -772,40 +812,41 @@ To demonstrate the support for SOAP Headers, we will stick to the simple multipl
 
 First we will modify the `mathActions` class the following way:
 
-    [php]
-    <?php
-    
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
+```php
+<?php
+
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  /**
+   * An action multiplying two numbers.
+   *
+   * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
+   *
+   * @param double $a Factor A
+   * @param double $b Factor B
+   *
+   * @return double The result
+   */
+  public function executeMultiply($request)
+  {
+    $factorA = $request->getParameter('a');
+    $factorB = $request->getParameter('b');
+  
+    if($this->getUser()->isAuthenticated() && is_numeric($factorA) && is_numeric($factorB))
     {
-      /**
-       * An action multiplying two numbers.
-       *
-       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
-       * @WSHeader(name='AuthHeader', type='AuthData')
-       *
-       * @param double $a Factor A
-       * @param double $b Factor B
-       *
-       * @return double The result
-       */
-      public function executeMultiply($request)
-      {
-        $factorA = $request->getParameter('a');
-        $factorB = $request->getParameter('b');
+      $this->result = $factorA * $factorB;
       
-        if($this->getUser()->isAuthenticated() && is_numeric($factorA) && is_numeric($factorB))
-        {
-          $this->result = $factorA * $factorB;
-          
-          return sfView::SUCCESS;    
-        }
-        else
-        {
-          return sfView::ERROR;
-        }
-      }
+      return sfView::SUCCESS;    
     }
+    else
+    {
+      return sfView::ERROR;
+    }
+  }
+}
+```
 
 Changes:
 
@@ -814,132 +855,138 @@ Changes:
 
 To get this example working we have to define the `AuthData` class, so let's create a `AuthData.class.php` file in the application's `lib` folder with the following content:
 
-    [php]
-    <?php
-    
-    // apps/frontend/lib/AuthData.class.php
-    class AuthData
-    {
-      /**
-       * @var string
-       */
-       public $username;
-       
-       /**
-        * @var string
-        */
-       public $password;
-    }
+```php
+<?php
+
+// apps/frontend/lib/AuthData.class.php
+class AuthData
+{
+  /**
+   * @var string
+   */
+   public $username;
+   
+   /**
+    * @var string
+    */
+   public $password;
+}
+```
 
 Afterwards we have to edit the application's `app.yml` file:
 
-    // apps/frontend/config/app.yml
-    soap:
-      # ...
-      ck_web_service_plugin:
-        # ...
-        soap_headers:
-          AuthHeader:
-            class: AuthData
+```yaml
+// apps/frontend/config/app.yml
+soap:
+  # ...
+  ck_web_service_plugin:
+    # ...
+    soap_headers:
+      AuthHeader:
+        class: AuthData
+```
 
 When the application receives a SOAP Header a `webservice.handle_header` event is dispatched (it is a `notifyUntil` event), it has two attributes, the first is `header` holding the name of the header and the second is `data` containing an instance of the header's data class.
 To do the authentication stuff in our example we will define an `AuthHeaderListener` class by creating an `AuthHeaderListener.class.php` in the application's `lib/` folder with the following content:
 
-    [php]
-    <?php
-    
-    // apps/frontend/lib/AuthHeaderListener.class.php
-    class AuthHeaderListener
+```php
+<?php
+
+// apps/frontend/lib/AuthHeaderListener.class.php
+class AuthHeaderListener
+{
+  const HEADER = 'AuthHeader';
+  
+  public static function handleAuthHeader($event)
+  {
+    if($event['header'] == self::HEADER)
     {
-      const HEADER = 'AuthHeader';
-      
-      public static function handleAuthHeader($event)
+      if($event['data']->username == 'test' && $event['data']->password == 'secret')
       {
-        if($event['header'] == self::HEADER)
-        {
-          if($event['data']->username == 'test' && $event['data']->password == 'secret')
-          {
-            sfContext::getInstance()->getUser()->setAuthenticated(true);
-          }
-          
-          return true;
-        }
-        else
-        {
-          return false;
-        }
+        sfContext::getInstance()->getUser()->setAuthenticated(true);
       }
+      
+      return true;
     }
+    else
+    {
+      return false;
+    }
+  }
+}
+```
 
 We have to register this event listener in the application's configuration class (assuming the application's name is `frontend`, this would be `frontendConfiguration.class.php`).
 
 The modified configuration class would look something like this:
 
-    [php]
-    <?php
-    
-    // apps/frontend/config/frontendConfiguration.class.php
-    class frontendConfiguration extends sfApplicationConfiguration
-    {
-      public function configure()
-      {
-        $this->dispatcher->connect('webservice.handle_header', array('AuthHeaderListener', 'handleAuthHeader'));
-      }
-    }
+```php
+<?php
+
+// apps/frontend/config/frontendConfiguration.class.php
+class frontendConfiguration extends sfApplicationConfiguration
+{
+  public function configure()
+  {
+    $this->dispatcher->connect('webservice.handle_header', array('AuthHeaderListener', 'handleAuthHeader'));
+  }
+}
+```
 
 The example is now ready to work, regenerate the wsdl file and clear the cache.
 
 The last missing thing is the updated test script:
 
-    [php]
-    <?php
-    
-    // test/functional/mathApiTest.php    
-    $app   = 'frontend';
-    $debug = true;
-    
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
-    
-    class ClientComplexNumber
-    {
-      // ...
-    }
-    
-    class ClientAuthData
-    {
-      public $username;
-      public $password;
-      
-      public function __construct($username, $password)
-      {
-        $this->username = $username;
-        $this->password = $password;
-      }
-    }
-    
-    $options = array(
-      'classmap' => array(
-        'ComplexNumber' => 'ClientComplexNumber',
-        'AuthHeader'    => 'ClientAuthData',
-      ),
-    );
-    
-    $c = new ckTestSoapClient($options);
-    
-    // test executeMultiply
-    $authData = new ClientAuthData('test', 'secret');    
-    
-    $c->addRequestHeader('AuthHeaderElement', $authData)
-      ->SimpleMultiply(5, 2)
-      ->isFaultEmpty()
-      ->isHeaderType('AuthHeaderElement', 'ClientAuthData')
-      ->isHeader('AuthHeaderElement.username', 'test')
-      ->isHeader('AuthHeaderElement.password', 'secret')
-      ->isType('', 'double')
-      ->is('', 10);
-    
-    // test executeComplexMultiply
-    // ...
+```php
+<?php
+
+// test/functional/mathApiTest.php    
+$app   = 'frontend';
+$debug = true;
+
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+
+class ClientComplexNumber
+{
+  // ...
+}
+
+class ClientAuthData
+{
+  public $username;
+  public $password;
+  
+  public function __construct($username, $password)
+  {
+    $this->username = $username;
+    $this->password = $password;
+  }
+}
+
+$options = array(
+  'classmap' => array(
+    'ComplexNumber' => 'ClientComplexNumber',
+    'AuthHeader'    => 'ClientAuthData',
+  ),
+);
+
+$c = new ckTestSoapClient($options);
+
+// test executeMultiply
+$authData = new ClientAuthData('test', 'secret');    
+
+$c->addRequestHeader('AuthHeaderElement', $authData)
+  ->SimpleMultiply(5, 2)
+  ->isFaultEmpty()
+  ->isHeaderType('AuthHeaderElement', 'ClientAuthData')
+  ->isHeader('AuthHeaderElement.username', 'test')
+  ->isHeader('AuthHeaderElement.password', 'secret')
+  ->isType('', 'double')
+  ->is('', 10);
+
+// test executeComplexMultiply
+// ...
+```
 
 >**TIP**
 >When adding or accessing a SOAP Header its name has to end with `Element`.
@@ -956,45 +1003,46 @@ To demonstrate the feature we will extend the authentication example from the la
 First to demonstrate what happens if an exception is thrown, we will modify the `multiply` action to throw an exception if the user is not authenticated.
 The modified `mathActions` class will look like this:
 
-    [php]
-    <?php
-    
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
+```php
+<?php
+
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  /**
+   * An action multiplying two numbers.
+   *
+   * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
+   *
+   * @param double $a Factor A
+   * @param double $b Factor B
+   *
+   * @return double The result
+   */
+  public function executeMultiply($request)
+  {
+    if(!$this->getUser()->isAuthenticated())
     {
-      /**
-       * An action multiplying two numbers.
-       *
-       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
-       * @WSHeader(name='AuthHeader', type='AuthData')
-       *
-       * @param double $a Factor A
-       * @param double $b Factor B
-       *
-       * @return double The result
-       */
-      public function executeMultiply($request)
-      {
-        if(!$this->getUser()->isAuthenticated())
-        {
-          throw new sfSecurityException('Unauthenticated user!');
-        }
-      
-        $factorA = $request->getParameter('a');
-        $factorB = $request->getParameter('b');
-      
-        if(is_numeric($factorA) && is_numeric($factorB))
-        {
-          $this->result = $factorA * $factorB;
-          
-          return sfView::SUCCESS;    
-        }
-        else
-        {
-          return sfView::ERROR;
-        }
-      }
+      throw new sfSecurityException('Unauthenticated user!');
     }
+  
+    $factorA = $request->getParameter('a');
+    $factorB = $request->getParameter('b');
+  
+    if(is_numeric($factorA) && is_numeric($factorB))
+    {
+      $this->result = $factorA * $factorB;
+      
+      return sfView::SUCCESS;    
+    }
+    else
+    {
+      return sfView::ERROR;
+    }
+  }
+}
+```
 
 How the exception is translated to a SOAP Fault depends on the value of `sf_debug`. If debugging is disabled every exception will be
 translated to a standard SOAP Fault with the message `'Internal Server Error'`, otherwise if debugging is enabled the message, the type 
@@ -1002,88 +1050,91 @@ and the stack trace of the exception will be send to the client.
 
 An example test script for the method with debugging enabled:
 
-    [php]
-    <?php
-    
-    // test/functional/mathApiTest.php    
-    $app   = 'frontend';
-    $debug = true;
-    
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
-    
-    $options = array(
-      'classmap' => array(
-      ),
-    );
-    
-    $c = new ckTestSoapClient($options);
-    $c->SimpleMultiply(2, 5)
-      ->hasFault('Unauthenticated user!')
-      ;
+```php
+<?php
+
+// test/functional/mathApiTest.php    
+$app   = 'frontend';
+$debug = true;
+
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+
+$options = array(
+  'classmap' => array(
+  ),
+);
+
+$c = new ckTestSoapClient($options);
+$c->SimpleMultiply(2, 5)
+  ->hasFault('Unauthenticated user!')
+  ;
+```
 
 A test script for the same method but with debugging disabled:
 
-    [php]
-    <?php
+```php
+<?php
+
+// test/functional/mathApiTest.php    
+$app   = 'frontend';
+$debug = false;
+
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
     
-    // test/functional/mathApiTest.php    
-    $app   = 'frontend';
-    $debug = false;
-    
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
-        
-    $options = array(
-      'classmap' => array(
-      ),
-    );
-    
-    $c = new ckTestSoapClient($options);
-    $c->SimpleMultiply(2, 5)
-      ->hasFault('Internal Server Error')
-      ;
+$options = array(
+  'classmap' => array(
+  ),
+);
+
+$c = new ckTestSoapClient($options);
+$c->SimpleMultiply(2, 5)
+  ->hasFault('Internal Server Error')
+  ;
+```
 
 The next example shows how to throw our own SOAP Fault if we are in webservice mode.
 
-    [php]
-    <?php
-    
-    // apps/frontend/modules/math/actions/actions.class.php
-    class mathActions extends sfActions
+```php
+<?php
+
+// apps/frontend/modules/math/actions/actions.class.php
+class mathActions extends sfActions
+{
+  /**
+   * An action multiplying two numbers.
+   *
+   * @WSMethod(name='SimpleMultiply', webservice='MathApi')
+   * @WSHeader(name='AuthHeader', type='AuthData')
+   *
+   * @param double $a Factor A
+   * @param double $b Factor B
+   *
+   * @return double The result
+   */
+  public function executeMultiply($request)
+  {
+    if(!$this->getUser()->isAuthenticated())
     {
-      /**
-       * An action multiplying two numbers.
-       *
-       * @WSMethod(name='SimpleMultiply', webservice='MathApi')
-       * @WSHeader(name='AuthHeader', type='AuthData')
-       *
-       * @param double $a Factor A
-       * @param double $b Factor B
-       *
-       * @return double The result
-       */
-      public function executeMultiply($request)
-      {
-        if(!$this->getUser()->isAuthenticated())
-        {
-          $e = $this->isSoapRequest() ? new SoapFault('Server', 'Unauthenticated user!') : new sfSecurityException('Unauthenticated user!');
-          throw $e;
-        }
-      
-        $factorA = $request->getParameter('a');
-        $factorB = $request->getParameter('b');
-      
-        if(is_numeric($factorA) && is_numeric($factorB))
-        {
-          $this->result = $factorA * $factorB;
-          
-          return sfView::SUCCESS;    
-        }
-        else
-        {
-          return sfView::ERROR;
-        }
-      }
+      $e = $this->isSoapRequest() ? new SoapFault('Server', 'Unauthenticated user!') : new sfSecurityException('Unauthenticated user!');
+      throw $e;
     }
+  
+    $factorA = $request->getParameter('a');
+    $factorB = $request->getParameter('b');
+  
+    if(is_numeric($factorA) && is_numeric($factorB))
+    {
+      $this->result = $factorA * $factorB;
+      
+      return sfView::SUCCESS;    
+    }
+    else
+    {
+      return sfView::ERROR;
+    }
+  }
+}
+```
 
 # Functional Testing
 
@@ -1102,25 +1153,29 @@ The changes to the configuration files are:
 
     Copy the configuration of the `soap` to the `soaptest` environment, e.g.:
     
-        # ...
-        soaptest:
-          enable_soap_parameter: on
-          ck_web_service_plugin:
-            wsdl: %SF_DATA_DIR%/wsdl/myWebService.wsdl
-            handler: ckSoapHandler
+    ```yaml
+    # ...
+    soaptest:
+      enable_soap_parameter: on
+      ck_web_service_plugin:
+        wsdl: %SF_DATA_DIR%/wsdl/myWebService.wsdl
+        handler: ckSoapHandler
+    ```
     
 *   `factories.yml`:
     
     Add the following configuration:
     
-        # ...
-        soaptest:
-          storage:
-            class: sfSessionTestStorage
-            param:
-              session_path: %SF_TEST_CACHE_DIR%/sessions
-          controller:
-            class: ckWebServiceController
+    ```yaml
+    # ...
+    soaptest:
+      storage:
+        class: sfSessionTestStorage
+        param:
+          session_path: %SF_TEST_CACHE_DIR%/sessions
+      controller:
+        class: ckWebServiceController
+    ```
     
 *   `filters.yml`:
     
@@ -1130,17 +1185,18 @@ To finish the setup you have to create a bootstrap script for the `soaptest` env
 
 It will be named `soaptest.php` and will have the following content:
 
-    [php]
-    <?php
-    
-    require_once dirname(__FILE__).'/../../config/ProjectConfiguration.class.php';
-    $configuration = ProjectConfiguration::getApplicationConfiguration($app, isset($env) ? $env : 'soaptest', isset($debug) ? $debug : true);
-    require_once($configuration->getSymfonyLibDir().'/vendor/lime/lime.php');
-    
-    sfContext::createInstance($configuration);
-    
-    // remove all cache
-    sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
+```php
+<?php
+
+require_once dirname(__FILE__).'/../../config/ProjectConfiguration.class.php';
+$configuration = ProjectConfiguration::getApplicationConfiguration($app, isset($env) ? $env : 'soaptest', isset($debug) ? $debug : true);
+require_once($configuration->getSymfonyLibDir().'/vendor/lime/lime.php');
+
+sfContext::createInstance($configuration);
+
+// remove all cache
+sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
+```
 
 This is the same as the default `functional.php` script except the environment parameter of `ProjectConfiguration::getApplicationConfiguration()` can be changed with the `$env` variable and defaults to `soaptest`.
 
@@ -1154,20 +1210,21 @@ Additionally it offers several evaluation methods for the result of each request
 
 A good starting point for every test script is the following template:
 
-    [php]
-    <?php
-    
-    $app   = 'frontend';
-    $debug = true;
-    
-    include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
-    
-    $options = array(
-      'classmap' => array(
-      ),
-    );
-    
-    $c = new ckTestSoapClient($options);
+```php
+<?php
+
+$app   = 'frontend';
+$debug = true;
+
+include_once(dirname(__FILE__).'/../bootstrap/soaptest.php');
+
+$options = array(
+  'classmap' => array(
+  ),
+);
+
+$c = new ckTestSoapClient($options);
+```
 
 Change the `$app` variable to the name of the application you want to test.
 
@@ -1176,17 +1233,23 @@ Change the `$app` variable to the name of the application you want to test.
 
 Calling a SOAP Action is quite easy, just use it as it would be a method of the `ckTestSoapClient` object:
 
-    [php]
-    $c->myMethod($param1, $param2);
+```php
+<?php
+
+$c->myMethod($param1, $param2);
+```
 
 The call does not directly return the result, instead it returns the `ckTestSoapClient` object, this offers you a so called fluent interface
  how it is often found in the symfony framework.
 
 To get the actual result you have to call the `getResult()` method:
 
-    [php]
-    $result = $c->myMethod($param1, $param2)
-                ->getResult();
+```php
+<?php
+
+$result = $c->myMethod($param1, $param2)
+            ->getResult();
+```
 
 For evaluating the result, the `ckTestSoapClient` class offers three methods: `is()` checks the value, `isType()` checks the type and `isCount()` checks the element count,
  useful when the result is an array.
@@ -1206,32 +1269,44 @@ Various examples for the use of the three methods `is()`, `isType()` and `isCoun
 
 You can also add SOAP Headers for the next request with the `addRequestHeader()` method, whichs first parameter is the header name and the second is the data object, e.g.:
 
-    [php]
-    $c->addRequestHeader('MyHeaderElement', new MyHeaderData('content'))
-      ->myMethodWithHeader();
+```php
+<?php
+
+$c->addRequestHeader('MyHeaderElement', new MyHeaderData('content'))
+  ->myMethodWithHeader();
+```
 
 The headers are cleared after each request, so do not forget to add them again if you need them more then once.
 
 Similar to the evaluation methods for the result, there are three methods to evaluate the response headers. These are `isHeader()`, `isHeaderType()` and `isHeaderCount()`.
 The parameter list is the same, but the child element selector has to contain at least the header name, e.g.:
 
-    [php]
-    $c->addRequestHeader('MyHeaderElement', new MyHeaderData('content'))
-      ->myMethodWithHeader()
-      ->isHeader('MyHeaderElement.myContent', 'content');
+```php
+<?php
+
+$c->addRequestHeader('MyHeaderElement', new MyHeaderData('content'))
+  ->myMethodWithHeader()
+  ->isHeader('MyHeaderElement.myContent', 'content');
+```
 
 The `ckTestSoapClient` has also methods to check the result for SoapFaults. One method is `isFaultEmpty()` it is usefull to check that the response contains no SoapFaults, e.g.:
 
-    [php]
-    $c->myMethod()
-      ->isFaultEmpty()
-      ->is('', 1);
+```php
+<?php
+
+$c->myMethod()
+  ->isFaultEmpty()
+  ->is('', 1);
+```
 
 Another method is `hasFault()` it checks if a SoapFault with the given message exists.
 
-    [php]
-    $c->myMethod()
-      ->hasFault('Internal Server Error');
+```php
+<?php
+
+$c->myMethod()
+  ->hasFault('Internal Server Error');
+```
 
 The method is at all quite similiar to the `throwsException()` method of `sfTestBrowser`. 
 
@@ -1256,32 +1331,35 @@ If you often regenerate your wsdl file during development, you propably want to 
 
 You can do this by modifying your `php.ini`:
 
-    soap.wsdl_cache_enabled=0
+```ini
+soap.wsdl_cache_enabled=0
+```
 
 ## Checking for webservice mode
 
 If you want to check in an action if it is executed in webservice mode, you can use the `isSoapRequest()` method, e.g.:
 
-    [php]
-    <?php
-    
-    class FooActions extends sfActions
+```php
+<?php
+
+class FooActions extends sfActions
+{
+  /**
+   * Some description...
+   *
+   * @WSMethod(webservice='MyApi')
+   */
+  public function executeBar($request)
+  {
+    if($this->isSoapRequest())
     {
-      /**
-       * Some description...
-       *
-       * @WSMethod(webservice='MyApi')
-       */
-      public function executeBar($request)
-      {
-        if($this->isSoapRequest())
-        {
-          // do this only in webservice mode...
-        }
-        
-        // do this always...
-      }
+      // do this only in webservice mode...
     }
+    
+    // do this always...
+  }
+}
+```
 
 ## Create multiple webservices for one application
 
@@ -1296,21 +1374,22 @@ It is possible to add an action to more then one webservice, because the `webser
 `@WSMethod` annotation accepts also an array of values. The action shown in the following example will be
 available in the webservices `MyWebserviceA` and `MyWebserviceB`:
 
-    [php]
-    <?php
-    
-    class FooActions extends sfActions
-    {
-      /**
-       * Some description...
-       *
-       * @WSMethod(webservice={'MyWebserviceA', 'MyWebserviceB'})
-       */
-      public function executeBar($request)
-      {
-        // ...
-      }
-    }
+```php
+<?php
+
+class FooActions extends sfActions
+{
+  /**
+   * Some description...
+   *
+   * @WSMethod(webservice={'MyWebserviceA', 'MyWebserviceB'})
+   */
+  public function executeBar($request)
+  {
+    // ...
+  }
+}
+```
 
 # Support
 
