@@ -22,6 +22,7 @@ To install the latest release from Git, checkout the release tag into a `plugins
 To install the latest development revision from Git, clone the HEAD revision of the development branch into a `plugins/ckWebServicePlugin` folder:
   
     > git clone --branch 1.3 git://github.com/christiankerl/ckWebServicePlugin.git
+    > git submodule update
 
 >**CAUTION**
 >The HEAD revision of the development branch is not guaranteed to be stable all the time!
