@@ -17,12 +17,16 @@ To install the latest release, execute:
 To install the latest release from Git, checkout the release tag into a `plugins/ckWebServicePlugin` folder:
   
     > git clone git://github.com/christiankerl/ckWebServicePlugin.git
+    > cd ./ckWebServicePlugin/
     > git checkout 4.0.0
+    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/ckWsdlGenerator/ ./lib/vendor/ckWsdlGenerator/
 
 To install the latest development revision from Git, clone the HEAD revision of the development branch into a `plugins/ckWebServicePlugin` folder:
   
     > git clone --branch 1.3 git://github.com/christiankerl/ckWebServicePlugin.git
+    > cd ./ckWebServicePlugin/
     > git submodule update
+    > svn co http://addendum.googlecode.com/svn/trunk/ ./lib/vendor/ckWsdlGenerator/vendor/addendum/
 
 >**CAUTION**
 >The HEAD revision of the development branch is not guaranteed to be stable all the time!
