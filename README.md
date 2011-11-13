@@ -14,13 +14,14 @@ To install the latest release, execute:
 
     > symfony plugin:install ckWebServicePlugin
 
-To install the latest release from SVN, checkout the release tag into a `plugins/ckWebServicePlugin` folder:
+To install the latest release from Git, checkout the release tag into a `plugins/ckWebServicePlugin` folder:
   
-    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/tags/4.0.0/
+    > git clone git://github.com/christiankerl/ckWebServicePlugin.git
+    > git checkout 4.0.0
 
-To install the latest development revision from SVN, checkout the HEAD revision of the development branch into a `plugins/ckWebServicePlugin` folder:
+To install the latest development revision from Git, clone the HEAD revision of the development branch into a `plugins/ckWebServicePlugin` folder:
   
-    > svn co http://svn.symfony-project.com/plugins/ckWebServicePlugin/branches/1.3/
+    > git clone --branch 1.3 git://github.com/christiankerl/ckWebServicePlugin.git
 
 >**CAUTION**
 >The HEAD revision of the development branch is not guaranteed to be stable all the time!
