@@ -1,0 +1,3 @@
+[submodule "lib/vendor/ckWsdlGenerator"]
+	path = lib/vendor/ckWsdlGenerator
+	url = git@github.com:christiankerl/ckWsdlGenerator.git
