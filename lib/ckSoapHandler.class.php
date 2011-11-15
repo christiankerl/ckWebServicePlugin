@@ -123,12 +123,12 @@ class ckSoapHandler
     }
     else
     {
-      $parts = explode('_', $method, 2);
+      $subject = $this;
+      $name = 'webservice.handle_unknown_header';
+      $parameters = array('header' => $method, 'data' => $arguments);
+      
+      $event = new sfEvent($subject, $name, $parameters);
 
-      $module = $parts[0];
-      $action = isset($parts[1]) && strlen($parts[1]) > 0 ? $parts[1] : 'index';
-
-      return sfContext::getInstance()->getController()->invokeSoapEnabledAction($module, $action, $arguments);
-    }
+      sfContext::getInstance()->getEventDispatcher()->notify($event);    }
   }
 }

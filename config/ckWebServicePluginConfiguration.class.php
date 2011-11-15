@@ -29,6 +29,8 @@ class ckWebServicePluginConfiguration extends sfPluginConfiguration
   public function initialize()
   {
     $this->dispatcher->connect('component.method_not_found', array('ckComponentEventListener', 'listenToComponentMethodNotFoundEvent'));
+    
+    $this->dispatcher->connect('webservice.handle_unknown_header', array($this, 'listenToHandleUnknownHeader'));
 
     if($this->isRegisterWsdlRoute())
     {
@@ -48,4 +50,21 @@ class ckWebServicePluginConfiguration extends sfPluginConfiguration
     $r = $event->getSubject();
     $r->prependRoute('ck_wsdl_bind', new sfRoute('/:service.wsdl', array('module' => 'ckWsdl', 'action' => 'bind')));
   }
+  
+  public function listenToHandleUnknownHeader(sfEvent $event)
+  {
+  	if (sfConfig::get('sf_logging_enabled'))
+    {
+      $params = $event->getParameters();
+      
+      if (is_array($params) > 0) {
+      	$headerName = $params['header'];
+      } else {
+      	$headerName = '';
+      }  
+    	
+      sfContext::getInstance()->getEventDispatcher()->notify(new sfEvent($this, 'application.log', array('Got unknown header "' . $headerName . '"')));
+    }
+  }
+    
 }
