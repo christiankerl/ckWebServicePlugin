@@ -103,6 +103,8 @@ EOF;
 
     WSMethod::setCreateMethodNameCallback(array($this, 'generateWSMethodName'));
 
+    $this->addClassMapping($app, $env);
+
     $handler_methods = array();
 
     foreach($this->getModules() as $module)
@@ -170,6 +172,35 @@ EOF;
     }
 
     return array('module' => substr($class, 0, -7), 'action' => ckString::lcfirst(substr($method, 7)));
+  }
+
+  public function addClassMapping($application, $env)
+  {
+    sfConfig::set('sf_environment', $env);
+    $h = new sfDefineEnvironmentConfigHandler(array('prefix' => 'app_'));
+    $config = $h->getConfiguration(array(sfConfig::get('sf_app_dir') . '/config/app.yml'));
+
+    $ckConfig = isset($config['ck_web_service_plugin']) ? $config['ck_web_service_plugin'] : array();
+    $options = isset($ckConfig['soap_options']) ? $ckConfig['soap_options']: array();
+    $soap_headers = isset($ckConfig['soap_headers']) ? $ckConfig['soap_headers'] : array();
+
+    if(!isset($options['classmap']) || !is_array($options['classmap']))
+    {
+      $options['classmap'] = array();
+    }
+
+    foreach($soap_headers as $header_name => $header_options)
+    {
+      if(isset($header_options['class']))
+      {
+        $options['classmap'][$header_name] = $header_options['class'];
+      }
+    }
+
+    foreach ($options['classmap'] as $alias => $mapping)
+    {
+      ckXsdComplexType::create($mapping, $alias);
+    }
   }
 
   public function generateWSMethodName(ReflectionMethod $method)
